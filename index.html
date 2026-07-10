@@ -38,8 +38,18 @@
   .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
   .btn-row { display: flex; gap: 10px; margin-top: 10px; }
 
-  .letter-group { margin-bottom: 14px; }
-  .letter-group .letter { font-weight: 700; color: var(--accent); font-size: 15px; margin-bottom: 6px; }
+  .letter-group { margin-bottom: 8px; }
+  .letter-head {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+    padding: 11px 14px; cursor: pointer; font-weight: 700; font-size: 16px;
+    color: var(--accent); user-select: none;
+  }
+  .letter-head .count { color: var(--sub); font-size: 13px; font-weight: 400; margin-left: 8px; }
+  .letter-head .chev { color: var(--sub); font-size: 14px; transition: transform .15s; }
+  .letter-head.open { background: var(--accent-soft); border-color: var(--accent); }
+  .letter-head.open .chev { transform: rotate(90deg); }
+  .letter-body { margin-top: 6px; padding-left: 4px; }
   .vocab-item { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin-bottom: 6px; font-size: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: transform .08s; }
   .vocab-item:active { transform: scale(.98); }
   .vocab-item span { color: var(--sub); font-size: 13px; }
@@ -217,14 +227,24 @@ function renderHome() {
   Object.keys(groups).sort().forEach(L => {
     const g = document.createElement("div");
     g.className = "letter-group";
-    g.innerHTML = '<div class="letter">' + L + "</div>";
+    const head = document.createElement("div");
+    head.className = "letter-head";
+    head.innerHTML = "<span>" + L + "<span class='count'>" + groups[L].length + " 字</span></span><span class='chev'>▶</span>";
+    const body = document.createElement("div");
+    body.className = "letter-body hidden";
+    head.onclick = () => {
+      body.classList.toggle("hidden");
+      head.classList.toggle("open");
+    };
     groups[L].forEach(v => {
       const item = document.createElement("div");
       item.className = "vocab-item";
       item.innerHTML = "<div><b>" + v.w + "</b> <span>" + v.pos + " " + v.zh + "</span></div><span class='arrow'>›</span>";
       item.onclick = () => showDetail(v);
-      g.appendChild(item);
+      body.appendChild(item);
     });
+    g.appendChild(head);
+    g.appendChild(body);
     list.appendChild(g);
   });
 }
