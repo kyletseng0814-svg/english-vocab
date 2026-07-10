@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>拼字練習</title>
+<style>
+  :root {
+    --bg: #f7f7f2; --card: #ffffff; --ink: #2d2d2d; --sub: #8a8a84;
+    --accent: #4a7c59; --accent-soft: #e6efe9;
+    --wrong: #c0504d; --wrong-soft: #f6e4e3;
+    --gold: #d9a441; --line: #e8e8e2;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif;
+    background: var(--bg); color: var(--ink);
+    max-width: 560px; margin: 0 auto; padding: 20px 16px 48px;
+  }
+  h1 { font-size: 22px; margin-bottom: 4px; }
+  .sub { color: var(--sub); font-size: 14px; margin-bottom: 20px; }
+  h2 { font-size: 16px; margin: 22px 0 10px; }
+  .hidden { display: none !important; }
+
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 14px; color: var(--sub); margin-bottom: 8px; }
+  .choices { display: flex; gap: 8px; flex-wrap: wrap; }
+  .choice {
+    border: 1.5px solid var(--line); background: var(--bg); border-radius: 10px;
+    padding: 8px 16px; font-size: 15px; cursor: pointer;
+  }
+  .choice.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .btn {
+    width: 100%; padding: 14px; border-radius: 12px; font-size: 16px; cursor: pointer;
+    border: 1.5px solid var(--line); background: var(--card);
+  }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn-row { display: flex; gap: 10px; margin-top: 10px; }
+
+  .letter-group { margin-bottom: 14px; }
+  .letter-group .letter { font-weight: 700; color: var(--accent); font-size: 15px; margin-bottom: 6px; }
+  .vocab-item { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; margin-bottom: 6px; font-size: 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: transform .08s; }
+  .vocab-item:active { transform: scale(.98); }
+  .vocab-item span { color: var(--sub); font-size: 13px; }
+  .vocab-item .arrow { color: var(--line); font-size: 16px; }
+
+  .overlay { position: fixed; inset: 0; background: rgba(45,45,45,.4); display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 10; }
+  .detail { background: var(--card); border-radius: 18px; padding: 24px 22px; max-width: 480px; width: 100%; max-height: 82vh; overflow-y: auto; }
+  .detail .dtop { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .detail .dword { font-size: 32px; font-weight: 700; }
+  .detail .dphon { color: var(--sub); font-size: 16px; }
+  .detail .dzh { font-size: 18px; margin-top: 6px; }
+  .detail .dzh b { color: var(--gold); margin-right: 6px; }
+  .detail .section { margin-top: 16px; }
+  .detail .label { font-size: 12px; color: var(--accent); font-weight: 700; letter-spacing: 1px; margin-bottom: 4px; }
+  .detail .val { font-size: 15px; line-height: 1.7; white-space: pre-line; }
+  .detail .val em { color: var(--sub); }
+  .detail .dfoot { margin-top: 18px; color: var(--sub); font-size: 12px; text-align: right; }
+  .detail .btn-row { margin-top: 14px; }
+
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .back { color: var(--sub); font-size: 14px; cursor: pointer; background: none; border: none; }
+  .progress-text { font-size: 13px; color: var(--sub); }
+  .bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; margin-bottom: 24px; }
+  .bar > div { height: 100%; background: var(--accent); width: 0; transition: width .25s; }
+
+  .clue { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-bottom: 18px; }
+  .clue .zh { font-size: 22px; font-weight: 700; }
+  .clue .pos { color: var(--gold); font-weight: 600; margin-right: 6px; }
+  .clue .en { color: var(--sub); font-size: 15px; line-height: 1.6; margin-top: 8px; }
+  .hint-letters {
+    font-family: "SF Mono", Menlo, monospace; font-size: 26px; letter-spacing: 6px;
+    text-align: center; margin: 18px 0 6px; font-weight: 600;
+  }
+  .hint-len { text-align: center; color: var(--sub); font-size: 13px; margin-bottom: 14px; }
+  input.spell {
+    width: 100%; padding: 14px; font-size: 20px; text-align: center;
+    border: 1.5px solid var(--line); border-radius: 12px; outline: none;
+    font-family: "SF Mono", Menlo, monospace; letter-spacing: 2px;
+    background: var(--card); color: var(--ink);
+  }
+  input.spell:focus { border-color: var(--accent); }
+  input.spell.ok { border-color: var(--accent); background: var(--accent-soft); }
+  input.spell.bad { border-color: var(--wrong); background: var(--wrong-soft); }
+  .feedback { min-height: 76px; margin-top: 14px; text-align: center; font-size: 15px; line-height: 1.6; }
+  .feedback .word { font-size: 20px; font-weight: 700; }
+  .feedback .ex { color: var(--sub); font-size: 14px; }
+
+  .result { text-align: center; }
+  .result .big { font-size: 52px; font-weight: 700; margin: 24px 0 4px; }
+  .result .msg { color: var(--sub); margin-bottom: 24px; }
+  .review { text-align: left; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 4px 16px; margin-bottom: 24px; }
+  .review-item { padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .review-item:last-child { border-bottom: none; }
+  .review-item b { font-size: 17px; }
+  .review-item div { color: var(--sub); font-size: 14px; margin-top: 3px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div id="home">
+  <h1>拼字練習 ✏️</h1>
+  <p class="sub" id="homeSub"></p>
+
+  <div class="panel" id="settings">
+    <div class="field">
+      <label>題數</label>
+      <div class="choices" id="countChoices"></div>
+    </div>
+    <div class="field">
+      <label>開頭字母提示</label>
+      <div class="choices" id="hintChoices">
+        <button class="choice" data-v="0">不提示</button>
+        <button class="choice active" data-v="1">1 個字母</button>
+        <button class="choice" data-v="2">2 個字母</button>
+        <button class="choice" data-v="3">3 個字母</button>
+      </div>
+    </div>
+    <button class="btn primary" onclick="startQuiz()">開始練習</button>
+  </div>
+
+  <h2>📚 單字庫（依字首排序）</h2>
+  <div id="vocabList"></div>
+</div>
+
+<div id="quiz" class="hidden">
+  <div class="topbar">
+    <button class="back" onclick="goHome()">← 離開</button>
+    <span class="progress-text" id="qProgress"></span>
+  </div>
+  <div class="bar"><div id="qBar"></div></div>
+  <div class="clue">
+    <div class="zh"><span class="pos" id="qPos"></span><span id="qZh"></span></div>
+    <div class="en" id="qEn"></div>
+  </div>
+  <div class="hint-letters" id="qHint"></div>
+  <div class="hint-len" id="qLen"></div>
+  <input class="spell" id="qInput" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="輸入拼字後按 Enter">
+  <div class="feedback" id="qFeedback"></div>
+  <div class="btn-row">
+    <button class="btn" id="qCheckBtn" onclick="check()">確認</button>
+  </div>
+</div>
+
+<div id="detailOverlay" class="overlay hidden" onclick="if (event.target === this) closeDetail()">
+  <div class="detail">
+    <div class="dtop">
+      <span class="dword" id="dWord"></span>
+      <span class="dphon" id="dPhon"></span>
+      <button class="speak" onclick="speak(document.getElementById('dWord').textContent)">🔊</button>
+    </div>
+    <div class="dzh"><b id="dPos"></b><span id="dZh"></span></div>
+    <div class="section"><div class="label">英文釋義</div><div class="val" id="dEn"></div></div>
+    <div class="section"><div class="label">例句</div><div class="val"><em id="dEx"></em></div></div>
+    <div class="section"><div class="label">考試 / 口語用法</div><div class="val" id="dUsage"></div></div>
+    <div class="section"><div class="label">相似字比較</div><div class="val" id="dSyn"></div></div>
+    <div class="dfoot" id="dAdded"></div>
+    <div class="btn-row"><button class="btn" onclick="closeDetail()">關閉</button></div>
+  </div>
+</div>
+
+<div id="result" class="hidden">
+  <div class="result">
+    <div class="big" id="rScore"></div>
+    <div class="msg" id="rMsg"></div>
+    <div class="review" id="rReview"></div>
+    <div class="btn-row">
+      <button class="btn" onclick="goHome()">回設定</button>
+      <button class="btn primary" onclick="startQuiz()">再練一次</button>
+    </div>
+  </div>
+</div>
+
+<script src="vocab.js"></script>
+<script>
+let opts = { count: 5, hint: 1 };
+let cur = { list: [], idx: 0, wrong: [], answered: false };
+
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+function renderHome() {
+  const n = VOCAB.length;
+  document.getElementById("homeSub").textContent =
+    n === 0 ? "單字庫還是空的——去問 Claude 一個英文單字，它就會自動加進來！"
+            : "單字庫目前有 " + n + " 個字。選好題數和提示，開始練拼字。";
+  document.getElementById("settings").classList.toggle("hidden", n === 0);
+
+  // 題數選項
+  const counts = [5, 10, 20].filter(c => c < n);
+  counts.push(n);
+  const cbox = document.getElementById("countChoices");
+  cbox.innerHTML = "";
+  counts.forEach((c, i) => {
+    const b = document.createElement("button");
+    b.className = "choice" + (i === 0 ? " active" : "");
+    b.textContent = c === n ? "全部 " + n + " 題" : c + " 題";
+    b.dataset.v = c;
+    b.onclick = () => { pick(cbox, b); opts.count = c; };
+    cbox.appendChild(b);
+  });
+  opts.count = counts[0];
+
+  // 提示選項
+  document.querySelectorAll("#hintChoices .choice").forEach(b => {
+    b.onclick = () => { pick(document.getElementById("hintChoices"), b); opts.hint = +b.dataset.v; };
+  });
+
+  // 單字庫列表（依字首分組）
+  const groups = {};
+  VOCAB.slice().sort((a, b) => a.w.localeCompare(b.w)).forEach(v => {
+    const L = v.w[0].toUpperCase();
+    (groups[L] = groups[L] || []).push(v);
+  });
+  const list = document.getElementById("vocabList");
+  list.innerHTML = "";
+  Object.keys(groups).sort().forEach(L => {
+    const g = document.createElement("div");
+    g.className = "letter-group";
+    g.innerHTML = '<div class="letter">' + L + "</div>";
+    groups[L].forEach(v => {
+      const item = document.createElement("div");
+      item.className = "vocab-item";
+      item.innerHTML = "<div><b>" + v.w + "</b> <span>" + v.pos + " " + v.zh + "</span></div><span class='arrow'>›</span>";
+      item.onclick = () => showDetail(v);
+      g.appendChild(item);
+    });
+    list.appendChild(g);
+  });
+}
+
+function pick(box, btn) {
+  box.querySelectorAll(".choice").forEach(b => b.classList.remove("active"));
+  btn.classList.add("active");
+}
+
+function show(id) {
+  for (const p of ["home", "quiz", "result"]) document.getElementById(p).classList.toggle("hidden", p !== id);
+  window.scrollTo(0, 0);
+}
+function goHome() { renderHome(); show("home"); }
+
+function startQuiz() {
+  cur = { list: shuffle(VOCAB.slice()).slice(0, opts.count), idx: 0, wrong: [], answered: false };
+  show("quiz");
+  renderQuestion();
+}
+
+function currentWord() { return cur.list[cur.idx]; }
+
+function renderQuestion() {
+  const v = currentWord();
+  const total = cur.list.length;
+  cur.answered = false;
+  document.getElementById("qProgress").textContent = (cur.idx + 1) + " / " + total;
+  document.getElementById("qBar").style.width = (cur.idx / total * 100) + "%";
+  document.getElementById("qPos").textContent = v.pos;
+  document.getElementById("qZh").textContent = v.zh;
+  document.getElementById("qEn").textContent = v.en;
+
+  const shown = Math.min(opts.hint, v.w.length - 1);
+  document.getElementById("qHint").textContent =
+    v.w.slice(0, shown).split("").join(" ") + (shown ? " " : "") + "_ ".repeat(v.w.length - shown).trim();
+  document.getElementById("qLen").textContent = "共 " + v.w.length + " 個字母";
+
+  const input = document.getElementById("qInput");
+  input.value = "";
+  input.className = "spell";
+  input.disabled = false;
+  document.getElementById("qFeedback").innerHTML = "";
+  document.getElementById("qCheckBtn").textContent = "確認";
+  input.focus();
+}
+
+function check() {
+  if (cur.answered) { next(); return; }
+  const v = currentWord();
+  const input = document.getElementById("qInput");
+  const guess = input.value.trim().toLowerCase();
+  if (!guess) { input.focus(); return; }
+
+  cur.answered = true;
+  input.disabled = true;
+  const ok = guess === v.w.toLowerCase();
+  input.classList.add(ok ? "ok" : "bad");
+  if (!ok) cur.wrong.push(v);
+
+  document.getElementById("qFeedback").innerHTML =
+    (ok ? "✅ 正確！" : "❌ 正確拼法：") +
+    '<span class="word"> ' + v.w + "</span> /" + v.phon + "/<br>" +
+    '<span class="ex">' + v.ex + "</span>";
+  document.getElementById("qCheckBtn").textContent = cur.idx + 1 < cur.list.length ? "下一題 →" : "看成績";
+  speak(v.w);
+}
+
+function next() {
+  cur.idx++;
+  if (cur.idx < cur.list.length) renderQuestion();
+  else finish();
+}
+
+function finish() {
+  const total = cur.list.length;
+  const right = total - cur.wrong.length;
+  const pct = Math.round(right / total * 100);
+  document.getElementById("rScore").textContent = pct + "%";
+  document.getElementById("rMsg").textContent =
+    pct === 100 ? "全對！拼字滿分 🎉" : "答對 " + right + " / " + total + "，錯的字再看一眼";
+  const rv = document.getElementById("rReview");
+  if (cur.wrong.length) {
+    rv.classList.remove("hidden");
+    rv.innerHTML = cur.wrong.map(v =>
+      '<div class="review-item"><b>' + v.w + "</b> <span style='color:var(--sub)'>/" + v.phon + "/</span><div>" +
+      v.pos + " " + v.zh + "<br>" + v.ex + "</div></div>"
+    ).join("");
+  } else {
+    rv.classList.add("hidden");
+  }
+  show("result");
+}
+
+function showDetail(v) {
+  document.getElementById("dWord").textContent = v.w;
+  document.getElementById("dPhon").textContent = "/" + v.phon + "/";
+  document.getElementById("dPos").textContent = v.pos;
+  document.getElementById("dZh").textContent = v.zh;
+  document.getElementById("dEn").textContent = v.en;
+  document.getElementById("dEx").textContent = v.ex;
+  document.getElementById("dUsage").textContent = v.usage;
+  document.getElementById("dSyn").textContent = v.syn + "：" + v.synNote;
+  document.getElementById("dAdded").textContent = "加入日期：" + v.added;
+  document.getElementById("detailOverlay").classList.remove("hidden");
+}
+function closeDetail() { document.getElementById("detailOverlay").classList.add("hidden"); }
+
+function speak(word) {
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(word);
+    u.lang = "en-US";
+    u.rate = 0.9;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+document.getElementById("qInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") check();
+});
+
+renderHome();
+</script>
+</body>
+</html>
