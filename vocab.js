@@ -86,6 +86,18 @@ const VOCAB = [
     added: "2026-07-10"
   },
   {
+    w: "intense",
+    pos: "adj.",
+    phon: "ɪnˈtens",
+    zh: "強烈的、劇烈的；緊繃認真的",
+    en: "very strong or extreme (feelings, heat, pressure); involving great effort or concentration",
+    ex: "The competition for the marketing position was intense.",
+    usage: "📝 考試：多益中高頻，商業文章常見 intense competition（激烈競爭）、intense pressure（沉重壓力）、intense negotiations（緊張的談判）\n💬 口語：很常用，That was intense!（剛剛好刺激/好猛）是年輕人口頭禪；形容人 He's so intense. 是說他超緊繃認真、氣場很強",
+    syn: "intensive",
+    synNote: "經典易混字！intense 講「程度強烈」（感受、壓力、競爭）；intensive 講「方式密集」（安排得很滿），如 intensive course（密集課程）、labor-intensive（勞力密集）。記法：intense 是感覺，intensive 是排程",
+    added: "2026-07-10"
+  },
+  {
     w: "negotiate",
     pos: "v.",
     phon: "nɪˈɡoʊʃieɪt",
