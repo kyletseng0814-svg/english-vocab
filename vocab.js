@@ -144,5 +144,17 @@ const VOCAB = [
     syn: "bargain",
     synNote: "bargain 較口語，多指買東西討價還價；negotiate 較正式，用於合約、條件協商",
     added: "2026-07-10"
+  },
+  {
+    w: "protester",
+    pos: "n.",
+    phon: "ˈproʊtestər",
+    zh: "抗議者、示威者",
+    en: "a person who publicly expresses strong disagreement, often by joining a demonstration",
+    ex: "Hundreds of protesters gathered outside city hall.",
+    usage: "📝 考試：多益低頻（多益迴避政治題材），但新聞英文超高頻——BBC、CNN 標題常客；托福雅思的社會議題閱讀也常見。動詞原形是 protest against（抗議某事）\n💬 口語：聊時事新聞會用到；拼法 protester 和 protestor 都有人寫，protester 較常見",
+    syn: "demonstrator",
+    synNote: "幾乎同義。demonstrator 偏正式新聞用語，來自 demonstration（示威遊行）；protester 更通用。小心 demonstrator 還有另一個意思「產品示範員」，多益反而可能考這個",
+    added: "2026-07-10"
   }
 ];
