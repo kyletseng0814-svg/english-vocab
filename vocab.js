@@ -110,6 +110,18 @@ const VOCAB = [
     added: "2026-07-10"
   },
   {
+    w: "item",
+    pos: "n.",
+    phon: "ˈaɪtəm",
+    zh: "項目、品項、物品；（清單上的）一項",
+    en: "a single thing in a list, group, or collection; a single article or object",
+    ex: "Please make sure all items on the invoice are correct before shipping.",
+    usage: "📝 考試：多益超高頻！訂單、發票、菜單、庫存情境必見：item number（品項編號）、out-of-stock items（缺貨商品）、agenda items（議程項目）、defective items（瑕疵品）\n💬 口語：天天用，結帳問幾件說 How many items?；購物清單上每一樣都是 item；趣味用法 They're an item. 是「他們在一起了」",
+    syn: "product",
+    synNote: "product 是「產品」——從製造、販售的角度講；item 是「清單上的一項」——泛指任何列出來的東西（商品、議程、行李都行）。同一支手機，在工廠是 product，在你的訂單明細裡是 item",
+    added: "2026-07-10"
+  },
+  {
     w: "negotiate",
     pos: "v.",
     phon: "nɪˈɡoʊʃieɪt",
