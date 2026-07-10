@@ -62,6 +62,18 @@ const VOCAB = [
     added: "2026-07-10"
   },
   {
+    w: "hall",
+    pos: "n.",
+    phon: "hɔːl",
+    zh: "大廳、門廳；會堂、禮堂；走廊",
+    en: "a large room or building used for events and meetings; the area just inside the entrance of a building; a corridor",
+    ex: "The award ceremony will be held in the main hall at 7 p.m.",
+    usage: "📝 考試：多益高頻場所字，常見於活動公告與地點題：city hall（市政廳）、concert hall（音樂廳）、exhibition hall（展覽館）、conference hall（會議廳）\n💬 口語：天天用，美式說走廊是 hallway，指路常說 down the hall（走廊那頭），如 The restroom is down the hall on your left.",
+    syn: "lobby",
+    synNote: "lobby 專指飯店、辦公大樓「入口的等候接待區」（有沙發櫃檯那種）；hall 範圍更廣，可以是大會堂、門廳或走廊。飯店大廳說 lobby 比 hall 道地",
+    added: "2026-07-10"
+  },
+  {
     w: "negotiate",
     pos: "v.",
     phon: "nɪˈɡoʊʃieɪt",
