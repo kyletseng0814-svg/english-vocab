@@ -74,6 +74,18 @@ const VOCAB = [
     added: "2026-07-10"
   },
   {
+    w: "inch",
+    pos: "n. / v.",
+    phon: "ɪntʃ",
+    zh: "英寸、吋（2.54 公分）；v. 緩慢移動",
+    en: "a unit of length equal to 2.54 centimeters (1/12 of a foot); to move very slowly and carefully",
+    ex: "The new laptop has a 15-inch display.",
+    usage: "📝 考試：多益中頻，幾乎都出現在產品規格與尺寸情境：a 27-inch monitor（27 吋螢幕）、two inches wide（兩吋寬）；注意「數字-inch」當形容詞時 inch 不加 s\n💬 口語：買 3C 天天用（螢幕、手機都講吋）；慣用語 inch by inch（一點一點地）、The traffic inched forward.（車陣緩慢前進）",
+    syn: "foot",
+    synNote: "都是英制長度單位：1 foot（英尺）＝ 12 inches ＝ 30.48 公分，身高常用 foot（5'11\" 唸 five eleven）；inch 用在小尺寸如螢幕、腰圍。台灣講的「螢幕幾吋」就是 inch",
+    added: "2026-07-10"
+  },
+  {
     w: "negotiate",
     pos: "v.",
     phon: "nɪˈɡoʊʃieɪt",
