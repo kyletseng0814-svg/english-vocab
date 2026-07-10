@@ -122,6 +122,18 @@ const VOCAB = [
     added: "2026-07-10"
   },
   {
+    w: "manner",
+    pos: "n.",
+    phon: "ˈmænər",
+    zh: "方式、方法；態度、舉止；（複數）禮貌",
+    en: "the way in which something is done or happens; a person's way of behaving; (manners) polite behavior",
+    ex: "Please respond to customer complaints in a timely manner.",
+    usage: "📝 考試：多益高頻！in a timely manner（及時地）是多益金句等級的固定搭配，客服、公告文章必見；還有 in a professional manner（以專業的方式）\n💬 口語：單數口語較少（會說 way），但複數 manners（禮貌）很常用：Mind your manners.（注意禮貌）、He has no manners.（他真沒禮貌）",
+    syn: "method",
+    synNote: "method 是有系統、有步驟的「方法」（教學法、實驗方法）；manner 是做事的「方式、風格」，常以 in a … manner 出現，另有態度舉止和禮貌的意思，method 都沒有",
+    added: "2026-07-10"
+  },
+  {
     w: "negotiate",
     pos: "v.",
     phon: "nɪˈɡoʊʃieɪt",
