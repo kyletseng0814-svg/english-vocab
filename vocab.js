@@ -86,6 +86,18 @@ const VOCAB = [
     added: "2026-07-10"
   },
   {
+    w: "insist",
+    pos: "v.",
+    phon: "ɪnˈsɪst",
+    zh: "堅持、堅決要求；堅稱",
+    en: "to demand something firmly and refuse to accept no; to say firmly that something is true",
+    ex: "She insisted on paying for dinner.",
+    usage: "📝 考試：多益中高頻，文法題最愛考兩個句型：insist on + V-ing（堅持做某事）、insist that + 主詞 +（should）原形動詞，如 He insisted that the report be revised.\n💬 口語：常用，請客時說 I insist.（別跟我搶，我堅持）超實用又有禮貌；也用在堅稱事實 He insists he didn't do it.（他堅稱不是他做的）",
+    syn: "persist",
+    synNote: "insist 是「嘴上堅持」——堅持意見、要求別人接受，搭配 insist on；persist 是「行動上堅持」——不放棄地持續做某事，搭配 persist in，如 persist in learning English（持續學英文不放棄）",
+    added: "2026-07-10"
+  },
+  {
     w: "intense",
     pos: "adj.",
     phon: "ɪnˈtens",
