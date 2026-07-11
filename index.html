@@ -38,6 +38,28 @@
   .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
   .btn-row { display: flex; gap: 10px; margin-top: 10px; }
 
+  .search-wrap { margin-bottom: 18px; }
+  .search-bar {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--card); border: 1.5px solid var(--line); border-radius: 24px;
+    padding: 8px 8px 8px 16px;
+  }
+  .search-bar:focus-within { border-color: var(--accent); }
+  .search-bar .s-icon { color: var(--sub); font-size: 15px; }
+  .search-bar input {
+    flex: 1; border: none; outline: none; font-size: 16px;
+    background: transparent; color: var(--ink); min-width: 0;
+  }
+  .s-btn { background: var(--accent); color: #fff; border: none; border-radius: 18px; padding: 8px 16px; font-size: 14px; cursor: pointer; }
+  .s-msg { color: var(--sub); font-size: 14px; margin-top: 10px; text-align: center; }
+  .s-card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-top: 10px; }
+  .s-card .s-word { font-size: 22px; font-weight: 700; }
+  .s-card .s-word span { color: var(--sub); font-size: 14px; font-weight: 400; }
+  .s-card .s-zh { margin-top: 4px; font-size: 15px; }
+  .s-card .s-en { margin-top: 6px; color: var(--sub); font-size: 14px; line-height: 1.5; }
+  .s-card .btn { margin-top: 12px; }
+  .badge { background: var(--gold); color: #fff; font-size: 11px; border-radius: 6px; padding: 1px 6px; margin-left: 4px; }
+
   .letter-group { margin-bottom: 8px; }
   .letter-head {
     display: flex; justify-content: space-between; align-items: center;
@@ -113,6 +135,15 @@
   <h1>拼字練習 ✏️</h1>
   <p class="sub" id="homeSub"></p>
 
+  <div class="search-wrap">
+    <div class="search-bar">
+      <span class="s-icon">🔍</span>
+      <input id="searchInput" type="text" placeholder="輸入英文單字，加入單字庫" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <button class="s-btn" onclick="lookup()">查詢</button>
+    </div>
+    <div id="searchResult"></div>
+  </div>
+
   <div class="panel" id="settings">
     <div class="field">
       <label>題數</label>
@@ -166,7 +197,10 @@
     <div class="section"><div class="label">考試 / 口語用法</div><div class="val" id="dUsage"></div></div>
     <div class="section"><div class="label">相似字比較</div><div class="val" id="dSyn"></div></div>
     <div class="dfoot" id="dAdded"></div>
-    <div class="btn-row"><button class="btn" onclick="closeDetail()">關閉</button></div>
+    <div class="btn-row">
+      <button class="btn hidden" id="dRemoveBtn" onclick="removeCurrent()">🗑 移除</button>
+      <button class="btn" onclick="closeDetail()">關閉</button>
+    </div>
   </div>
 </div>
 
@@ -187,18 +221,84 @@
 let opts = { count: 5, hint: 1 };
 let cur = { list: [], idx: 0, wrong: [], answered: false };
 
+// ===== 手動新增的單字（存在這台裝置的瀏覽器） =====
+const CUSTOM_KEY = "toeicCustomWords";
+function loadCustom() { try { return JSON.parse(localStorage.getItem(CUSTOM_KEY) || "[]"); } catch (e) { return []; } }
+function saveCustom(list) { localStorage.setItem(CUSTOM_KEY, JSON.stringify(list)); }
+function cleanCustom() { // 已被正式收錄的字自動移除暫存版
+  saveCustom(loadCustom().filter(c => !VOCAB.some(v => v.w.toLowerCase() === c.w.toLowerCase())));
+}
+function allWords() { return VOCAB.concat(loadCustom()); }
+
+const POS_MAP = { noun: "n.", verb: "v.", adjective: "adj.", adverb: "adv.", preposition: "prep.", conjunction: "conj.", interjection: "int.", pronoun: "pron." };
+
+async function lookup() {
+  const input = document.getElementById("searchInput");
+  const box = document.getElementById("searchResult");
+  const word = input.value.trim().toLowerCase();
+  if (!word || !/^[a-z][a-z' -]*$/.test(word)) { box.innerHTML = "<div class='s-msg'>請輸入英文單字</div>"; return; }
+  if (allWords().some(v => v.w.toLowerCase() === word)) { box.innerHTML = "<div class='s-msg'>「" + word + "」已經在單字庫裡了</div>"; return; }
+  box.innerHTML = "<div class='s-msg'>查詢中…</div>";
+  try {
+    const [dictRes, transRes] = await Promise.all([
+      fetch("https://api.dictionaryapi.dev/api/v2/entries/en/" + encodeURIComponent(word)),
+      fetch("https://api.mymemory.translated.net/get?q=" + encodeURIComponent(word) + "&langpair=en|zh-TW")
+    ]);
+    if (!dictRes.ok) { box.innerHTML = "<div class='s-msg'>字典裡找不到「" + word + "」，請檢查拼字</div>"; return; }
+    const dict = await dictRes.json();
+    let zh = "";
+    try { zh = (await transRes.json()).responseData.translatedText || ""; } catch (e) {}
+    if (zh.toLowerCase() === word) zh = "";
+    const meanings = dict[0].meanings || [];
+    const phon = ((dict[0].phonetics || []).map(p => p.text).find(t => t) || "").replace(/^\/|\/$/g, "");
+    const pos = meanings.map(m => POS_MAP[m.partOfSpeech] || m.partOfSpeech).slice(0, 2).join(" / ");
+    const def = (meanings[0] && meanings[0].definitions[0]) ? meanings[0].definitions[0].definition : "";
+    const withEx = meanings.flatMap(m => m.definitions).find(d => d.example);
+    const entry = {
+      w: word, pos: pos, phon: phon, zh: zh, en: def,
+      ex: withEx ? withEx.example : "",
+      usage: "📱 從網頁快速新增。下次把這個字丟給 Claude，就會補上考試/口語用法並正式收錄",
+      syn: "", synNote: "", added: new Date().toISOString().slice(0, 10), custom: true
+    };
+    box.innerHTML = "";
+    const card = document.createElement("div");
+    card.className = "s-card";
+    card.innerHTML = "<div class='s-word'>" + word + (phon ? " <span>/" + phon + "/</span>" : "") + "</div>" +
+      "<div class='s-zh'>" + (pos ? pos + " " : "") + (zh || "（自動翻譯沒抓到中文，仍可加入）") + "</div>" +
+      (def ? "<div class='s-en'>" + def + "</div>" : "");
+    const btn = document.createElement("button");
+    btn.className = "btn primary";
+    btn.textContent = "＋ 加入單字庫";
+    btn.onclick = () => {
+      const list = loadCustom();
+      list.push(entry);
+      saveCustom(list);
+      input.value = "";
+      renderHome();
+      box.innerHTML = "<div class='s-msg'>✅ 已加入！到下方 " + word[0].toUpperCase() + " 書籤就能看到（標「新」的字存在這台裝置上）</div>";
+    };
+    card.appendChild(btn);
+    box.appendChild(card);
+  } catch (e) {
+    box.innerHTML = "<div class='s-msg'>查詢失敗，請確認網路後再試一次</div>";
+  }
+}
+
 function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
 function renderHome() {
-  const n = VOCAB.length;
+  cleanCustom();
+  const words = allWords();
+  const n = words.length;
+  const customCount = loadCustom().length;
   document.getElementById("homeSub").textContent =
-    n === 0 ? "單字庫還是空的——去問 Claude 一個英文單字，它就會自動加進來！"
-            : "單字庫目前有 " + n + " 個字。選好題數和提示，開始練拼字。";
+    n === 0 ? "單字庫還是空的——用下方搜尋列加字，或問 Claude 一個英文單字！"
+            : "單字庫目前有 " + n + " 個字" + (customCount ? "（含快速新增 " + customCount + " 個）" : "") + "。選好題數和提示，開始練拼字。";
   document.getElementById("settings").classList.toggle("hidden", n === 0);
 
   // 題數選項
   const counts = [5, 10, 20].filter(c => c < n);
-  counts.push(n);
+  if (n > 0) counts.push(n);
   const cbox = document.getElementById("countChoices");
   cbox.innerHTML = "";
   counts.forEach((c, i) => {
@@ -218,7 +318,7 @@ function renderHome() {
 
   // 單字庫列表（依字首分組）
   const groups = {};
-  VOCAB.slice().sort((a, b) => a.w.localeCompare(b.w)).forEach(v => {
+  words.slice().sort((a, b) => a.w.localeCompare(b.w)).forEach(v => {
     const L = v.w[0].toUpperCase();
     (groups[L] = groups[L] || []).push(v);
   });
@@ -239,7 +339,7 @@ function renderHome() {
     groups[L].forEach(v => {
       const item = document.createElement("div");
       item.className = "vocab-item";
-      item.innerHTML = "<div><b>" + v.w + "</b> <span>" + v.pos + " " + v.zh + "</span></div><span class='arrow'>›</span>";
+      item.innerHTML = "<div><b>" + v.w + "</b>" + (v.custom ? "<span class='badge'>新</span>" : "") + " <span>" + v.pos + " " + v.zh + "</span></div><span class='arrow'>›</span>";
       item.onclick = () => showDetail(v);
       body.appendChild(item);
     });
@@ -261,7 +361,7 @@ function show(id) {
 function goHome() { renderHome(); show("home"); }
 
 function startQuiz() {
-  cur = { list: shuffle(VOCAB.slice()).slice(0, opts.count), idx: 0, wrong: [], answered: false };
+  cur = { list: shuffle(allWords()).slice(0, opts.count), idx: 0, wrong: [], answered: false };
   show("quiz");
   renderQuestion();
 }
@@ -339,19 +439,28 @@ function finish() {
   show("result");
 }
 
+let detailWord = null;
 function showDetail(v) {
+  detailWord = v;
   document.getElementById("dWord").textContent = v.w;
-  document.getElementById("dPhon").textContent = "/" + v.phon + "/";
+  document.getElementById("dPhon").textContent = v.phon ? "/" + v.phon + "/" : "";
   document.getElementById("dPos").textContent = v.pos;
   document.getElementById("dZh").textContent = v.zh;
-  document.getElementById("dEn").textContent = v.en;
-  document.getElementById("dEx").textContent = v.ex;
+  document.getElementById("dEn").textContent = v.en || "（待補充）";
+  document.getElementById("dEx").textContent = v.ex || "（待補充）";
   document.getElementById("dUsage").textContent = v.usage;
-  document.getElementById("dSyn").textContent = v.syn + "：" + v.synNote;
-  document.getElementById("dAdded").textContent = "加入日期：" + v.added;
+  document.getElementById("dSyn").textContent = v.syn ? v.syn + "：" + v.synNote : "（待補充——把這個字丟給 Claude 就會補上）";
+  document.getElementById("dAdded").textContent = "加入日期：" + v.added + (v.custom ? "（快速新增，存在此裝置）" : "");
+  document.getElementById("dRemoveBtn").classList.toggle("hidden", !v.custom);
   document.getElementById("detailOverlay").classList.remove("hidden");
 }
 function closeDetail() { document.getElementById("detailOverlay").classList.add("hidden"); }
+function removeCurrent() {
+  if (!detailWord || !detailWord.custom) return;
+  saveCustom(loadCustom().filter(c => c.w !== detailWord.w));
+  closeDetail();
+  renderHome();
+}
 
 function speak(word) {
   try {
@@ -365,6 +474,9 @@ function speak(word) {
 
 document.getElementById("qInput").addEventListener("keydown", e => {
   if (e.key === "Enter") check();
+});
+document.getElementById("searchInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") lookup();
 });
 
 renderHome();
