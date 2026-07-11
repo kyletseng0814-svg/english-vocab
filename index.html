@@ -217,6 +217,7 @@
 </div>
 
 <script src="vocab.js"></script>
+<script src="dict.js"></script>
 <script>
 let opts = { count: 5, hint: 1 };
 let cur = { list: [], idx: 0, wrong: [], answered: false };
@@ -225,8 +226,18 @@ let cur = { list: [], idx: 0, wrong: [], answered: false };
 const CUSTOM_KEY = "toeicCustomWords";
 function loadCustom() { try { return JSON.parse(localStorage.getItem(CUSTOM_KEY) || "[]"); } catch (e) { return []; } }
 function saveCustom(list) { localStorage.setItem(CUSTOM_KEY, JSON.stringify(list)); }
-function cleanCustom() { // 已被正式收錄的字自動移除暫存版
-  saveCustom(loadCustom().filter(c => !VOCAB.some(v => v.w.toLowerCase() === c.w.toLowerCase())));
+function cleanCustom() { // 已被正式收錄的字自動移除暫存版；字典補完內容後自動升級暫存字
+  let list = loadCustom().filter(c => !VOCAB.some(v => v.w.toLowerCase() === c.w.toLowerCase()));
+  if (typeof DICT !== "undefined") {
+    list = list.map(c => {
+      const d = DICT.find(x => x.enriched && x.w.toLowerCase() === c.w.toLowerCase());
+      if (!d) return c;
+      const up = Object.assign({}, d, { custom: true, added: c.added });
+      delete up.enriched;
+      return up;
+    });
+  }
+  saveCustom(list);
 }
 function allWords() { return VOCAB.concat(loadCustom()); }
 
@@ -238,6 +249,36 @@ async function lookup() {
   const word = input.value.trim().toLowerCase();
   if (!word || !/^[a-z][a-z' -]*$/.test(word)) { box.innerHTML = "<div class='s-msg'>請輸入英文單字</div>"; return; }
   if (allWords().some(v => v.w.toLowerCase() === word)) { box.innerHTML = "<div class='s-msg'>「" + word + "」已經在單字庫裡了</div>"; return; }
+
+  // 優先查內建多益字典
+  const dictHit = (typeof DICT !== "undefined") ? DICT.find(d => d.w.toLowerCase() === word) : null;
+  if (dictHit) {
+    box.innerHTML = "";
+    const card = document.createElement("div");
+    card.className = "s-card";
+    card.innerHTML = "<div class='s-word'>" + dictHit.w + (dictHit.phon ? " <span>/" + dictHit.phon + "/</span>" : "") +
+      "<span class='badge'>" + (dictHit.enriched ? "多益核心字" : "多益核心字 · 詳細內容製作中") + "</span></div>" +
+      "<div class='s-zh'>" + (dictHit.pos ? dictHit.pos + " " : "") + dictHit.zh + "</div>" +
+      (dictHit.en ? "<div class='s-en'>" + dictHit.en + "</div>" : "") +
+      (dictHit.ex ? "<div class='s-en'><em>" + dictHit.ex + "</em></div>" : "");
+    const btn = document.createElement("button");
+    btn.className = "btn primary";
+    btn.textContent = "＋ 加入單字庫";
+    btn.onclick = () => {
+      const entry = Object.assign({}, dictHit, { custom: true, added: new Date().toISOString().slice(0, 10) });
+      delete entry.enriched;
+      if (!dictHit.enriched) entry.usage = "📖 多益核心字：詳細用法製作中，補完後會自動更新";
+      const list = loadCustom();
+      list.push(entry);
+      saveCustom(list);
+      input.value = "";
+      renderHome();
+      box.innerHTML = "<div class='s-msg'>✅ 已加入！到下方 " + dictHit.w[0].toUpperCase() + " 書籤就能看到</div>";
+    };
+    card.appendChild(btn);
+    box.appendChild(card);
+    return;
+  }
   box.innerHTML = "<div class='s-msg'>查詢中…</div>";
   try {
     const [dictRes, transRes] = await Promise.all([
