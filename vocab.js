@@ -2,6 +2,18 @@
 // 由 Claude 在查單字時自動更新，拼字練習.html 會讀取這份資料
 const VOCAB = [
   {
+    w: "general",
+    pos: "adj. / n.",
+    phon: "ˈdʒenrəl",
+    zh: "一般的、普遍的；整體的；n. 將軍",
+    en: "relating to the whole or to most people or things, not specific or detailed; a high-ranking army officer",
+    ex: "The general manager will announce the new policy next week.",
+    usage: "📝 考試：多益超高頻：general manager（總經理，縮寫 GM）、the general public（一般大眾）、general information（一般資訊）\n💬 口語：in general 和 generally speaking（一般來說）是英文裡最常用的開場白之一，如 In general, I prefer working from home.",
+    syn: "common",
+    synNote: "common 是「常見的」——發生頻率高（a common mistake 常見錯誤）；general 是「全面的、不特定的」——涵蓋範圍廣不細講（a general idea 大致概念）。common 講次數多，general 講範圍廣",
+    added: "2026-07-10"
+  },
+  {
     w: "gist",
     pos: "n.",
     phon: "dʒɪst",
