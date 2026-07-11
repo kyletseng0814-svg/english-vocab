@@ -1587,6 +1587,19 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "archive",
+  "pos": "n. / vt.",
+  "phon": "ˈɑːrkaɪv",
+  "zh": "檔案庫；存檔、歸檔",
+  "en": "a collection of historical records; to store documents for long-term keeping",
+  "ex": "The legal department will archive contract documents for seven years.",
+  "usage": "📝 考試：多益中高頻辦公室字：archive documents / files（將文件歸檔）——文件管理情境常見\n💬 口語：數位時代常用：archive an email（把信件封存）——Gmail 的「封存」按鈕就是它",
+  "syn": "file",
+  "synNote": "file（動詞）是「歸檔」放進分類系統（進行中的文件）；archive 是「封存」長期保存（不常用但要留底的）。日常文件 file 起來，七年前的合約 archive 起來",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "area",
   "pos": "n.",
   "phon": "'ɛrɪə",
@@ -1728,6 +1741,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "assembly",
+  "pos": "n.",
+  "phon": "əˈsembli",
+  "zh": "組裝；集會、大會",
+  "en": "the process of putting parts together; a group of people gathered together",
+  "ex": "The assembly line operates efficiently with minimal waste.",
+  "usage": "📝 考試：多益高頻製造業字：assembly line（生產線、組裝線）、assembly instructions（組裝說明）\n💬 口語：買 IKEA 必見：assembly required（需自行組裝）；學校的朝會也叫 assembly",
+  "syn": "installation",
+  "synNote": "assembly 是「把零件組起來」（多個零件→一個成品）；installation 是「安裝」（把成品裝到定位）。組書櫃是 assembly，裝冷氣是 installation",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "assess",
@@ -1936,6 +1962,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "attendee",
+  "pos": "n.",
+  "phon": "əˌtenˈdiː",
+  "zh": "出席者、與會者",
+  "en": "a person who is present at an event or meeting",
+  "ex": "All attendees must register before the conference begins.",
+  "usage": "📝 考試：多益高頻會議字：conference attendees（與會者）——活動公告必見；字尾 -ee＝被…的人／做…的人（employee、trainee）\n💬 口語：辦活動常用：We expect 200 attendees.（預計 200 人出席）",
+  "syn": "participant",
+  "synNote": "attendee 是「有到場」的人（人有來就算）；participant 是「有參與」的人（有動手、有發言）。聽演講的是 attendee，工作坊一起做的是 participant",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "attentive",
@@ -2406,6 +2445,19 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "batch",
+  "pos": "n.",
+  "phon": "bætʃ",
+  "zh": "一批、批次",
+  "en": "a group of things made or processed at the same time",
+  "ex": "Each production batch is tracked for quality assurance purposes.",
+  "usage": "📝 考試：多益中高頻製造與烘焙字：a batch of products（一批產品）、batch number（批號——食品安全新聞常見）\n💬 口語：烘焙常用：a fresh batch of cookies（新鮮出爐的一批餅乾）；工作上「分批處理」說 in batches",
+  "syn": "lot",
+  "synNote": "batch 是「同一次生產／處理」的一批；lot 也指批次（lot number 批號）但更常見於拍賣與土地。品管領域兩者常互換",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "bazaar",
   "pos": "n.",
   "phon": "bəˈzɑːr",
@@ -2807,6 +2859,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "breach",
+  "pos": "n. / vt.",
+  "phon": "briːtʃ",
+  "zh": "違反、違約；（資安）外洩",
+  "en": "an act of breaking a law, agreement, or duty",
+  "ex": "Late delivery will constitute a breach of contract.",
+  "usage": "📝 考試：多益中高頻法律字：breach of contract（違約）——合約情境必背\n💬 口語：科技新聞常見：data breach（資料外洩）——某公司個資被駭就是這個字",
+  "syn": "violation",
+  "synNote": "幾乎同義。breach 多用於「合約、信任、資安」（breach of trust 背信）；violation 多用於「法規、規則」（traffic violation 交通違規）",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "breakthrough",
@@ -3680,6 +3745,32 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "check-in",
+  "pos": "n. / v.",
+  "phon": "ˈtʃek ɪn",
+  "zh": "登記入住；報到",
+  "en": "the process of registering at a hotel or airport",
+  "ex": "Hotel check-in starts at 3 p.m.",
+  "usage": "📝 考試：多益超高頻旅館機場字：check-in counter（報到櫃檯）、early check-in（提前入住）\n💬 口語：出國天天用；當動詞拆開寫 check in：I'll check in online.（我線上報到）；朋友間 check in on you＝關心你近況",
+  "syn": "registration",
+  "synNote": "check-in 專用於「旅館入住、機場報到」；registration 是廣義「登記註冊」（活動報名、公司登記）。搭機用 check-in，報名課程用 registration",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
+  "w": "check-out",
+  "pos": "n. / v.",
+  "phon": "ˈtʃek aʊt",
+  "zh": "退房；結帳",
+  "en": "the process of leaving a hotel and paying; the place to pay in a store",
+  "ex": "Check-out time is 11 a.m., but late check-out is available on request.",
+  "usage": "📝 考試：多益超高頻：check-out time（退房時間）、late check-out（延遲退房）——旅館情境必考\n💬 口語：超市結帳台也叫 checkout；網購的「結帳」按鈕就是 Checkout；口語 Check it out! 是「你看看這個！」",
+  "syn": "departure",
+  "synNote": "check-out 是「辦理退房、結帳」的動作；departure 是「離開、出發」本身（機場的出境是 Departures）。先 check out 再 departure",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "checkout",
   "pos": "n.",
   "phon": "'tʃɛkaʊt",
@@ -3951,6 +4042,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "collaborate",
+  "pos": "vi.",
+  "phon": "kəˈlæbəreɪt",
+  "zh": "合作、協作",
+  "en": "to work together with others on a project",
+  "ex": "The marketing team will collaborate with designers on the new campaign.",
+  "usage": "📝 考試：多益高頻：collaborate with + 人 / on + 專案（與…合作進行…）；名詞 collaboration\n💬 口語：職場流行字：collab（合作企劃的口語縮寫）——網紅圈說的「聯名、合作」就是 collab",
+  "syn": "cooperate",
+  "synNote": "collaborate 是「一起做同一件作品／專案」（共同產出）；cooperate 是「配合、不作對」（態度上合作）。一起寫企劃是 collaborate，配合調查是 cooperate",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "collaboration",
@@ -5357,6 +5461,19 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "copy",
+  "pos": "n. / v.",
+  "phon": "ˈkɑːpi",
+  "zh": "影本、副本；複製、影印",
+  "en": "a duplicate of something; to make a duplicate",
+  "ex": "Please make three copies of the contract for the meeting.",
+  "usage": "📝 考試：多益高頻辦公室字：make a copy（影印一份）、a copy of the report（報告副本）；email 的 CC 就是 carbon copy（副本）\n💬 口語：天天用：copy and paste（複製貼上）；無線電回覆 Copy that!（收到！）",
+  "syn": "duplicate",
+  "synNote": "copy 通用「副本」；duplicate 強調「一模一樣的複製品」（duplicate key 備份鑰匙），也當動詞。日常說 copy 就夠，法律文件會用 duplicate",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "corporate",
   "pos": "adj.",
   "phon": "ˈkɔːrpərət",
@@ -6124,6 +6241,19 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "deductible",
+  "pos": "n. / adj.",
+  "phon": "dɪˈdʌktəbl",
+  "zh": "（保險）自付額；可扣除的",
+  "en": "the amount you must pay before insurance covers the rest; able to be subtracted",
+  "ex": "The annual deductible for health insurance is $500 per employee.",
+  "usage": "📝 考試：多益中頻保險字：insurance deductible（保險自付額）；tax-deductible（可抵稅的——捐款收據常見）\n💬 口語：在美國看病、買保險必懂的字；報稅季常聽到 Is it tax-deductible?（這能抵稅嗎）",
+  "syn": "copay",
+  "synNote": "deductible 是「保險開始給付前你要自付的總額」（年度門檻）；copay 是「每次看診固定付的小額」。美國醫療保險兩個都有，觀念不同",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "deduction",
   "pos": "n.",
   "phon": "dɪ'dʌkʃən",
@@ -6811,6 +6941,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "diagnosis",
+  "pos": "n.",
+  "phon": "ˌdaɪəɡˈnoʊsɪs",
+  "zh": "診斷（複數 diagnoses）",
+  "en": "the identification of an illness or problem after examination",
+  "ex": "Early diagnosis and treatment can prevent serious complications.",
+  "usage": "📝 考試：多益中頻醫療字：make a diagnosis（做出診斷）；動詞是 diagnose（be diagnosed with 被診斷出…）\n💬 口語：醫療劇必備；引申用法也常見：diagnose the problem（找出問題所在——修車修電腦都能用）",
+  "syn": "assessment",
+  "synNote": "diagnosis 是「判定病因／問題根源」（下結論）；assessment 是「整體評估」（了解狀況）。醫生先做 assessment 再給 diagnosis",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "dictate",
@@ -7918,6 +8061,19 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "email",
+  "pos": "n. / v.",
+  "phon": "ˈiːmeɪl",
+  "zh": "電子郵件；寄電子郵件",
+  "en": "a message sent electronically; to send such a message",
+  "ex": "I'll email you the meeting notes by end of day.",
+  "usage": "📝 考試：多益超高頻（email 是固定題型！）：send / receive / forward an email；email attachment（附件）\n💬 口語：天天用，直接當動詞最方便：Email me.（寄給我）；drop me an email＝寄封信給我",
+  "syn": "message",
+  "synNote": "email 專指電子郵件（正式、可存檔）；message 泛指任何訊息（簡訊、LINE、DM）。職場正式溝通用 email，即時聊天是 message",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "embark",
   "pos": "vi. / vt.",
   "phon": "ɪmˈbɑːrk",
@@ -8111,6 +8267,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "encrypt",
+  "pos": "vt.",
+  "phon": "ɪnˈkrɪpt",
+  "zh": "加密",
+  "en": "to convert information into a code so others cannot read it",
+  "ex": "The bank will encrypt customer credit card information for security.",
+  "usage": "📝 考試：多益中頻 IT 字：encrypt data（加密資料）；名詞 encryption（加密技術）\n💬 口語：科技生活常見：end-to-end encryption（端對端加密）——LINE、WhatsApp 都標榜這個；反義 decrypt（解密）",
+  "syn": "protect",
+  "synNote": "protect 是廣義「保護」（任何方式）；encrypt 是特定手段「用編碼保護」。encrypt 是 protect 資料的其中一種方法",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "endeavor",
@@ -8631,6 +8800,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "exchange",
+  "pos": "n. / v.",
+  "phon": "ɪksˈtʃeɪndʒ",
+  "zh": "交換；換貨；匯兌",
+  "en": "to give something and receive something in return",
+  "ex": "Customers can exchange items within seven days with a receipt.",
+  "usage": "📝 考試：多益高頻零售與金融字：exchange rate（匯率）、exchange an item（換貨）、in exchange for（作為交換）\n💬 口語：購物實用：Can I exchange this?（可以換貨嗎）；出國換錢 currency exchange；交換學生 exchange student",
+  "syn": "swap",
+  "synNote": "exchange 正式通用（換貨、匯兌、交換名片）；swap 口語隨性（跟朋友換位子、換東西吃）。店裡換貨說 exchange，跟同事換班說 swap",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "excruciating",
@@ -10466,6 +10648,19 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "hardware",
+  "pos": "n.",
+  "phon": "ˈhɑːrdwer",
+  "zh": "硬體；五金",
+  "en": "the physical parts of a computer; tools and equipment for home repairs",
+  "ex": "New hardware installations require approval from the IT department.",
+  "usage": "📝 考試：多益中高頻 IT 字：hardware and software（軟硬體）；hardware store（五金行）也考\n💬 口語：電腦壞了先分清楚：hardware problem（硬體問題——摔到）還是 software problem（軟體問題——當機）",
+  "syn": "equipment",
+  "synNote": "hardware 專指「電腦實體零件」或「五金」；equipment 泛指任何「設備器材」。主機板是 hardware，投影機算 office equipment",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "harmful",
   "pos": "adj.",
   "phon": "ˈhɑːrmfl",
@@ -10700,6 +10895,19 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "hospital",
+  "pos": "n.",
+  "phon": "ˈhɑːspɪtl",
+  "zh": "醫院",
+  "en": "a place where sick or injured people receive medical care",
+  "ex": "The nearest hospital is only five minutes from our office.",
+  "usage": "📝 考試：多益中頻場所字：be in the hospital（住院）、be released from the hospital（出院）\n💬 口語：天天可能用到：go to the hospital 是「去醫院（看病、探病）」；英式說 in hospital（不加 the）",
+  "syn": "clinic",
+  "synNote": "hospital 是「醫院」（有病房、能開刀、24 小時）；clinic 是「診所」（門診為主、規模小）。感冒去 clinic，開刀住 hospital",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "host",
   "pos": "n. / vt. / vi.",
   "phon": "hoʊst",
@@ -10711,6 +10919,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "hotel",
+  "pos": "n.",
+  "phon": "hoʊˈtel",
+  "zh": "旅館、飯店",
+  "en": "a place that provides rooms and meals for travelers to stay in",
+  "ex": "The company booked a hotel near the convention center for all attendees.",
+  "usage": "📝 考試：多益超高頻場景（訂房、入住、客訴都是固定題型）：hotel reservation（訂房）、five-star hotel（五星級飯店）\n💬 口語：出門必用；訂房口語說 book a hotel、check hotel reviews（看評價）",
+  "syn": "inn",
+  "synNote": "hotel 是現代旅館統稱；inn 是「小旅店」（傳統、鄉間、通常附餐廳）——Holiday Inn 的 Inn 就是走溫馨小店形象。規模：resort > hotel > inn > hostel（青年旅館）",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "hug",
@@ -11454,6 +11675,19 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "inspection",
+  "pos": "n.",
+  "phon": "ɪnˈspekʃn",
+  "zh": "檢查、檢驗、視察",
+  "en": "a careful official examination of something",
+  "ex": "Quality inspection occurs at multiple stages during production.",
+  "usage": "📝 考試：多益高頻品管字：safety inspection（安全檢查）、on closer inspection（仔細一看）；動詞 inspect、檢查員 inspector\n💬 口語：租屋買車實用：房屋檢查 home inspection、車輛驗車 vehicle inspection",
+  "syn": "examination",
+  "synNote": "inspection 是「官方、例行的檢查」（找缺陷、驗合格）；examination 是「仔細檢視」（醫療檢查、考試）。工廠驗貨用 inspection，健康檢查用 examination",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "inspire",
   "pos": "vt.",
   "phon": "ɪnˈspaɪər",
@@ -12037,6 +12271,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "itinerary",
+  "pos": "n.",
+  "phon": "aɪˈtɪnəreri",
+  "zh": "行程表、旅程路線",
+  "en": "a detailed plan of a journey, including places and times",
+  "ex": "The assistant emailed the full travel itinerary to all participants.",
+  "usage": "📝 考試：多益高頻出差字：travel itinerary（旅行行程表）——秘書寄行程給主管是經典題景\n💬 口語：旅遊規劃常用：plan the itinerary（排行程）；跟旅伴確認 What's our itinerary for tomorrow?（明天行程是什麼）",
+  "syn": "schedule",
+  "synNote": "itinerary 專指「旅程」的安排（含地點、交通、時間）；schedule 是一般「時間表」。出國排的是 itinerary，上班日程是 schedule",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "J",
@@ -13079,6 +13326,19 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "machinery",
+  "pos": "n.",
+  "phon": "məˈʃiːnəri",
+  "zh": "機械、機器（總稱，不可數）",
+  "en": "machines as a group, especially large ones",
+  "ex": "Regular maintenance of machinery prevents costly production delays.",
+  "usage": "📝 考試：多益中高頻＋文法陷阱：machinery 不可數（a machinery ✗）！heavy machinery（重型機械）\n💬 口語：工廠與工地用字；藥物警語常見 Do not operate heavy machinery.（服藥後勿操作重機械）",
+  "syn": "machine",
+  "synNote": "machine 是「一台機器」（可數：three machines）；machinery 是「機械設備總稱」（不可數）。數得出來用 machine，整廠設備用 machinery",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "mad",
   "pos": "adj.",
   "phon": "mæd",
@@ -13261,6 +13521,19 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "market",
+  "pos": "n. / v.",
+  "phon": "ˈmɑːrkɪt",
+  "zh": "市場；行銷、推銷",
+  "en": "a place or system for buying and selling; to promote and sell products",
+  "ex": "The startup will market its new app to university students.",
+  "usage": "📝 考試：多益超高頻：market share（市佔率）、market research（市場調查）、on the market（上市販售中）\n💬 口語：你的本行核心字 😄 stock market（股市）、job market（就業市場）、marketing（行銷）都從它來",
+  "syn": "promote",
+  "synNote": "market（動詞）是「行銷」的整體操作（定位、定價、推廣）；promote 是其中的「宣傳推廣」動作。marketing 是戰略，promotion 是戰術",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "marketing",
   "pos": "n.",
   "phon": "ˈmɑːrkɪtɪŋ",
@@ -13285,6 +13558,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "material",
+  "pos": "n. / adj.",
+  "phon": "məˈtɪriəl",
+  "zh": "材料、原料；素材；物質的",
+  "en": "a substance used for making things; information used for creating something",
+  "ex": "Raw materials are sourced from certified suppliers only.",
+  "usage": "📝 考試：多益高頻：raw materials（原物料）、reading materials（閱讀資料）、training materials（教材）\n💬 口語：常用：building materials（建材）；創作者說的「素材」也是 material：I need material for my next video.",
+  "syn": "substance",
+  "synNote": "material 是「拿來做東西的材料」（有用途導向）；substance 是「物質」本身（化學、成分角度）。做桌子的木頭是 material，木頭的成分是 substance",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "mattress",
@@ -14561,6 +14847,19 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "outcome",
+  "pos": "n.",
+  "phon": "ˈaʊtkʌm",
+  "zh": "結果、成果",
+  "en": "the final result of a process, meeting, or event",
+  "ex": "The positive outcome of the negotiations benefited both companies.",
+  "usage": "📝 考試：多益高頻：the outcome of the meeting / negotiation（會議、談判的結果）\n💬 口語：常用：Whatever the outcome...（不管結果如何…）；學界說的「學習成效」是 learning outcomes",
+  "syn": "result",
+  "synNote": "幾乎同義。result 通用（考試成績、比賽比分都行）；outcome 偏「整個過程最終導向的結果」，稍正式。日常用 result，報告寫 outcome 顯專業",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "outlet",
   "pos": "n.",
   "phon": "ˈaʊtlet",
@@ -14611,6 +14910,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "output",
+  "pos": "n.",
+  "phon": "ˈaʊtpʊt",
+  "zh": "產量、產出；輸出",
+  "en": "the amount of something produced",
+  "ex": "Monthly output has increased 15% since the new procedures began.",
+  "usage": "📝 考試：多益高頻製造字：increase output（提高產量）；反義 input（投入）\n💬 口語：工作圈常用：檢討產出說 my output this week（我這週的產出）；3C 的輸出孔也是 output",
+  "syn": "production",
+  "synNote": "output 是「產出的量」（數字結果）；production 是「生產」這件事（過程）。production 順利，output 才會高",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "outstanding",
@@ -14923,6 +15235,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "passport",
+  "pos": "n.",
+  "phon": "ˈpæspɔːrt",
+  "zh": "護照",
+  "en": "an official document that allows you to travel to other countries",
+  "ex": "Make sure your passport is valid for at least six months before departure.",
+  "usage": "📝 考試：多益高頻機場字：valid passport（有效護照）、renew a passport（換發護照）\n💬 口語：出國第一關：May I see your passport?（請出示護照）；引申義「通行證」：a passport to success（成功的敲門磚）",
+  "syn": "visa",
+  "synNote": "護照（passport）是「你的國家發給你」的身分證件；簽證（visa）是「目的地國家發給你」的入境許可。先有 passport 才能辦 visa",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "pastime",
@@ -15274,6 +15599,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "physician",
+  "pos": "n.",
+  "phon": "fɪˈzɪʃn",
+  "zh": "（內科）醫師",
+  "en": "a medical doctor, especially one who treats illness with medicine rather than surgery",
+  "ex": "Employees can choose their preferred physician within the network.",
+  "usage": "📝 考試：多益中頻醫療字：consult a physician（諮詢醫師）——保險文件愛用這個正式說法\n💬 口語：日常都說 doctor；physician 是正式用語（診所招牌、保險條款）。小心別跟 physicist（物理學家）搞混！",
+  "syn": "surgeon",
+  "synNote": "physician 是「內科醫師」（開藥治療）；surgeon 是「外科醫師」（開刀）。感冒看 physician，開刀找 surgeon，統稱都是 doctor",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "pickpocket",
@@ -15874,6 +16212,19 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "prescription",
+  "pos": "n.",
+  "phon": "prɪˈskrɪpʃn",
+  "zh": "處方、藥方",
+  "en": "a written order from a doctor for medicine",
+  "ex": "Prescription medications are covered under the company health plan.",
+  "usage": "📝 考試：多益高頻藥局情境：fill a prescription（照處方配藥）、prescription drugs（處方藥）\n💬 口語：看病領藥必用；反義是 over-the-counter（OTC，成藥、不用處方）——藥妝店買的都是 OTC",
+  "syn": "medication",
+  "synNote": "prescription 是醫生開的「處方單」（那張紙／醫囑）；medication 是「藥物」本身。拿 prescription 去藥局領 medication",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "present",
   "pos": "vt. / vi. / adj. / n.",
   "phon": "ˈpreznt",
@@ -16134,6 +16485,19 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "production",
+  "pos": "n.",
+  "phon": "prəˈdʌkʃn",
+  "zh": "生產、製造；產量",
+  "en": "the process of making goods in large quantities",
+  "ex": "Daily production targets must be met to fulfill customer orders.",
+  "usage": "📝 考試：多益超高頻：production line（生產線）、production costs（生產成本）、in production（生產中）\n💬 口語：影視圈也用：film production（電影製作）；production value（製作水準——評論 YouTube 影片常用）",
+  "syn": "manufacturing",
+  "synNote": "production 泛指「生產」（工廠、電影、農產都行）；manufacturing 專指「工業製造」（機器、工廠）。種菜是 production 不是 manufacturing",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "profession",
   "pos": "n.",
   "phon": "prəˈfeʃn",
@@ -16353,6 +16717,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "proposal",
+  "pos": "n.",
+  "phon": "prəˈpoʊzl",
+  "zh": "提案、企劃書；求婚",
+  "en": "a formal plan or suggestion, often written, for others to consider",
+  "ex": "The marketing team submitted a proposal for the new campaign.",
+  "usage": "📝 考試：多益超高頻：submit / review / approve a proposal（提交、審查、批准提案）——辦公室情境鐵板字\n💬 口語：職場天天用：write up a proposal（寫企劃）；另一個意思是「求婚」——單膝下跪那個 proposal 😄",
+  "syn": "suggestion",
+  "synNote": "suggestion 是口頭隨口的「建議」；proposal 是正式成文的「提案」（有文件、要審批）。開會說 suggestion，寄出去的企劃書是 proposal",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "propose",
@@ -16652,6 +17029,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "quality",
+  "pos": "n. / adj.",
+  "phon": "ˈkwɑːləti",
+  "zh": "品質；特質；優質的",
+  "en": "how good or bad something is; a feature of someone or something",
+  "ex": "Strict quality control ensures products meet international standards.",
+  "usage": "📝 考試：多益超高頻：quality control（品管，縮寫 QC）、high-quality（高品質的）、quality assurance（品保，QA）\n💬 口語：天天用：quality time（優質相處時光——陪家人專心不滑手機）；網路用語 quality content（優質內容）",
+  "syn": "standard",
+  "synNote": "quality 是東西「本身的好壞程度」；standard 是「衡量用的標準線」。用 standard 來檢驗 quality——品質達標就是 meet the standard",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "quantity",
@@ -17395,6 +17785,19 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "rehabilitation",
+  "pos": "n.",
+  "phon": "ˌriːəˌbɪlɪˈteɪʃn",
+  "zh": "復健；重建、修復",
+  "en": "the process of helping someone return to health or normal life",
+  "ex": "Rehabilitation services are covered for work-related injuries.",
+  "usage": "📝 考試：多益中頻保險醫療字：rehabilitation services / center（復健服務、復健中心）\n💬 口語：口語縮寫 rehab 更常用：physical rehab（物理復健）；運動員受傷後 in rehab（復健中）",
+  "syn": "recovery",
+  "synNote": "recovery 是「康復」本身（身體自己好轉的過程）；rehabilitation 是「復健」（靠治療訓練幫助恢復）。開完刀先 recovery，接著做 rehab 加速恢復",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "rehearsal",
   "pos": "n.",
   "phon": "rɪ'hɝsl",
@@ -17705,6 +18108,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "reply",
+  "pos": "n. / v.",
+  "phon": "rɪˈplaɪ",
+  "zh": "回覆、答覆",
+  "en": "to answer someone in speech or writing",
+  "ex": "Customer service will reply to complaints within 24 hours.",
+  "usage": "📝 考試：多益超高頻 email 字：reply to an email（回信）；小心 Reply All（回覆所有人）——商務禮儀考點也是職場地雷\n💬 口語：天天用：No reply yet.（還沒回我）；已讀不回的痛就是 no reply 😄",
+  "syn": "respond",
+  "synNote": "幾乎同義。reply 具體「回覆訊息、信件」；respond 更廣（回應需求、情況、刺激都行）且稍正式。回 email 兩個都對，「市場反應」只能 respond",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "report",
@@ -18422,6 +18838,19 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "sales",
+  "pos": "n.",
+  "phon": "seɪlz",
+  "zh": "銷售、銷售額；銷售部門",
+  "en": "the activity of selling; the amount sold",
+  "ex": "Sales figures for the holiday season exceeded all expectations.",
+  "usage": "📝 考試：多益超高頻：sales figures（銷售數字）、sales representative（業務代表，口語 sales rep）、sales target（業績目標）\n💬 口語：職場常用：work in sales（做業務）；on sale 是「特價中」、for sale 是「出售中」——一字之差意思不同",
+  "syn": "revenue",
+  "synNote": "sales 是「賣出去的量／金額」；revenue 是「總營收」（含所有收入來源）。sales 是 revenue 的主要來源但不是全部（利息、授權金也算 revenue）",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "salute",
   "pos": "vt. / n.",
   "phon": "səˈluːt",
@@ -18745,6 +19174,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "segment",
+  "pos": "n. / v.",
+  "phon": "ˈseɡmənt",
+  "zh": "區隔、部分；市場區隔；分割",
+  "en": "a part of something; to divide into parts",
+  "ex": "The hotel will segment guests into business and leisure travelers.",
+  "usage": "📝 考試：多益中高頻行銷字：market segment（市場區隔）、customer segmentation（顧客分群）\n💬 口語：行銷人必備：segment your audience（把受眾分群）——你投廣告設定受眾就是在做這件事；電視節目的「單元」也叫 segment",
+  "syn": "section",
+  "synNote": "section 是一般的「部分、區塊」（文章章節、賣場區域）；segment 帶「切分出來」的意味，行銷與數據分析的專用語感。報告分 sections，市場分 segments",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "select",
@@ -19449,6 +19891,19 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "standard",
+  "pos": "n. / adj.",
+  "phon": "ˈstændərd",
+  "zh": "標準、水準；標準的",
+  "en": "a level of quality used for comparing things; normal or usual",
+  "ex": "International quality standards guide all production activities.",
+  "usage": "📝 考試：多益高頻：meet the standard（達到標準）、safety standards（安全標準）、standard procedure（標準程序）\n💬 口語：常用：That's pretty standard.（這很常見／正常操作）；生活水準是 standard of living",
+  "syn": "criterion",
+  "synNote": "standard 是「訂好的水準線」（過了就合格）；criterion（複數 criteria）是「評判的條件項目」。徵才列的條件是 criteria，產品檢驗照 standards",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "stapler",
   "pos": "n.",
   "phon": "ˈsteɪplər",
@@ -19969,6 +20424,19 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "supervisor",
+  "pos": "n.",
+  "phon": "ˈsuːpərvaɪzər",
+  "zh": "主管、上司；監督者",
+  "en": "a person who manages and checks the work of others",
+  "ex": "Please report any equipment problems to your supervisor.",
+  "usage": "📝 考試：多益超高頻職稱（對話裡的角色常客）：immediate supervisor（直屬主管）；動詞 supervise（監督）\n💬 口語：職場常用；口語也說 boss 或 manager；填表格的「主管欄」通常寫 supervisor",
+  "syn": "manager",
+  "synNote": "supervisor 是「盯第一線執行」的主管（領班、組長）；manager 是「管部門、做決策」的經理。supervisor 通常回報給 manager",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "supplier",
   "pos": "n.",
   "phon": "səˈplaɪər",
@@ -20084,6 +20552,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "survey",
+  "pos": "n. / v.",
+  "phon": "ˈsɜːrveɪ",
+  "zh": "問卷調查；調查；勘察",
+  "en": "a set of questions asked to find out people's opinions; to examine something",
+  "ex": "The research team will survey 500 families about shopping habits.",
+  "usage": "📝 考試：多益超高頻：conduct a survey（進行調查）、customer satisfaction survey（顧客滿意度調查）——填問卷抽獎是經典題景\n💬 口語：做行銷常用：run a quick survey（跑個小調查）；fill out a survey（填問卷）",
+  "syn": "poll",
+  "synNote": "survey 是「多題的問卷調查」（深入了解）；poll 是「單題快問」（投票表態，如 IG 限動投票）。市調用 survey，民調用 poll",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "suspicious",
@@ -20435,6 +20916,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "testing",
+  "pos": "n.",
+  "phon": "ˈtestɪŋ",
+  "zh": "測試、檢測",
+  "en": "the process of checking whether something works correctly",
+  "ex": "Rigorous testing ensures all products function correctly before shipping.",
+  "usage": "📝 考試：多益中高頻品管字：product testing（產品測試）、undergo testing（接受檢測）\n💬 口語：科技圈常用：beta testing（公測——App 上線前找用戶試用）、A/B testing（A/B 測試——你做行銷會用到）",
+  "syn": "trial",
+  "synNote": "testing 是「檢測驗證」（工程、品管角度）；trial 是「試用、試驗」（試試看效果，如 free trial 免費試用、clinical trial 臨床試驗）",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "theoretical",
@@ -20840,6 +21334,19 @@ const DICT = [
   "enriched": false
  },
  {
+  "w": "treatment",
+  "pos": "n.",
+  "phon": "ˈtriːtmənt",
+  "zh": "治療；對待、處理",
+  "en": "medical care for an illness; the way you deal with someone or something",
+  "ex": "The insurance covers all necessary medical treatments.",
+  "usage": "📝 考試：多益高頻醫療字：receive treatment（接受治療）、treatment plan（治療計畫）\n💬 口語：雙義都常用：spa 的療程也叫 treatment（facial treatment 臉部護理）；special treatment 是「特殊待遇」",
+  "syn": "therapy",
+  "synNote": "treatment 泛指「治療」（吃藥、手術都算）；therapy 偏「療程式、非手術」的治療（物理治療 physical therapy、心理諮商 therapy）。感冒的用藥是 treatment，長期復健是 therapy",
+  "added": "2026-07-11",
+  "enriched": true
+ },
+ {
   "w": "tremendous",
   "pos": "adj.",
   "phon": "trəˈmendəs",
@@ -20916,6 +21423,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "troubleshoot",
+  "pos": "v.",
+  "phon": "ˈtrʌblʃuːt",
+  "zh": "排除故障、解決問題",
+  "en": "to find and fix problems in a system or machine",
+  "ex": "The technician will troubleshoot the internet connection problems.",
+  "usage": "📝 考試：多益中頻 IT 字：troubleshoot a problem（排除問題）；說明書的「疑難排解」章節就叫 Troubleshooting\n💬 口語：3C 生活常用：讓我先 troubleshoot 一下＝我先查查哪裡出問題；troubleshooter 是「救火隊、解題高手」",
+  "syn": "debug",
+  "synNote": "troubleshoot 通用「排除故障」（機器、網路、流程都行）；debug 專指「除錯」（程式碼的 bug）。網路不通 troubleshoot，程式錯誤 debug",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "troubleshooting",
@@ -21202,6 +21722,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "upload",
+  "pos": "v. / n.",
+  "phon": "ˌʌpˈloʊd",
+  "zh": "上傳",
+  "en": "to send data from your device to the internet or another computer",
+  "ex": "The photographer will upload the wedding photos tonight.",
+  "usage": "📝 考試：多益中高頻 IT 字：upload files to the server（上傳檔案到伺服器）；反義 download（下載）\n💬 口語：社群時代天天用：upload a video to YouTube；口訣：up 上（傳出去）、down 下（抓下來）",
+  "syn": "download",
+  "synNote": "方向相反的一對：upload 是「從你的裝置傳出去」（給網路）；download 是「從網路抓下來」（到你的裝置）。發 IG 是 upload，存迷因圖是 download",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "upset",
@@ -21865,6 +22398,19 @@ const DICT = [
   "synNote": "",
   "added": "",
   "enriched": false
+ },
+ {
+  "w": "wellness",
+  "pos": "n.",
+  "phon": "ˈwelnəs",
+  "zh": "健康、身心健康",
+  "en": "the state of being healthy in body and mind",
+  "ex": "The company promotes employee wellness through fitness programs.",
+  "usage": "📝 考試：多益中頻員工福利字：wellness program（健康促進計畫）、employee wellness（員工身心健康）\n💬 口語：近年流行字：wellness industry（大健康產業——spa、健身、冥想 App 都算）；wellness check 是「關心探視」",
+  "syn": "health",
+  "synNote": "health 是「健康」本身（生理狀態，可好可壞：poor health）；wellness 是「主動追求的身心良好狀態」（永遠是正面的，帶生活風格意味）。醫院管 health，瑜伽館賣 wellness",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "wholesale",
