@@ -172,6 +172,7 @@
   </div>
 
   <button class="library-btn" onclick="openLibrary()">📚 單字庫</button>
+  <button class="library-btn" style="margin-top: 10px" onclick="openDictLibrary()">🎯 多益單字庫</button>
 </div>
 
 <div id="library" class="hidden">
@@ -181,6 +182,15 @@
   </div>
   <h1 class="lib-title">📚 單字庫</h1>
   <div id="vocabList"></div>
+</div>
+
+<div id="dictLib" class="hidden">
+  <div class="topbar">
+    <button class="back" onclick="goHome()">← 返回</button>
+    <span class="progress-text" id="dictCount"></span>
+  </div>
+  <h1 class="lib-title">🎯 多益單字庫</h1>
+  <div id="dictList"></div>
 </div>
 
 <div id="quiz" class="hidden">
@@ -414,7 +424,7 @@ function pick(box, btn) {
 }
 
 function show(id) {
-  for (const p of ["home", "quiz", "result", "library"]) document.getElementById(p).classList.toggle("hidden", p !== id);
+  for (const p of ["home", "quiz", "result", "library", "dictLib"]) document.getElementById(p).classList.toggle("hidden", p !== id);
   window.scrollTo(0, 0);
 }
 function goHome() { renderHome(); show("home"); }
@@ -422,6 +432,55 @@ function openLibrary() {
   renderHome();
   document.getElementById("libCount").textContent = "共 " + allWords().length + " 個字";
   show("library");
+}
+
+let dictListBuilt = false;
+function openDictLibrary() {
+  if (typeof DICT === "undefined") {
+    document.getElementById("searchResult").innerHTML = "<div class='s-msg'>多益字典載入失敗，請重新整理頁面</div>";
+    return;
+  }
+  document.getElementById("dictCount").textContent = "共 " + DICT.length + " 個字";
+  renderDictList();
+  show("dictLib");
+}
+
+function renderDictList() {
+  if (dictListBuilt) return;
+  dictListBuilt = true;
+  const groups = {};
+  DICT.forEach(v => {
+    const L = v.w[0].toUpperCase();
+    (groups[L] = groups[L] || []).push(v);
+  });
+  const list = document.getElementById("dictList");
+  list.innerHTML = "";
+  Object.keys(groups).sort().forEach(L => {
+    const g = document.createElement("div");
+    g.className = "letter-group";
+    const head = document.createElement("div");
+    head.className = "letter-head";
+    head.innerHTML = "<span>" + L + "<span class='count'>" + groups[L].length + " 字</span></span><span class='chev'>▶</span>";
+    const body = document.createElement("div");
+    body.className = "letter-body hidden";
+    head.onclick = () => {
+      if (!body.dataset.filled) { // 點開才建立單字列表，避免一次載入上千筆
+        groups[L].forEach(v => {
+          const item = document.createElement("div");
+          item.className = "vocab-item";
+          item.innerHTML = "<div><b>" + v.w + "</b> <span>" + v.pos + " " + v.zh + "</span></div><span class='arrow'>›</span>";
+          item.onclick = () => showDetail(v);
+          body.appendChild(item);
+        });
+        body.dataset.filled = "1";
+      }
+      body.classList.toggle("hidden");
+      head.classList.toggle("open");
+    };
+    g.appendChild(head);
+    g.appendChild(body);
+    list.appendChild(g);
+  });
 }
 
 function startQuiz() {
@@ -512,7 +571,7 @@ function showDetail(v) {
   document.getElementById("dZh").textContent = v.zh;
   document.getElementById("dEn").textContent = v.en || "（待補充）";
   document.getElementById("dEx").textContent = v.ex || "（待補充）";
-  document.getElementById("dUsage").textContent = v.usage;
+  document.getElementById("dUsage").textContent = v.usage || "（詳細內容製作中，之後自動補上）";
   document.getElementById("dSyn").textContent = v.syn ? v.syn + "：" + v.synNote : "（待補充——把這個字丟給 Claude 就會補上）";
   document.getElementById("dAdded").textContent = "加入日期：" + v.added + (v.custom ? "（快速新增，存在此裝置）" : "");
   document.getElementById("dRemoveBtn").classList.toggle("hidden", !v.custom);
