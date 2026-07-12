@@ -447,6 +447,9 @@ function renderLetterGrid(containerId, source) {
 
 let letterCtx = { source: "mine", letter: "A" };
 function openLetterPage(source, L) {
+  navigate({ view: "letter", source: source, letter: L });
+}
+function renderLetterContent(source, L) {
   letterCtx = { source: source, letter: L };
   const words = libraryWords(source)
     .filter(v => v.w[0].toUpperCase() === L)
@@ -466,12 +469,9 @@ function openLetterPage(source, L) {
       list.appendChild(item);
     });
   }
-  show("letterPage");
 }
 
-function backFromLetter() {
-  show(letterCtx.source === "dict" ? "dictLib" : "library");
-}
+function backFromLetter() { history.back(); }
 
 function renderCounts() {
   const n = practicePool().length;
@@ -499,26 +499,56 @@ function show(id) {
   for (const p of ["home", "quiz", "result", "library", "dictLib", "letterPage"]) document.getElementById(p).classList.toggle("hidden", p !== id);
   window.scrollTo(0, 0);
 }
-function goHome() { renderHome(); show("home"); }
-function openLibrary() {
-  renderHome();
-  document.getElementById("libCount").textContent = "共 " + allWords().length + " 個字";
-  show("library");
+// ===== 頁面導覽接上瀏覽器歷史紀錄：系統的「上一頁」手勢／按鍵都有效 =====
+function applyState(s) {
+  if (!document.getElementById("detailOverlay").classList.contains("hidden")) closeDetail();
+  if (!s) s = { view: "home" };
+  if (s.view === "library") {
+    renderHome();
+    document.getElementById("libCount").textContent = "共 " + allWords().length + " 個字";
+    show("library");
+  } else if (s.view === "dictLib" && typeof DICT !== "undefined") {
+    document.getElementById("dictCount").textContent = "共 " + DICT.length + " 個字";
+    renderLetterGrid("dictList", "dict");
+    show("dictLib");
+  } else if (s.view === "letter") {
+    renderLetterContent(s.source, s.letter);
+    show("letterPage");
+  } else if (s.view === "quiz" && cur.list.length) {
+    show("quiz");
+  } else if (s.view === "result") {
+    show("result");
+  } else {
+    renderHome();
+    show("home");
+  }
 }
+
+function navigate(state) {
+  history.pushState(state, "");
+  applyState(state);
+}
+
+window.addEventListener("popstate", e => applyState(e.state));
+
+function goHome() { history.back(); }
+function openLibrary() { navigate({ view: "library" }); }
 
 function openDictLibrary() {
   if (typeof DICT === "undefined") {
     document.getElementById("searchResult").innerHTML = "<div class='s-msg'>多益字典載入失敗，請重新整理頁面</div>";
     return;
   }
-  document.getElementById("dictCount").textContent = "共 " + DICT.length + " 個字";
-  renderLetterGrid("dictList", "dict");
-  show("dictLib");
+  navigate({ view: "dictLib" });
 }
 
 function startQuiz() {
-  cur = { list: shuffle(practicePool().slice()).slice(0, opts.count), idx: 0, wrong: [], answered: false };
-  if (cur.list.length === 0) { goHome(); return; }
+  const list = shuffle(practicePool().slice()).slice(0, opts.count);
+  if (list.length === 0) return;
+  cur = { list: list, idx: 0, wrong: [], answered: false };
+  const s = history.state;
+  if (s && (s.view === "quiz" || s.view === "result")) history.replaceState({ view: "quiz" }, "");
+  else history.pushState({ view: "quiz" }, "");
   show("quiz");
   renderQuestion();
 }
@@ -593,6 +623,7 @@ function finish() {
   } else {
     rv.classList.add("hidden");
   }
+  history.replaceState({ view: "result" }, "");
   show("result");
 }
 
@@ -649,22 +680,59 @@ document.getElementById("searchInput").addEventListener("keydown", e => {
   if (e.key === "Enter") lookup();
 });
 
-// 往右滑＝返回上一頁（測驗進行中不觸發，避免誤滑中斷作答）
-let touchStartX = 0, touchStartY = 0;
+// ===== 手機：從畫面左邊緣拖動頁面返回（頁面跟著手指滑動，iOS 手感） =====
+const BACKABLE = ["library", "dictLib", "letterPage", "result"];
+let edgeDrag = null;
+
 document.addEventListener("touchstart", e => {
-  touchStartX = e.touches[0].clientX;
-  touchStartY = e.touches[0].clientY;
-}, { passive: true });
-document.addEventListener("touchend", e => {
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  const dy = e.changedTouches[0].clientY - touchStartY;
-  if (dx < 80 || Math.abs(dy) > 60) return; // 要滑得夠遠、夠水平才算
-  const visible = id => !document.getElementById(id).classList.contains("hidden");
-  if (visible("detailOverlay")) { closeDetail(); return; } // 卡片開著就先關卡片
-  if (visible("letterPage")) backFromLetter();
-  else if (visible("library") || visible("dictLib") || visible("result")) goHome();
+  if (e.touches[0].clientX > 30) return; // 只從最左邊緣 30px 內開始才算
+  const overlayOpen = !document.getElementById("detailOverlay").classList.contains("hidden");
+  const view = BACKABLE.find(v => !document.getElementById(v).classList.contains("hidden"));
+  if (!overlayOpen && !view) return;
+  edgeDrag = {
+    startX: e.touches[0].clientX,
+    startY: e.touches[0].clientY,
+    el: overlayOpen ? document.querySelector("#detailOverlay .detail") : document.getElementById(view),
+    overlay: overlayOpen,
+    active: false
+  };
 }, { passive: true });
 
+document.addEventListener("touchmove", e => {
+  if (!edgeDrag) return;
+  const dx = e.touches[0].clientX - edgeDrag.startX;
+  const dy = Math.abs(e.touches[0].clientY - edgeDrag.startY);
+  if (!edgeDrag.active) {
+    if (dx > 10 && dx > dy) { edgeDrag.active = true; edgeDrag.el.style.transition = "none"; }
+    else if (dy > 10) { edgeDrag = null; return; } // 是上下捲動，放行
+  }
+  if (edgeDrag.active) {
+    e.preventDefault();
+    edgeDrag.el.style.transform = "translateX(" + Math.max(0, dx) + "px)";
+  }
+}, { passive: false });
+
+document.addEventListener("touchend", e => {
+  if (!edgeDrag) return;
+  const drag = edgeDrag;
+  edgeDrag = null;
+  const dx = e.changedTouches[0].clientX - drag.startX;
+  drag.el.style.transition = "transform .2s ease-out";
+  if (drag.active && dx > window.innerWidth / 3) {
+    drag.el.style.transform = "translateX(100%)"; // 滑出畫面再返回
+    setTimeout(() => {
+      drag.el.style.transition = "";
+      drag.el.style.transform = "";
+      if (drag.overlay) closeDetail();
+      else history.back();
+    }, 200);
+  } else {
+    drag.el.style.transform = ""; // 沒滑過門檻，彈回原位
+    setTimeout(() => { drag.el.style.transition = ""; }, 200);
+  }
+}, { passive: true });
+
+history.replaceState({ view: "home" }, "");
 renderHome();
 </script>
 </body>
