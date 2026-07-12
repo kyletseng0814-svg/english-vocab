@@ -257,7 +257,11 @@
 let opts = { source: "mine", count: 5, hint: 1 };
 
 function practicePool() {
-  return (opts.source === "dict" && typeof DICT !== "undefined") ? DICT : allWords();
+  if (opts.source === "dict" && typeof DICT !== "undefined") {
+    // 只出中譯乾淨的題目；內容還在整理中的字先跳過
+    return DICT.filter(d => d.enriched || (/[一-鿿]/.test(d.zh) && d.zh.length <= 60));
+  }
+  return allWords();
 }
 let cur = { list: [], idx: 0, wrong: [], answered: false };
 
