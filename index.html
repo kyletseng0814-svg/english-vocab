@@ -156,6 +156,13 @@
 
   <div class="panel" id="settings">
     <div class="field">
+      <label>練習範圍</label>
+      <div class="choices" id="sourceChoices">
+        <button class="choice active" data-v="mine">📚 單字庫</button>
+        <button class="choice" data-v="dict">🎯 多益單字庫</button>
+      </div>
+    </div>
+    <div class="field">
       <label>題數</label>
       <div class="choices" id="countChoices"></div>
     </div>
@@ -247,7 +254,11 @@
 <script src="vocab.js"></script>
 <script src="dict.js"></script>
 <script>
-let opts = { count: 5, hint: 1 };
+let opts = { source: "mine", count: 5, hint: 1 };
+
+function practicePool() {
+  return (opts.source === "dict" && typeof DICT !== "undefined") ? DICT : allWords();
+}
 let cur = { list: [], idx: 0, wrong: [], answered: false };
 
 // ===== 手動新增的單字（存在這台裝置的瀏覽器） =====
@@ -363,22 +374,17 @@ function renderHome() {
   document.getElementById("homeSub").textContent =
     n === 0 ? "單字庫還是空的——用下方搜尋列加字，或問 Claude 一個英文單字！"
             : "單字庫目前有 " + n + " 個字" + (customCount ? "（含快速新增 " + customCount + " 個）" : "") + "。選好題數和提示，開始練拼字。";
-  document.getElementById("settings").classList.toggle("hidden", n === 0);
+  document.getElementById("settings").classList.toggle("hidden", n === 0 && typeof DICT === "undefined");
 
-  // 題數選項
-  const counts = [5, 10, 20].filter(c => c < n);
-  if (n > 0) counts.push(n);
-  const cbox = document.getElementById("countChoices");
-  cbox.innerHTML = "";
-  counts.forEach((c, i) => {
-    const b = document.createElement("button");
-    b.className = "choice" + (i === 0 ? " active" : "");
-    b.textContent = c === n ? "全部 " + n + " 題" : c + " 題";
-    b.dataset.v = c;
-    b.onclick = () => { pick(cbox, b); opts.count = c; };
-    cbox.appendChild(b);
+  // 練習範圍選項
+  document.querySelectorAll("#sourceChoices .choice").forEach(b => {
+    b.onclick = () => {
+      pick(document.getElementById("sourceChoices"), b);
+      opts.source = b.dataset.v;
+      renderCounts();
+    };
   });
-  opts.count = counts[0];
+  renderCounts();
 
   // 提示選項
   document.querySelectorAll("#hintChoices .choice").forEach(b => {
@@ -416,6 +422,23 @@ function renderHome() {
     g.appendChild(body);
     list.appendChild(g);
   });
+}
+
+function renderCounts() {
+  const n = practicePool().length;
+  const counts = [5, 10, 20, 50].filter(c => c < n);
+  if (n > 0 && n <= 50) counts.push(n);
+  const cbox = document.getElementById("countChoices");
+  cbox.innerHTML = "";
+  counts.forEach((c, i) => {
+    const b = document.createElement("button");
+    b.className = "choice" + (i === 0 ? " active" : "");
+    b.textContent = c === n ? "全部 " + n + " 題" : c + " 題";
+    b.dataset.v = c;
+    b.onclick = () => { pick(cbox, b); opts.count = c; };
+    cbox.appendChild(b);
+  });
+  opts.count = counts[0] || 0;
 }
 
 function pick(box, btn) {
@@ -484,7 +507,8 @@ function renderDictList() {
 }
 
 function startQuiz() {
-  cur = { list: shuffle(allWords()).slice(0, opts.count), idx: 0, wrong: [], answered: false };
+  cur = { list: shuffle(practicePool().slice()).slice(0, opts.count), idx: 0, wrong: [], answered: false };
+  if (cur.list.length === 0) { goHome(); return; }
   show("quiz");
   renderQuestion();
 }
