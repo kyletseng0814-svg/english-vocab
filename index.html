@@ -633,7 +633,17 @@ function speak(word) {
 }
 
 document.getElementById("qInput").addEventListener("keydown", e => {
-  if (e.key === "Enter") check();
+  if (e.key === "Enter") {
+    e.stopPropagation(); // 避免同一下 Enter 同時觸發「確認」和「下一題」
+    check();
+  }
+});
+
+// 作答後再按一次 Enter＝下一題（此時輸入框已停用，改由整頁接收按鍵）
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && cur.answered && !document.getElementById("quiz").classList.contains("hidden")) {
+    next();
+  }
 });
 document.getElementById("searchInput").addEventListener("keydown", e => {
   if (e.key === "Enter") lookup();
