@@ -649,6 +649,22 @@ document.getElementById("searchInput").addEventListener("keydown", e => {
   if (e.key === "Enter") lookup();
 });
 
+// 往右滑＝返回上一頁（測驗進行中不觸發，避免誤滑中斷作答）
+let touchStartX = 0, touchStartY = 0;
+document.addEventListener("touchstart", e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+document.addEventListener("touchend", e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if (dx < 80 || Math.abs(dy) > 60) return; // 要滑得夠遠、夠水平才算
+  const visible = id => !document.getElementById(id).classList.contains("hidden");
+  if (visible("detailOverlay")) { closeDetail(); return; } // 卡片開著就先關卡片
+  if (visible("letterPage")) backFromLetter();
+  else if (visible("library") || visible("dictLib") || visible("result")) goHome();
+}, { passive: true });
+
 renderHome();
 </script>
 </body>
