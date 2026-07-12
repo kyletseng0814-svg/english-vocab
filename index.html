@@ -259,7 +259,7 @@ let opts = { source: "mine", count: 5, hint: 1 };
 function practicePool() {
   if (opts.source === "dict" && typeof DICT !== "undefined") {
     // 只出中譯乾淨的題目；內容還在整理中的字先跳過
-    return DICT.filter(d => d.enriched || (/[一-鿿]/.test(d.zh) && d.zh.length <= 60));
+    return DICT.filter(d => d.enriched || (/[一-鿿]/.test(d.zh) && d.zh.length <= 60 && d.zh !== "（內容整理中）"));
   }
   return allWords();
 }
