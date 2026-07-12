@@ -2224,19 +2224,6 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "B",
-  "pos": "abbr.",
-  "phon": "biː",
-  "zh": "生於",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
   "w": "background",
   "pos": "n.",
   "phon": "ˈbækɡraʊnd",
@@ -2289,7 +2276,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "baggage%20claim",
+  "w": "baggage claim",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -2666,7 +2653,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "boarding%20pass",
+  "w": "boarding pass",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -2796,7 +2783,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "bottom%20line",
+  "w": "bottom line",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -3095,19 +3082,6 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "C",
-  "pos": "abbr. / n.",
-  "phon": "si:",
-  "zh": "；century 世紀C；字母C",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
   "w": "cabin",
   "pos": "n. / vt. / vi.",
   "phon": "ˈkæbɪn",
@@ -3121,7 +3095,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "cabin%20crew",
+  "w": "cabin crew",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -3524,7 +3498,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "cell%20phone",
+  "w": "cell phone",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -3589,7 +3563,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "chain%20store",
+  "w": "chain store",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -3710,32 +3684,6 @@ const DICT = [
   "pos": "adj.",
   "phon": "tʃip",
   "zh": "廉價的, 便宜的劣質的, 低劣的低俗的, 卑鄙的比較級:cheaper, cheapest副 詞:cheaply；名 詞:cheapness",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
-  "w": "check%20in",
-  "pos": "",
-  "phon": "",
-  "zh": "",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
-  "w": "check%20out",
-  "pos": "",
-  "phon": "",
-  "zh": "",
   "en": "",
   "ex": "",
   "usage": "",
@@ -5305,7 +5253,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "control%20panel",
+  "w": "control panel",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -5591,7 +5539,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "cover%20letter",
+  "w": "cover letter",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -5994,7 +5942,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "cutting%20edge",
+  "w": "cutting edge",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -6011,19 +5959,6 @@ const DICT = [
   "pos": "n. / vt. / vi.",
   "phon": "ˈsaɪkl",
   "zh": "迴圈；週期；整套；腳踏車；一段時間；使迴圈；使輪轉；騎腳踏車；迴圈；輪轉；時態:cycled, cycling, cycles名 詞:cycler",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
-  "w": "D",
-  "pos": "",
-  "phon": "diː",
-  "zh": "直接指出的;直接證明的;直證的;指示的",
   "en": "",
   "ex": "",
   "usage": "",
@@ -6592,7 +6527,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "depend%20on",
+  "w": "depend on",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -7788,19 +7723,6 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "E",
-  "pos": "n.",
-  "phon": "i:",
-  "zh": "字母E",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
   "w": "earn",
   "pos": "vt.",
   "phon": "ɜːrn",
@@ -8195,19 +8117,6 @@ const DICT = [
   "pos": "",
   "phon": "",
   "zh": "",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
-  "w": "en",
-  "pos": "n. / prep.",
-  "phon": "ɪn",
-  "zh": "N字,半方；〈法〉在,在…中",
   "en": "",
   "ex": "",
   "usage": "",
@@ -9192,19 +9101,6 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "F",
-  "pos": "",
-  "phon": "ef",
-  "zh": "(以態度、言語、撫摸)表示愛撫",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
   "w": "facilitate",
   "pos": "vt.",
   "phon": "fəˈsɪlɪteɪt",
@@ -9569,7 +9465,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "fill%20out",
+  "w": "fill out",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -9738,7 +9634,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "flight%20attendant",
+  "w": "flight attendant",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -10180,19 +10076,6 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "G",
-  "pos": "n.",
-  "phon": "dʒiː",
-  "zh": "英語字母的第七個字母",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
   "w": "gadget",
   "pos": "n.",
   "phon": "ˈɡædʒɪt",
@@ -10531,19 +10414,6 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "H",
-  "pos": "n.",
-  "phon": "etʃ",
-  "zh": "字母hHabbr. hard （鉛筆心硬度）硬hydrogen 氫",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
   "w": "hacker",
   "pos": "n.",
   "phon": "ˈhækər",
@@ -10687,7 +10557,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "head%20office",
+  "w": "head office",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -10961,16 +10831,16 @@ const DICT = [
  },
  {
   "w": "I",
-  "pos": "n.",
+  "pos": "pron.",
   "phon": "aɪ",
-  "zh": "pro；我",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
+  "zh": "我",
+  "en": "the person who is speaking or writing",
+  "ex": "I will send you the report by Friday.",
+  "usage": "📝 考試：文法基本功——I 永遠大寫；I 是主格（I like it），受格是 me（tell me）\n💬 口語：最常用的英文單字之一；正式寫作避免過多以 I 開頭的句子",
+  "syn": "me",
+  "synNote": "同一個人的兩種格：I 當主詞（I called him）；me 當受詞（He called me）。口訣：動作發起人用 I，動作接收者用 me",
+  "added": "2026-07-11",
+  "enriched": true
  },
  {
   "w": "identification",
@@ -12286,19 +12156,6 @@ const DICT = [
   "enriched": true
  },
  {
-  "w": "J",
-  "pos": "n.",
-  "phon": "dʒeɪ",
-  "zh": "字母j",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
   "w": "jaywalk",
   "pos": "vi.",
   "phon": "'dʒe'wɔk",
@@ -12494,19 +12351,6 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "K",
-  "pos": "n.",
-  "phon": "kei",
-  "zh": "字母k",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
   "w": "keen",
   "pos": "adj.",
   "phon": "kiːn",
@@ -12602,19 +12446,6 @@ const DICT = [
   "pos": "adj.",
   "phon": "ˈnɑːlɪdʒəbl",
   "zh": "博學的;有見識的;知識淵博的副 詞:knowledgeably",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
-  "w": "L",
-  "pos": "n.",
-  "phon": "ɛl",
-  "zh": "字母l",
   "en": "",
   "ex": "",
   "usage": "",
@@ -12819,7 +12650,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "lay%20off",
+  "w": "lay off",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -13222,7 +13053,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "log%20on",
+  "w": "log on",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -13235,7 +13066,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "log%20out",
+  "w": "log out",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -13304,19 +13135,6 @@ const DICT = [
   "pos": "n.",
   "phon": "ˈlʌkʃəri",
   "zh": "奢侈, 豪華奢侈品",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
-  "w": "M",
-  "pos": "abbr.",
-  "phon": "em",
-  "zh": "meter 米",
   "en": "",
   "ex": "",
   "usage": "",
@@ -14132,19 +13950,6 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "N",
-  "pos": "n.",
-  "phon": "en",
-  "zh": "字母n",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
   "w": "napkin",
   "pos": "n.",
   "phon": "ˈnæpkɪn",
@@ -14409,19 +14214,6 @@ const DICT = [
   "pos": "n.",
   "phon": "nuˈtrɪʃn",
   "zh": "營養形容詞:nutritional；副 詞:nutritionally",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
-  "w": "O",
-  "pos": "",
-  "phon": "əʊ",
-  "zh": "哦,喲,…啊,唉,哎呀(表示驚訝、痛苦、恐懼、讚歎等)",
   "en": "",
   "ex": "",
   "usage": "",
@@ -15029,19 +14821,6 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "P",
-  "pos": "abbr.",
-  "phon": "pi:",
-  "zh": "〈軍〉personnel 人員",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
   "w": "package",
   "pos": "vt. / n.",
   "phon": "ˈpækɪdʒ",
@@ -15055,7 +14834,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "package%20tour",
+  "w": "package tour",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -15133,7 +14912,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "parking%20lot",
+  "w": "parking lot",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -15718,7 +15497,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "plug%20in",
+  "w": "plug in",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -16979,19 +16758,6 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "Q",
-  "pos": "n.",
-  "phon": "kjuː",
-  "zh": "字母q",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
   "w": "qualification",
   "pos": "n.",
   "phon": "ˌkwɑːlɪfɪˈkeɪʃn",
@@ -17122,19 +16888,6 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "R",
-  "pos": "n.",
-  "phon": "ɑ:",
-  "zh": "字母r",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
   "w": "raise",
   "pos": "v. / n.",
   "phon": "reɪz",
@@ -17239,7 +16992,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "raw%20materials",
+  "w": "raw materials",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -18630,7 +18383,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "right%20away",
+  "w": "right away",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -18790,19 +18543,6 @@ const DICT = [
   "pos": "n.",
   "phon": "",
   "zh": "résumé ★ ˈrezjumeɪ ；簡歷Please send your résumé to this address if you're interested in this postio；如果你對此職位感興趣，請把簡歷發到這個地址。同類記憶法:多彩生活-&gt;快樂工作-&gt;職場新人",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
-  "w": "S",
-  "pos": "n.",
-  "phon": "es",
-  "zh": "字母s",
   "en": "",
   "ex": "",
   "usage": "",
@@ -19085,7 +18825,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "search%20engine",
+  "w": "search engine",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -19722,7 +19462,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "spare%20part",
+  "w": "spare part",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -19735,7 +19475,7 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "spare%20time",
+  "w": "spare time",
   "pos": "",
   "phon": "",
   "zh": "",
@@ -20645,19 +20385,6 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "T",
-  "pos": "n.",
-  "phon": "tiː",
-  "zh": "字母tTsymb.tritium 氚",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
   "w": "tactic",
   "pos": "n.",
   "phon": "ˈtæktɪk",
@@ -21503,19 +21230,6 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "U",
-  "pos": "n.",
-  "phon": "juː",
-  "zh": "字母U",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
   "w": "ultimately",
   "pos": "v.",
   "phon": "ˈʌltɪmətli",
@@ -21815,23 +21529,10 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "utility%20bill",
+  "w": "utility bill",
   "pos": "",
   "phon": "",
   "zh": "",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
-  "w": "V",
-  "pos": "n.",
-  "phon": "vi:",
-  "zh": "字母v,羅馬數字5,V形物VH region@重鏈可變區VL region@輕鏈可變區",
   "en": "",
   "ex": "",
   "usage": "",
@@ -22205,19 +21906,6 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "W",
-  "pos": "abbr. / n.",
-  "phon": "'dʌb(ə)ljuː",
-  "zh": "wickets (板球)三柱門Wabbr. aircraft weight 飛機重量；飛行器重量(代號)component of velocity 速度分量electric energy 電能Korean won 韓國圓(貨幣單位)total weight 總重(量)tungsten 鎢waist 腰(部)，腰圍Wales 威爾士warden 看守人，監護人warehouse 貨棧，倉庫warehousing 倉儲，倉儲費，倉儲業Washington 華盛頓(美國首都，美國州名)watch time 鐘錶時間water compartments 水艙Waterloo 滑鐵盧(比利時城鎮)Waterman Steamship 沃男曼輪船公司water vapour content 水蒸汽含量watt(s)【電】瓦(特)Wattmeter 瓦特計，瓦特表wave height correction【海】浪高修正weather reconnaissance 氣象偵察websterite 二輝石；礬石Wednesday 星期三wehnelt 威尼特(X線硬度單位)weight ton 重量噸weight 重量well 井，油井Welsh 威爾士的；威爾士人(的)；威爾士語(的)Wesleyan 美以美會教徒Western Postal District 西區(倫敦郵區之一)western 西的，西方的，西部的，朝西的Westinghouse Electric Company 西屋電氣公司west 西，西方，西部；西方的，朝西的we 我們，我方W flag W旗(本船需要醫療救護)Whampoa 黃埔港white 白色(的)Whitworth screw 惠氏螺紋width 寬度，闊度wild throw 野傳(棒球)winter loading (on load-line) 冬季吃水線winter loadline【船】冬季載重水線wire 金屬絲；導線won 圓(韓國貨幣單位)wooden 木頭的，木製的wooden deck【船】木甲板word fluency【心】語言流暢work 功，工作Worldwide Marine 世界海運公司Wrangell Shipping 蘭格爾航運公司wring 收縮量，過盈量W；字母W",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
   "w": "wage",
   "pos": "vi. / n. / vt.",
   "phon": "weɪdʒ",
@@ -22582,19 +22270,6 @@ const DICT = [
   "enriched": false
  },
  {
-  "w": "X",
-  "pos": "n. / adj.",
-  "phon": "eks",
-  "zh": "字母x,羅馬數字10；X形的,X級的(電影等),第二十四的Xabbr. Xs或 X's X級電影，成人電影（十八歲以下兒童不得觀看）",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
   "w": "X-ray",
   "pos": "n. / vt.",
   "phon": "ˈɛksˌre",
@@ -22612,19 +22287,6 @@ const DICT = [
   "pos": "n. / vt.",
   "phon": "ˈzɪrɑks",
   "zh": "施樂（商標名，美國辦公裝置製造公司）；影印，靜電印刷品；用靜電覆印法影印Xerox；影印，影印；影印件；影印本；& vi. 影印，影印",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
-  "w": "Y",
-  "pos": "n.",
-  "phon": "wai",
-  "zh": "字母y",
   "en": "",
   "ex": "",
   "usage": "",
@@ -22664,19 +22326,6 @@ const DICT = [
   "pos": "n.",
   "phon": "juːθ",
   "zh": "青年時期, 青春(期)青春, 活力, 朝氣, 血氣青年人年輕人, 青年男子",
-  "en": "",
-  "ex": "",
-  "usage": "",
-  "syn": "",
-  "synNote": "",
-  "added": "",
-  "enriched": false
- },
- {
-  "w": "Z",
-  "pos": "n.",
-  "phon": "ziː",
-  "zh": "字母z",
   "en": "",
   "ex": "",
   "usage": "",
