@@ -70,6 +70,16 @@
   .s-card .btn { margin-top: 12px; }
   .badge { background: var(--gold); color: #fff; font-size: 11px; border-radius: 6px; padding: 1px 6px; margin-left: 4px; }
 
+  .letter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .letter-cell {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 14px 4px; text-align: center; cursor: pointer; transition: transform .08s;
+  }
+  .letter-cell:active { transform: scale(.95); }
+  .letter-cell .lt { font-size: 22px; font-weight: 800; color: var(--accent); }
+  .letter-cell .lc { font-size: 12px; color: var(--sub); margin-top: 2px; }
+  .letter-cell.empty .lt, .letter-cell.empty .lc { color: var(--line); }
+
   .letter-group { margin-bottom: 8px; }
   .letter-head {
     display: flex; justify-content: space-between; align-items: center;
@@ -198,6 +208,15 @@
   </div>
   <h1 class="lib-title">🎯 多益單字庫</h1>
   <div id="dictList"></div>
+</div>
+
+<div id="letterPage" class="hidden">
+  <div class="topbar">
+    <button class="back" onclick="backFromLetter()">← 返回</button>
+    <span class="progress-text" id="letterCount"></span>
+  </div>
+  <h1 class="lib-title" id="letterTitle"></h1>
+  <div id="letterList"></div>
 </div>
 
 <div id="quiz" class="hidden">
@@ -395,37 +414,63 @@ function renderHome() {
     b.onclick = () => { pick(document.getElementById("hintChoices"), b); opts.hint = +b.dataset.v; };
   });
 
-  // 單字庫列表（依字首分組）
-  const groups = {};
-  words.slice().sort((a, b) => a.w.localeCompare(b.w)).forEach(v => {
+  // 單字庫字首資料夾（A–Z 全部建立）
+  renderLetterGrid("vocabList", "mine");
+}
+
+function libraryWords(source) {
+  if (source === "dict") return (typeof DICT !== "undefined") ? DICT : [];
+  return allWords();
+}
+
+function renderLetterGrid(containerId, source) {
+  const counts = {};
+  libraryWords(source).forEach(v => {
     const L = v.w[0].toUpperCase();
-    (groups[L] = groups[L] || []).push(v);
+    counts[L] = (counts[L] || 0) + 1;
   });
-  const list = document.getElementById("vocabList");
+  const list = document.getElementById(containerId);
   list.innerHTML = "";
-  Object.keys(groups).sort().forEach(L => {
-    const g = document.createElement("div");
-    g.className = "letter-group";
-    const head = document.createElement("div");
-    head.className = "letter-head";
-    head.innerHTML = "<span>" + L + "<span class='count'>" + groups[L].length + " 字</span></span><span class='chev'>▶</span>";
-    const body = document.createElement("div");
-    body.className = "letter-body hidden";
-    head.onclick = () => {
-      body.classList.toggle("hidden");
-      head.classList.toggle("open");
-    };
-    groups[L].forEach(v => {
+  const grid = document.createElement("div");
+  grid.className = "letter-grid";
+  for (let i = 0; i < 26; i++) {
+    const L = String.fromCharCode(65 + i);
+    const n = counts[L] || 0;
+    const cell = document.createElement("div");
+    cell.className = "letter-cell" + (n === 0 ? " empty" : "");
+    cell.innerHTML = "<div class='lt'>" + L + "</div><div class='lc'>" + n + " 字</div>";
+    cell.onclick = () => openLetterPage(source, L);
+    grid.appendChild(cell);
+  }
+  list.appendChild(grid);
+}
+
+let letterCtx = { source: "mine", letter: "A" };
+function openLetterPage(source, L) {
+  letterCtx = { source: source, letter: L };
+  const words = libraryWords(source)
+    .filter(v => v.w[0].toUpperCase() === L)
+    .sort((a, b) => a.w.localeCompare(b.w));
+  document.getElementById("letterTitle").textContent = (source === "dict" ? "🎯 " : "📚 ") + L;
+  document.getElementById("letterCount").textContent = "共 " + words.length + " 個字";
+  const list = document.getElementById("letterList");
+  list.innerHTML = "";
+  if (words.length === 0) {
+    list.innerHTML = "<div class='s-msg'>這個字母還沒有單字，用首頁的搜尋列加一個吧！</div>";
+  } else {
+    words.forEach(v => {
       const item = document.createElement("div");
       item.className = "vocab-item";
       item.innerHTML = "<div><b>" + v.w + "</b>" + (v.custom ? "<span class='badge'>新</span>" : "") + " <span>" + v.pos + " " + v.zh + "</span></div><span class='arrow'>›</span>";
       item.onclick = () => showDetail(v);
-      body.appendChild(item);
+      list.appendChild(item);
     });
-    g.appendChild(head);
-    g.appendChild(body);
-    list.appendChild(g);
-  });
+  }
+  show("letterPage");
+}
+
+function backFromLetter() {
+  show(letterCtx.source === "dict" ? "dictLib" : "library");
 }
 
 function renderCounts() {
@@ -451,7 +496,7 @@ function pick(box, btn) {
 }
 
 function show(id) {
-  for (const p of ["home", "quiz", "result", "library", "dictLib"]) document.getElementById(p).classList.toggle("hidden", p !== id);
+  for (const p of ["home", "quiz", "result", "library", "dictLib", "letterPage"]) document.getElementById(p).classList.toggle("hidden", p !== id);
   window.scrollTo(0, 0);
 }
 function goHome() { renderHome(); show("home"); }
@@ -461,53 +506,14 @@ function openLibrary() {
   show("library");
 }
 
-let dictListBuilt = false;
 function openDictLibrary() {
   if (typeof DICT === "undefined") {
     document.getElementById("searchResult").innerHTML = "<div class='s-msg'>多益字典載入失敗，請重新整理頁面</div>";
     return;
   }
   document.getElementById("dictCount").textContent = "共 " + DICT.length + " 個字";
-  renderDictList();
+  renderLetterGrid("dictList", "dict");
   show("dictLib");
-}
-
-function renderDictList() {
-  if (dictListBuilt) return;
-  dictListBuilt = true;
-  const groups = {};
-  DICT.forEach(v => {
-    const L = v.w[0].toUpperCase();
-    (groups[L] = groups[L] || []).push(v);
-  });
-  const list = document.getElementById("dictList");
-  list.innerHTML = "";
-  Object.keys(groups).sort().forEach(L => {
-    const g = document.createElement("div");
-    g.className = "letter-group";
-    const head = document.createElement("div");
-    head.className = "letter-head";
-    head.innerHTML = "<span>" + L + "<span class='count'>" + groups[L].length + " 字</span></span><span class='chev'>▶</span>";
-    const body = document.createElement("div");
-    body.className = "letter-body hidden";
-    head.onclick = () => {
-      if (!body.dataset.filled) { // 點開才建立單字列表，避免一次載入上千筆
-        groups[L].forEach(v => {
-          const item = document.createElement("div");
-          item.className = "vocab-item";
-          item.innerHTML = "<div><b>" + v.w + "</b> <span>" + v.pos + " " + v.zh + "</span></div><span class='arrow'>›</span>";
-          item.onclick = () => showDetail(v);
-          body.appendChild(item);
-        });
-        body.dataset.filled = "1";
-      }
-      body.classList.toggle("hidden");
-      head.classList.toggle("open");
-    };
-    g.appendChild(head);
-    g.appendChild(body);
-    list.appendChild(g);
-  });
 }
 
 function startQuiz() {
@@ -611,6 +617,9 @@ function removeCurrent() {
   saveCustom(loadCustom().filter(c => c.w !== detailWord.w));
   closeDetail();
   renderHome();
+  if (!document.getElementById("letterPage").classList.contains("hidden")) {
+    openLetterPage(letterCtx.source, letterCtx.letter);
+  }
 }
 
 function speak(word) {
