@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>拼字練習</title>
+<title>字寶</title>
 <style>
   :root {
     --bg: #f7f7f2; --card: #ffffff; --ink: #2d2d2d; --sub: #8a8a84;
@@ -18,7 +18,17 @@
     max-width: 560px; margin: 0 auto; padding: 20px 16px 48px;
   }
   h1 { font-size: 22px; margin-bottom: 4px; }
-  .sub { color: var(--sub); font-size: 14px; margin-bottom: 20px; }
+  .app-title { text-align: center; font-size: 46px; font-weight: 900; letter-spacing: 10px; text-indent: 10px; margin: 20px 0 6px; }
+  .sub { color: var(--sub); font-size: 14px; margin-bottom: 20px; text-align: center; }
+  .library-btn {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    width: 100%; margin-top: 18px; padding: 16px; border-radius: 14px;
+    font-size: 19px; font-weight: 700; color: var(--ink);
+    background: var(--card); border: 1px solid var(--line); cursor: pointer;
+    transition: transform .08s;
+  }
+  .library-btn:active { transform: scale(.98); }
+  .lib-title { text-align: center; font-size: 34px; font-weight: 900; margin: 4px 0 20px; }
   h2 { font-size: 16px; margin: 22px 0 10px; }
   .hidden { display: none !important; }
 
@@ -132,7 +142,7 @@
 <body>
 
 <div id="home">
-  <h1>拼字練習 ✏️</h1>
+  <h1 class="app-title">字寶</h1>
   <p class="sub" id="homeSub"></p>
 
   <div class="search-wrap">
@@ -161,7 +171,15 @@
     <button class="btn primary" onclick="startQuiz()">開始練習</button>
   </div>
 
-  <h2>📚 單字庫（依字首排序）</h2>
+  <button class="library-btn" onclick="openLibrary()">📚 單字庫</button>
+</div>
+
+<div id="library" class="hidden">
+  <div class="topbar">
+    <button class="back" onclick="goHome()">← 返回</button>
+    <span class="progress-text" id="libCount"></span>
+  </div>
+  <h1 class="lib-title">📚 單字庫</h1>
   <div id="vocabList"></div>
 </div>
 
@@ -273,7 +291,7 @@ async function lookup() {
       saveCustom(list);
       input.value = "";
       renderHome();
-      box.innerHTML = "<div class='s-msg'>✅ 已加入！到下方 " + dictHit.w[0].toUpperCase() + " 書籤就能看到</div>";
+      box.innerHTML = "<div class='s-msg'>✅ 已加入單字庫的 " + dictHit.w[0].toUpperCase() + " 書籤！</div>";
     };
     card.appendChild(btn);
     box.appendChild(card);
@@ -316,7 +334,7 @@ async function lookup() {
       saveCustom(list);
       input.value = "";
       renderHome();
-      box.innerHTML = "<div class='s-msg'>✅ 已加入！到下方 " + word[0].toUpperCase() + " 書籤就能看到（標「新」的字存在這台裝置上）</div>";
+      box.innerHTML = "<div class='s-msg'>✅ 已加入單字庫的 " + word[0].toUpperCase() + " 書籤！（標「新」的字存在這台裝置上）</div>";
     };
     card.appendChild(btn);
     box.appendChild(card);
@@ -396,10 +414,15 @@ function pick(box, btn) {
 }
 
 function show(id) {
-  for (const p of ["home", "quiz", "result"]) document.getElementById(p).classList.toggle("hidden", p !== id);
+  for (const p of ["home", "quiz", "result", "library"]) document.getElementById(p).classList.toggle("hidden", p !== id);
   window.scrollTo(0, 0);
 }
 function goHome() { renderHome(); show("home"); }
+function openLibrary() {
+  renderHome();
+  document.getElementById("libCount").textContent = "共 " + allWords().length + " 個字";
+  show("library");
+}
 
 function startQuiz() {
   cur = { list: shuffle(allWords()).slice(0, opts.count), idx: 0, wrong: [], answered: false };
