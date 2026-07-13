@@ -176,6 +176,17 @@
   .ans-space { width: 14px; }
   .q-status { text-align: center; color: var(--sub); font-size: 13px; margin-bottom: 10px; min-height: 18px; }
 
+  /* 英翻中選擇題模式 */
+  .q-sentence .hl { color: var(--accent); font-weight: 700; border-bottom: 2px solid var(--accent); padding: 0 2px; }
+  .q-choices { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+  .zh-opt {
+    background: var(--card); border: 1.5px solid var(--line); border-radius: 12px;
+    padding: 14px 16px; font-size: 17px; line-height: 1.5; text-align: center; cursor: pointer;
+  }
+  .zh-opt.ok { background: var(--accent-soft); border-color: var(--accent); }
+  .zh-opt.bad { background: var(--wrong-soft); border-color: var(--wrong); }
+  .zh-opt:disabled { color: var(--ink); opacity: 1; cursor: default; }
+
   .result { text-align: center; }
   .result .big { font-size: 52px; font-weight: 700; margin: 24px 0 4px; }
   .result .msg { color: var(--sub); margin-bottom: 24px; }
@@ -203,6 +214,13 @@
 
   <div class="panel" id="settings">
     <div class="field">
+      <label>練習類型</label>
+      <div class="choices" id="typeChoices">
+        <button class="choice active" data-v="spell">✏️ 英文拼音</button>
+        <button class="choice" data-v="zh">🈶 英翻中</button>
+      </div>
+    </div>
+    <div class="field">
       <label>練習範圍</label>
       <div class="choices" id="sourceChoices">
         <button class="choice active" data-v="mine">📚 單字庫</button>
@@ -213,7 +231,7 @@
       <label>題數</label>
       <div class="choices" id="countChoices"></div>
     </div>
-    <div class="field">
+    <div class="field" id="hintField">
       <label>開頭字母提示</label>
       <div class="choices" id="hintChoices">
         <button class="choice" data-v="0">不提示</button>
@@ -266,8 +284,11 @@
   <!-- 第一排：例句題目（單字挖空） -->
   <div class="q-sentence" id="qSentence"></div>
 
-  <!-- 第二排：中文意思提示 -->
-  <div class="q-hint-pill"><span class="pos" id="qPos"></span><span id="qZh"></span></div>
+  <!-- 第二排：中文意思提示（英翻中模式隱藏） -->
+  <div class="q-hint-pill" id="qHintPill"><span class="pos" id="qPos"></span><span id="qZh"></span></div>
+
+  <!-- 英翻中模式：三選一中文選項 -->
+  <div class="q-choices hidden" id="qChoices"></div>
 
   <!-- 第三排：打散的英文字母 -->
   <div class="q-pool" id="qPool"></div>
@@ -320,7 +341,7 @@
 <script src="vocab.js"></script>
 <script src="dict.js"></script>
 <script>
-let opts = { source: "mine", count: 5, hint: 1 };
+let opts = { qtype: "spell", source: "mine", count: 5, hint: 1 };
 
 function practicePool() {
   if (opts.source === "dict" && typeof DICT !== "undefined") {
@@ -445,6 +466,15 @@ function renderHome() {
     n === 0 ? "單字庫還是空的——用下方搜尋列加字，或問 Claude 一個英文單字！"
             : "單字庫目前有 " + n + " 個字" + (customCount ? "（含快速新增 " + customCount + " 個）" : "") + "。選好題數和提示，開始練拼字。";
   document.getElementById("settings").classList.toggle("hidden", n === 0 && typeof DICT === "undefined");
+
+  // 練習類型選項（英翻中模式不需要字母提示，順便隱藏）
+  document.querySelectorAll("#typeChoices .choice").forEach(b => {
+    b.onclick = () => {
+      pick(document.getElementById("typeChoices"), b);
+      opts.qtype = b.dataset.v;
+      document.getElementById("hintField").classList.toggle("hidden", opts.qtype === "zh");
+    };
+  });
 
   // 練習範圍選項
   document.querySelectorAll("#sourceChoices .choice").forEach(b => {
@@ -636,6 +666,16 @@ function renderQuestion() {
   cur.answered = false;
   document.getElementById("qProgress").textContent = (cur.idx + 1) + " / " + total;
   document.getElementById("qBar").style.width = (cur.idx / total * 100) + "%";
+
+  // 依練習類型切換顯示的區塊
+  const zhMode = opts.qtype === "zh";
+  document.getElementById("qHintPill").classList.toggle("hidden", zhMode);
+  document.getElementById("qChoices").classList.toggle("hidden", !zhMode);
+  document.getElementById("qPool").classList.toggle("hidden", zhMode);
+  document.getElementById("qAnswer").classList.toggle("hidden", zhMode);
+  document.getElementById("qBackspace").style.display = zhMode ? "none" : "";
+  if (zhMode) { renderZhQuestion(v); return; }
+
   document.getElementById("qPos").textContent = v.pos || "";
   document.getElementById("qZh").textContent = v.zh || "";
 
@@ -667,6 +707,66 @@ function renderQuestion() {
   document.getElementById("qStatus").textContent = "點下方字母，或直接用鍵盤打字";
   document.getElementById("qCheckBtn").textContent = "確認";
   document.getElementById("qBackspace").style.visibility = "visible";
+}
+
+// ===== 英翻中選擇題模式 =====
+function zhDistractors(v) {
+  const clean = x => x.w !== v.w && x.zh && x.zh !== v.zh && x.zh !== "（內容整理中）";
+  let pool = practicePool().filter(clean);
+  if (pool.length < 2 && typeof DICT !== "undefined") pool = DICT.filter(clean);
+  return shuffle(pool.slice()).slice(0, 2).map(x => x.zh);
+}
+
+function renderZhQuestion(v) {
+  const form = findFormInSentence(v.ex, v.w) || v.w;
+  cur.answer = form;
+  cur.pool = [];
+  cur.placed = [];
+
+  // 題目：例句中把單字標色保留
+  const el = document.getElementById("qSentence");
+  const sentence = v.ex || "";
+  const idx = sentence.indexOf(form);
+  if (idx >= 0) {
+    el.innerHTML = esc(sentence.slice(0, idx)) + "<span class='hl'>" + esc(form) + "</span>" + esc(sentence.slice(idx + form.length));
+  } else {
+    el.innerHTML = "<span class='hl'>" + esc(v.w) + "</span>" + (v.en ? "<br><span class='q-def'>" + esc(v.en) + "</span>" : "");
+  }
+
+  // 三個選項：一個正解＋兩個隨機別字的中文
+  const box = document.getElementById("qChoices");
+  box.innerHTML = "";
+  const options = shuffle([{ zh: v.zh, ok: true }].concat(zhDistractors(v).map(zh => ({ zh: zh, ok: false }))));
+  options.forEach(o => {
+    const b = document.createElement("button");
+    b.className = "zh-opt";
+    b.textContent = o.zh;
+    if (o.ok) b.dataset.correct = "1";
+    b.onclick = () => answerZh(b, o.ok, v);
+    box.appendChild(b);
+  });
+
+  document.getElementById("qFeedback").innerHTML = "";
+  document.getElementById("qStatus").textContent = "選出正確的中文意思（電腦可按 1 / 2 / 3）";
+  document.getElementById("qCheckBtn").textContent = "確認";
+}
+
+function answerZh(btn, ok, v) {
+  if (cur.answered) return;
+  cur.answered = true;
+  if (!ok) cur.wrong.push(v);
+  document.querySelectorAll("#qChoices .zh-opt").forEach(b => {
+    b.disabled = true;
+    if (b.dataset.correct) b.classList.add("ok");
+  });
+  if (!ok) btn.classList.add("bad");
+  document.getElementById("qStatus").textContent = "";
+  document.getElementById("qFeedback").innerHTML =
+    (ok ? "✅ 正確！" : "❌ 正確答案是綠色那個") +
+    "<span class='word'> " + esc(v.w) + "</span> /" + (v.phon || "") + "/<br>" +
+    "<span class='ex'>" + esc(v.pos || "") + " " + esc(v.zh || "") + "</span>";
+  document.getElementById("qCheckBtn").textContent = cur.idx + 1 < cur.list.length ? "下一題 →" : "看成績";
+  speak(cur.answer || v.w);
 }
 
 function renderSentence(v, form, hintCount) {
@@ -749,6 +849,7 @@ function typeLetter(ch) {
 
 function check() {
   if (cur.answered) { next(); return; }
+  if (opts.qtype === "zh") { document.getElementById("qStatus").textContent = "先選一個答案喔"; return; }
   if (nextEmptySlot() >= 0) { document.getElementById("qStatus").textContent = "還沒填完喔"; return; }
   cur.answered = true;
   const v = currentWord();
@@ -850,6 +951,13 @@ document.addEventListener("keydown", e => {
   if (document.getElementById("quiz").classList.contains("hidden")) return;
   if (e.key === "Enter") { e.preventDefault(); check(); return; }
   if (cur.answered) return;
+  if (opts.qtype === "zh") {
+    if (/^[1-3]$/.test(e.key)) {
+      const b = document.querySelectorAll("#qChoices .zh-opt")[+e.key - 1];
+      if (b && !b.disabled) b.click();
+    }
+    return;
+  }
   if (e.key === "Backspace") { e.preventDefault(); popLetter(); }
   else if (/^[a-zA-Z]$/.test(e.key)) { e.preventDefault(); typeLetter(e.key); }
 });
