@@ -150,6 +150,32 @@
   .feedback .word { font-size: 20px; font-weight: 700; }
   .feedback .ex { color: var(--sub); font-size: 14px; }
 
+  /* 例句填空模式 */
+  .q-sentence { font-size: 20px; line-height: 2; text-align: center; margin: 14px 4px 18px; color: var(--ink); }
+  .q-sentence .blank { white-space: nowrap; }
+  .q-sentence .bk-hint { display: inline-block; min-width: 15px; border-bottom: 2px solid var(--accent); color: var(--accent); font-weight: 700; text-align: center; }
+  .q-sentence .bk-line { display: inline-block; width: 15px; border-bottom: 2px solid var(--sub); margin: 0 1px; }
+  .q-sentence .bk-space { display: inline-block; width: 8px; }
+  .q-sentence .q-def { font-style: italic; color: var(--sub); font-size: 16px; }
+
+  .q-hint-pill { text-align: center; background: var(--card); border: 1px solid var(--line); border-radius: 22px; padding: 11px 18px; font-size: 17px; margin-bottom: 20px; }
+  .q-hint-pill .pos { color: var(--gold); font-weight: 600; margin-right: 6px; }
+
+  .q-pool { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 16px; min-height: 48px; }
+  .pool-letter { min-width: 46px; height: 50px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); font-size: 21px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,.06); transition: transform .06s; }
+  .pool-letter:active { transform: scale(.92); }
+  .pool-letter.used { opacity: 0; pointer-events: none; }
+
+  .q-answer { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; min-height: 44px; margin-bottom: 10px; }
+  .ans-slot { width: 34px; height: 42px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 600; }
+  .ans-slot.locked { background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent); }
+  .ans-slot.filled { background: var(--card); border: 1.5px solid var(--accent); color: var(--ink); }
+  .ans-slot.empty { background: var(--card); border: 1.5px dashed var(--line); }
+  .ans-slot.ok { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .ans-slot.bad { background: var(--wrong-soft); border-color: var(--wrong); color: var(--wrong); }
+  .ans-space { width: 14px; }
+  .q-status { text-align: center; color: var(--sub); font-size: 13px; margin-bottom: 10px; min-height: 18px; }
+
   .result { text-align: center; }
   .result .big { font-size: 52px; font-weight: 700; margin: 24px 0 4px; }
   .result .msg { color: var(--sub); margin-bottom: 24px; }
@@ -236,16 +262,24 @@
     <span class="progress-text" id="qProgress"></span>
   </div>
   <div class="bar"><div id="qBar"></div></div>
-  <div class="clue">
-    <div class="zh"><span class="pos" id="qPos"></span><span id="qZh"></span></div>
-    <div class="en" id="qEn"></div>
-  </div>
-  <div class="hint-letters" id="qHint"></div>
-  <div class="hint-len" id="qLen"></div>
-  <input class="spell" id="qInput" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="輸入拼字後按 Enter">
+
+  <!-- 第一排：例句題目（單字挖空） -->
+  <div class="q-sentence" id="qSentence"></div>
+
+  <!-- 第二排：中文意思提示 -->
+  <div class="q-hint-pill"><span class="pos" id="qPos"></span><span id="qZh"></span></div>
+
+  <!-- 第三排：打散的英文字母 -->
+  <div class="q-pool" id="qPool"></div>
+
+  <!-- 第四排：輸入答案的地方 -->
+  <div class="q-answer" id="qAnswer"></div>
+  <div class="q-status" id="qStatus"></div>
+
   <div class="feedback" id="qFeedback"></div>
   <div class="btn-row">
-    <button class="btn" id="qCheckBtn" onclick="check()">確認</button>
+    <button class="btn" id="qBackspace" style="flex:0 0 auto; width:64px;" onclick="popLetter()">⌫</button>
+    <button class="btn primary" id="qCheckBtn" onclick="check()">確認</button>
   </div>
 </div>
 
@@ -569,49 +603,168 @@ function startQuiz() {
 
 function currentWord() { return cur.list[cur.idx]; }
 
+function esc(s) { return (s || "").replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c])); }
+
+// 在例句裡找出要挖空的字（優先完全相符，再找同字根的變化形，如 negotiate→negotiated）
+function findFormInSentence(sentence, word) {
+  if (!sentence) return null;
+  const lc = sentence.toLowerCase(), wl = word.toLowerCase();
+  let i = lc.indexOf(wl);
+  while (i >= 0) {
+    const beforeOk = i === 0 || !/[a-z]/i.test(sentence[i - 1]);
+    const afterCh = sentence[i + wl.length];
+    const afterOk = afterCh === undefined || !/[a-z]/i.test(afterCh);
+    if (beforeOk && afterOk) return sentence.substr(i, wl.length);
+    i = lc.indexOf(wl, i + 1);
+  }
+  if (!word.includes(" ") && wl.length >= 4) {
+    let best = null, bestLen = 0;
+    for (const m of sentence.matchAll(/[A-Za-z]+/g)) {
+      const t = m[0], tl = t.toLowerCase();
+      let p = 0;
+      while (p < tl.length && p < wl.length && tl[p] === wl[p]) p++;
+      if (p >= Math.min(4, wl.length - 1) && Math.abs(tl.length - wl.length) <= 3 && p > bestLen) { best = t; bestLen = p; }
+    }
+    return best;
+  }
+  return null;
+}
+
 function renderQuestion() {
   const v = currentWord();
   const total = cur.list.length;
   cur.answered = false;
   document.getElementById("qProgress").textContent = (cur.idx + 1) + " / " + total;
   document.getElementById("qBar").style.width = (cur.idx / total * 100) + "%";
-  document.getElementById("qPos").textContent = v.pos;
-  document.getElementById("qZh").textContent = v.zh;
-  document.getElementById("qEn").textContent = v.en;
+  document.getElementById("qPos").textContent = v.pos || "";
+  document.getElementById("qZh").textContent = v.zh || "";
 
-  const shown = Math.min(opts.hint, v.w.length - 1);
-  document.getElementById("qHint").textContent =
-    v.w.slice(0, shown).split("").join(" ") + (shown ? " " : "") + "_ ".repeat(v.w.length - shown).trim();
-  document.getElementById("qLen").textContent = "共 " + v.w.length + " 個字母";
+  // 答案：優先用例句裡出現的字形
+  const form = findFormInSentence(v.ex, v.w) || v.w;
+  cur.answer = form;
+  cur.answerLc = form.toLowerCase();
 
-  const input = document.getElementById("qInput");
-  input.value = "";
-  input.className = "spell";
-  input.disabled = false;
+  // 鎖定的位置＝前 N 個提示字母 + 空格（片語用）
+  const letterLen = form.replace(/ /g, "").length;
+  const hintCount = Math.min(opts.hint, Math.max(0, letterLen - 1));
+  cur.locked = [];
+  let seen = 0;
+  for (let i = 0; i < form.length; i++) {
+    if (form[i] === " ") cur.locked[i] = true;
+    else { cur.locked[i] = seen < hintCount; seen++; }
+  }
+  cur.filled = form.split("").map((ch, i) => cur.locked[i] ? ch : null);
+  const poolChars = [];
+  for (let i = 0; i < form.length; i++) if (!cur.locked[i]) poolChars.push(form[i]);
+  cur.pool = shuffle(poolChars).map(ch => ({ ch, used: false }));
+  cur.placed = [];
+
+  renderSentence(v, form, hintCount);
+  renderPool();
+  renderAnswer();
+
   document.getElementById("qFeedback").innerHTML = "";
+  document.getElementById("qStatus").textContent = "點下方字母，或直接用鍵盤打字";
   document.getElementById("qCheckBtn").textContent = "確認";
-  input.focus();
+  document.getElementById("qBackspace").style.visibility = "visible";
+}
+
+function renderSentence(v, form, hintCount) {
+  const el = document.getElementById("qSentence");
+  const sentence = v.ex || "";
+  const idx = sentence.indexOf(form);
+  if (idx < 0) {
+    el.innerHTML = "<span class='q-def'>" + (esc(v.en) || "根據提示拼出單字") + "</span>";
+    return;
+  }
+  let blank = "", seen = 0;
+  for (let i = 0; i < form.length; i++) {
+    if (form[i] === " ") { blank += "<span class='bk-space'></span>"; continue; }
+    blank += seen < hintCount ? "<span class='bk-hint'>" + form[i] + "</span>" : "<span class='bk-line'></span>";
+    seen++;
+  }
+  el.innerHTML = esc(sentence.slice(0, idx)) + "<span class='blank'>" + blank + "</span>" + esc(sentence.slice(idx + form.length));
+}
+
+function renderPool() {
+  const el = document.getElementById("qPool");
+  el.innerHTML = "";
+  cur.pool.forEach((p, i) => {
+    const b = document.createElement("button");
+    b.className = "pool-letter" + (p.used ? " used" : "");
+    b.textContent = p.ch;
+    b.onclick = () => tapLetter(i);
+    el.appendChild(b);
+  });
+}
+
+function renderAnswer() {
+  const el = document.getElementById("qAnswer");
+  el.innerHTML = "";
+  for (let i = 0; i < cur.answer.length; i++) {
+    if (cur.answer[i] === " ") { const g = document.createElement("span"); g.className = "ans-space"; el.appendChild(g); continue; }
+    const t = document.createElement("span");
+    const ch = cur.filled[i];
+    if (cur.locked[i]) { t.className = "ans-slot locked"; t.textContent = ch; }
+    else if (ch != null) { t.className = "ans-slot filled"; t.textContent = ch; }
+    else { t.className = "ans-slot empty"; }
+    el.appendChild(t);
+  }
+}
+
+function nextEmptySlot() {
+  for (let i = 0; i < cur.answer.length; i++)
+    if (!cur.locked[i] && cur.answer[i] !== " " && cur.filled[i] == null) return i;
+  return -1;
+}
+
+function tapLetter(poolIdx) {
+  if (cur.answered) return;
+  const p = cur.pool[poolIdx];
+  if (p.used) return;
+  const slot = nextEmptySlot();
+  if (slot < 0) return;
+  cur.filled[slot] = p.ch;
+  p.used = true;
+  cur.placed.push({ slot, poolIdx });
+  renderPool();
+  renderAnswer();
+}
+
+function popLetter() {
+  if (cur.answered) return;
+  const last = cur.placed.pop();
+  if (!last) return;
+  cur.filled[last.slot] = null;
+  cur.pool[last.poolIdx].used = false;
+  renderPool();
+  renderAnswer();
+}
+
+function typeLetter(ch) {
+  ch = ch.toLowerCase();
+  for (let i = 0; i < cur.pool.length; i++)
+    if (!cur.pool[i].used && cur.pool[i].ch.toLowerCase() === ch) { tapLetter(i); return; }
 }
 
 function check() {
   if (cur.answered) { next(); return; }
-  const v = currentWord();
-  const input = document.getElementById("qInput");
-  const guess = input.value.trim().toLowerCase();
-  if (!guess) { input.focus(); return; }
-
+  if (nextEmptySlot() >= 0) { document.getElementById("qStatus").textContent = "還沒填完喔"; return; }
   cur.answered = true;
-  input.disabled = true;
-  const ok = guess === v.w.toLowerCase();
-  input.classList.add(ok ? "ok" : "bad");
+  const v = currentWord();
+  const ok = cur.filled.join("").toLowerCase() === cur.answerLc;
   if (!ok) cur.wrong.push(v);
-
+  document.querySelectorAll("#qAnswer .ans-slot").forEach(s => {
+    if (!s.classList.contains("locked")) s.classList.add(ok ? "ok" : "bad");
+  });
+  document.getElementById("qStatus").textContent = "";
   document.getElementById("qFeedback").innerHTML =
-    (ok ? "✅ 正確！" : "❌ 正確拼法：") +
-    '<span class="word"> ' + v.w + "</span> /" + v.phon + "/<br>" +
-    '<span class="ex">' + v.ex + "</span>";
+    (ok ? "✅ 正確！" : "❌ 正確答案：") +
+    "<span class='word'> " + cur.answer + "</span> /" + (v.phon || "") + "/<br>" +
+    "<span class='ex'>" + esc(v.pos) + " " + esc(v.zh) + "</span>";
+  document.getElementById("qBackspace").style.visibility = "hidden";
   document.getElementById("qCheckBtn").textContent = cur.idx + 1 < cur.list.length ? "下一題 →" : "看成績";
-  speak(v.w);
+  speak(cur.answer);
 }
 
 function next() {
@@ -692,18 +845,13 @@ function speak(word) {
   } catch (e) {}
 }
 
-document.getElementById("qInput").addEventListener("keydown", e => {
-  if (e.key === "Enter") {
-    e.stopPropagation(); // 避免同一下 Enter 同時觸發「確認」和「下一題」
-    check();
-  }
-});
-
-// 作答後再按一次 Enter＝下一題（此時輸入框已停用，改由整頁接收按鍵）
+// 練習中的鍵盤操作：打字母＝填入配對的字母、Backspace＝退一格、Enter＝確認／下一題
 document.addEventListener("keydown", e => {
-  if (e.key === "Enter" && cur.answered && !document.getElementById("quiz").classList.contains("hidden")) {
-    next();
-  }
+  if (document.getElementById("quiz").classList.contains("hidden")) return;
+  if (e.key === "Enter") { e.preventDefault(); check(); return; }
+  if (cur.answered) return;
+  if (e.key === "Backspace") { e.preventDefault(); popLetter(); }
+  else if (/^[a-zA-Z]$/.test(e.key)) { e.preventDefault(); typeLetter(e.key); }
 });
 document.getElementById("searchInput").addEventListener("keydown", e => {
   if (e.key === "Enter") lookup();
