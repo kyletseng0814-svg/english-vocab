@@ -149,6 +149,7 @@
   .feedback { min-height: 76px; margin-top: 14px; text-align: center; font-size: 15px; line-height: 1.6; }
   .feedback .word { font-size: 20px; font-weight: 700; }
   .feedback .ex { color: var(--sub); font-size: 14px; }
+  .speak.sm { margin: 0 0 0 6px; padding: 3px 12px; font-size: 14px; vertical-align: middle; }
 
   /* 例句填空模式 */
   .q-sentence { font-size: 20px; line-height: 2; text-align: center; margin: 14px 4px 18px; color: var(--ink); }
@@ -763,7 +764,8 @@ function answerZh(btn, ok, v) {
   document.getElementById("qStatus").textContent = "";
   document.getElementById("qFeedback").innerHTML =
     (ok ? "✅ 正確！" : "❌ 正確答案是綠色那個") +
-    "<span class='word'> " + esc(v.w) + "</span> /" + (v.phon || "") + "/<br>" +
+    "<span class='word'> " + esc(v.w) + "</span> /" + (v.phon || "") + "/" +
+    "<button class='speak sm' onclick='speak(cur.answer)'>🔊</button><br>" +
     "<span class='ex'>" + esc(v.pos || "") + " " + esc(v.zh || "") + "</span>";
   document.getElementById("qCheckBtn").textContent = cur.idx + 1 < cur.list.length ? "下一題 →" : "看成績";
   speak(cur.answer || v.w);
@@ -861,7 +863,8 @@ function check() {
   document.getElementById("qStatus").textContent = "";
   document.getElementById("qFeedback").innerHTML =
     (ok ? "✅ 正確！" : "❌ 正確答案：") +
-    "<span class='word'> " + cur.answer + "</span> /" + (v.phon || "") + "/<br>" +
+    "<span class='word'> " + cur.answer + "</span> /" + (v.phon || "") + "/" +
+    "<button class='speak sm' onclick='speak(cur.answer)'>🔊</button><br>" +
     "<span class='ex'>" + esc(v.pos) + " " + esc(v.zh) + "</span>";
   document.getElementById("qBackspace").style.visibility = "hidden";
   document.getElementById("qCheckBtn").textContent = cur.idx + 1 < cur.list.length ? "下一題 →" : "看成績";
