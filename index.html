@@ -831,6 +831,8 @@ function tapLetter(poolIdx) {
   cur.placed.push({ slot, poolIdx });
   renderPool();
   renderAnswer();
+  // 填滿且拼對就直接顯示正確，不用按確認
+  if (nextEmptySlot() < 0 && cur.filled.join("").toLowerCase() === cur.answerLc) check();
 }
 
 function popLetter() {
