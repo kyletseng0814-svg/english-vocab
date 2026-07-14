@@ -168,5 +168,17 @@ const VOCAB = [
     syn: "demonstrator",
     synNote: "幾乎同義。demonstrator 偏正式新聞用語，來自 demonstration（示威遊行）；protester 更通用。小心 demonstrator 還有另一個意思「產品示範員」，多益反而可能考這個",
     added: "2026-07-10"
+  },
+  {
+    w: "regard",
+    pos: "v. / n.",
+    phon: "rɪˈɡɑːrd",
+    zh: "看待、認為；尊重、關注；（複數）問候",
+    en: "to think of someone or something in a particular way; respect or attention; (regards) good wishes",
+    ex: "The company is regarded as a leader in the industry.",
+    usage: "📝 考試：多益高頻，兩個用法都要會：(a) regard A as B（把 A 視為 B）——被動 be regarded as（被認為是…），公司評價、品牌形象常見；(b) with regard to / in regard to（關於…），商用書信的正式開頭，跟 regarding 同義\n💬 口語：信件結尾的 Best regards（謹致問候）最常用；give my regards to...（代我向…問好）；口語表達看法多用 see 或 think，regard 偏書面正式",
+    syn: "consider",
+    synNote: "consider 和 regard 都是「認為、看待」，但句型不同：regard 要加 as（regard him as a friend）；consider 可省略 as（consider him a friend）。另外 regard 還有「尊重、問候」的意思，consider 沒有。你單字庫的 perceive、respect、esteem 都是親戚字",
+    added: "2026-07-14"
   }
 ];
