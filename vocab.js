@@ -14,6 +14,18 @@ const VOCAB = [
     added: "2026-07-14"
   },
   {
+    w: "accumulate",
+    pos: "v.",
+    phon: "əˈkjuːmjəleɪt",
+    zh: "累積、積聚",
+    en: "to gradually collect or increase over time",
+    ex: "Interest accumulates on the unpaid balance.",
+    usage: "📝 考試：多益中高頻，財務與資源情境：accumulate savings / debt / interest / experience（累積存款、債務、利息、經驗）；名詞 accumulation（累積）\n💬 口語：常用：accumulate（慢慢累積起來）——強調「隨時間逐漸變多」；灰塵、雜物越堆越多也用它：Dust accumulates quickly.",
+    syn: "accrue",
+    synNote: "你單字庫的 accrue 的親戚！accumulate 是「泛指的累積」（東西、經驗、灰塵都行，較口語通用）；accrue 專指「利息、權益隨時間自然孳生」（金融法律味重）。存款 accumulate，利息 accrue——accrue 較專業狹窄",
+    added: "2026-07-14"
+  },
+  {
     w: "general",
     pos: "adj. / n.",
     phon: "ˈdʒenrəl",
