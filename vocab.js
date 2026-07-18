@@ -2,6 +2,18 @@
 // 由 Claude 在查單字時自動更新，拼字練習.html 會讀取這份資料
 const VOCAB = [
   {
+    w: "abolish",
+    pos: "vt.",
+    phon: "əˈbɑːlɪʃ",
+    zh: "廢除、廢止（制度、法律）",
+    en: "to officially end a law, system, or practice",
+    ex: "The company abolished the outdated dress code.",
+    usage: "📝 考試：多益中頻，制度變革情境：abolish a rule / policy / law（廢除規定、政策、法律）——注意受詞幾乎都是「制度、法規、慣例」這類抽象的東西，不能拿來廢除具體物品\n💬 口語：偏正式書面，歷史與新聞常見（abolish slavery 廢除奴隸制度）；日常說「取消某規定」更常用 get rid of 或 scrap",
+    syn: "eliminate",
+    synNote: "eliminate 是「消除、淘汰」（把不要的東西徹底除掉，對象很廣：錯誤、對手、成本都行）；abolish 專門用在「正式廢除制度法規」（要有官方權力才做得到）。公司 eliminate 浪費，政府 abolish 法條",
+    added: "2026-07-14"
+  },
+  {
     w: "general",
     pos: "adj. / n.",
     phon: "ˈdʒenrəl",
