@@ -110,6 +110,18 @@ const VOCAB = [
     added: "2026-07-10"
   },
   {
+    w: "haste",
+    pos: "n.",
+    phon: "heɪst",
+    zh: "匆忙、倉促",
+    en: "the act of doing something quickly, especially too quickly",
+    ex: "In her haste to leave, she forgot her phone.",
+    usage: "📝 考試：多益低頻，偏書面；常見慣用語 in haste（匆忙地）、make haste（趕快——較老式）；帶「因為太趕反而出錯」的負面語感\n💬 口語：日常較少單用，但諺語超有名：Haste makes waste.（欲速則不達）、More haste, less speed.（越急越慢）；動詞是 hasten（催促、趕緊），形容詞 hasty（草率的）",
+    syn: "hurry",
+    synNote: "hurry 是「趕、匆忙」（中性，口語常用，動詞名詞都行：Hurry up! 快點）；haste 是「倉促」（較書面，且常暗示「太急而失誤」的負面）。趕時間口語說 hurry，寫作或想強調「欲速則不達」用 haste",
+    added: "2026-07-14"
+  },
+  {
     w: "inch",
     pos: "n. / v.",
     phon: "ɪntʃ",
