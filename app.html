@@ -207,6 +207,26 @@
   .zh-opt.bad { background: var(--wrong-soft); border-color: var(--wrong); }
   .zh-opt:disabled { color: var(--ink); opacity: 1; cursor: default; }
 
+  /* 填字／發音：自由打字輸入框 */
+  .type-input {
+    display: block; width: 100%; box-sizing: border-box; text-align: center;
+    background: var(--card); border: 1.5px solid var(--line); border-radius: 14px;
+    padding: 14px 16px; font-size: 22px; font-weight: 700; letter-spacing: 1px;
+    color: var(--ink); margin-bottom: 12px; outline: none;
+  }
+  .type-input:focus { border-color: var(--accent); }
+  .type-input.type-ok { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .type-input.type-bad { background: var(--wrong-soft); border-color: var(--wrong); color: var(--wrong); }
+
+  /* 發音模式：大喇叭播放鍵 */
+  .q-audio { text-align: center; margin: 6px 0 18px; }
+  .audio-btn {
+    width: 88px; height: 88px; border-radius: 50%; border: none; cursor: pointer;
+    background: var(--accent-soft); color: var(--accent); font-size: 40px; line-height: 1;
+    box-shadow: 0 4px 14px rgba(74,124,89,.18); transition: transform .08s;
+  }
+  .audio-btn:active { transform: scale(.94); }
+
   .result { text-align: center; }
   .result .big { font-size: 52px; font-weight: 700; margin: 24px 0 4px; }
   .result .msg { color: var(--sub); margin-bottom: 24px; }
@@ -236,8 +256,10 @@
     <div class="field">
       <label>練習類型</label>
       <div class="choices" id="typeChoices">
-        <button class="choice active" data-v="spell">✏️ 英文拼音</button>
+        <button class="choice active" data-v="spell">✏️ 拼字</button>
+        <button class="choice" data-v="fill">⌨️ 填字</button>
         <button class="choice" data-v="zh">🈶 英翻中</button>
+        <button class="choice" data-v="listen">🔊 發音</button>
       </div>
     </div>
     <div class="field">
@@ -311,6 +333,9 @@
   </div>
   <div class="bar"><div id="qBar"></div></div>
 
+  <!-- 發音模式：大喇叭播放鍵 -->
+  <div class="q-audio hidden" id="qAudio"></div>
+
   <!-- 第一排：例句題目（單字挖空） -->
   <div class="q-sentence" id="qSentence"></div>
 
@@ -320,11 +345,15 @@
   <!-- 英翻中模式：三選一中文選項 -->
   <div class="q-choices hidden" id="qChoices"></div>
 
-  <!-- 第三排：打散的英文字母 -->
+  <!-- 第三排：打散的英文字母（拼字模式） -->
   <div class="q-pool" id="qPool"></div>
 
-  <!-- 第四排：輸入答案的地方 -->
+  <!-- 第四排：輸入答案的地方（拼字模式） -->
   <div class="q-answer" id="qAnswer"></div>
+
+  <!-- 填字／發音模式：自由打字 -->
+  <input type="text" class="type-input hidden" id="qTypeInput" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+
   <div class="q-status" id="qStatus"></div>
 
   <div class="feedback" id="qFeedback"></div>
@@ -502,7 +531,8 @@ function renderHome() {
     b.onclick = () => {
       pick(document.getElementById("typeChoices"), b);
       opts.qtype = b.dataset.v;
-      document.getElementById("hintField").classList.toggle("hidden", opts.qtype === "zh");
+      // 只有「拼字」模式會用到首字母提示
+      document.getElementById("hintField").classList.toggle("hidden", opts.qtype !== "spell");
     };
   });
 
@@ -754,13 +784,18 @@ function renderQuestion() {
   document.getElementById("qBar").style.width = (cur.idx / total * 100) + "%";
 
   // 依練習類型切換顯示的區塊
-  const zhMode = opts.qtype === "zh";
-  document.getElementById("qHintPill").classList.toggle("hidden", zhMode);
-  document.getElementById("qChoices").classList.toggle("hidden", !zhMode);
-  document.getElementById("qPool").classList.toggle("hidden", zhMode);
-  document.getElementById("qAnswer").classList.toggle("hidden", zhMode);
-  document.getElementById("qBackspace").style.display = zhMode ? "none" : "";
-  if (zhMode) { renderZhQuestion(v); return; }
+  const t = opts.qtype;
+  document.getElementById("qSentence").classList.toggle("hidden", t === "listen");
+  document.getElementById("qAudio").classList.toggle("hidden", t !== "listen");
+  document.getElementById("qHintPill").classList.toggle("hidden", t === "zh");
+  document.getElementById("qChoices").classList.toggle("hidden", t !== "zh");
+  document.getElementById("qPool").classList.toggle("hidden", t !== "spell");
+  document.getElementById("qAnswer").classList.toggle("hidden", t !== "spell");
+  document.getElementById("qTypeInput").classList.toggle("hidden", !(t === "fill" || t === "listen"));
+  document.getElementById("qBackspace").style.display = t === "spell" ? "" : "none";
+  document.getElementById("qFeedback").innerHTML = "";
+  if (t === "zh") { renderZhQuestion(v); return; }
+  if (t === "fill" || t === "listen") { renderTypeQuestion(v, t); return; }
 
   document.getElementById("qPos").textContent = v.pos || "";
   document.getElementById("qZh").textContent = v.zh || "";
@@ -793,6 +828,34 @@ function renderQuestion() {
   document.getElementById("qStatus").textContent = "點下方字母，或直接用鍵盤打字";
   document.getElementById("qCheckBtn").textContent = "確認";
   document.getElementById("qBackspace").style.visibility = "visible";
+}
+
+// ===== 填字／發音：自由打字模式 =====
+function renderTypeQuestion(v, mode) {
+  // 填字：對照例句裡的字形；發音：直接拼出字典原形
+  const answer = mode === "listen" ? v.w : (findFormInSentence(v.ex, v.w) || v.w);
+  cur.answer = answer;
+  cur.answerLc = answer.toLowerCase();
+  document.getElementById("qPos").textContent = v.pos || "";
+  document.getElementById("qZh").textContent = v.zh || "";
+
+  const input = document.getElementById("qTypeInput");
+  input.value = "";
+  input.disabled = false;
+  input.className = "type-input";
+  input.placeholder = "輸入單字後按 Enter";
+
+  if (mode === "fill") {
+    renderSentence(v, answer, 0); // 例句挖空、不給任何字母提示
+    document.getElementById("qStatus").textContent = "看例句與中文，把單字拼出來";
+  } else {
+    document.getElementById("qAudio").innerHTML =
+      "<button class='audio-btn' onclick='speak(cur.answer)'>🔊</button>";
+    document.getElementById("qStatus").textContent = "聽發音，把單字拼出來（點 🔊 可重播）";
+    speak(answer);
+  }
+  document.getElementById("qCheckBtn").textContent = "確認";
+  setTimeout(() => input.focus(), 60);
 }
 
 // ===== 英翻中選擇題模式 =====
@@ -939,6 +1002,27 @@ function typeLetter(ch) {
 function check() {
   if (cur.answered) { next(); return; }
   if (opts.qtype === "zh") { document.getElementById("qStatus").textContent = "先選一個答案喔"; return; }
+  // 填字／發音：比對打字輸入框
+  if (opts.qtype === "fill" || opts.qtype === "listen") {
+    const input = document.getElementById("qTypeInput");
+    const guess = input.value.trim();
+    if (!guess) { document.getElementById("qStatus").textContent = "先打出你的答案喔"; input.focus(); return; }
+    cur.answered = true;
+    input.disabled = true;
+    const v = currentWord();
+    const ok = guess.toLowerCase() === cur.answerLc;
+    input.classList.add(ok ? "type-ok" : "type-bad");
+    if (!ok) cur.wrong.push(v);
+    document.getElementById("qStatus").textContent = "";
+    document.getElementById("qFeedback").innerHTML =
+      (ok ? "✅ 正確！" : "❌ 正確答案：") +
+      "<span class='word'> " + cur.answer + "</span> /" + (v.phon || "") + "/" +
+      "<button class='speak sm' onclick='speak(cur.answer)'>🔊</button><br>" +
+      "<span class='ex'>" + esc(v.pos) + " " + esc(v.zh) + "</span>";
+    document.getElementById("qCheckBtn").textContent = cur.idx + 1 < cur.list.length ? "下一題 →" : "看成績";
+    speak(cur.answer);
+    return;
+  }
   if (nextEmptySlot() >= 0) { document.getElementById("qStatus").textContent = "還沒填完喔"; return; }
   cur.answered = true;
   const v = currentWord();
@@ -1049,6 +1133,8 @@ document.addEventListener("keydown", e => {
     }
     return;
   }
+  // 填字／發音用原生輸入框，讓瀏覽器自己處理打字
+  if (opts.qtype === "fill" || opts.qtype === "listen") return;
   if (e.key === "Backspace") { e.preventDefault(); popLetter(); }
   else if (/^[a-zA-Z]$/.test(e.key)) { e.preventDefault(); typeLetter(e.key); }
 });
