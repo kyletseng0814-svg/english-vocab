@@ -1111,12 +1111,50 @@ function removeCurrent() {
   }
 }
 
+// 挑裝置裡最好聽的英文聲音（避免挑到機械音或中文腔）
+let _enVoice = null;
+function pickEnglishVoice() {
+  if (typeof speechSynthesis === "undefined") return null;
+  const voices = speechSynthesis.getVoices();
+  if (!voices.length) return null;
+  const en = voices.filter(v => /^en([-_]|$)/i.test(v.lang));
+  const pool = en.length ? en : voices;
+  const prefer = ["enhanced", "premium", "natural", "neural", "siri", "samantha", "ava", "allison", "google us english", "google uk english"];
+  for (const key of prefer) {
+    const hit = pool.find(v => (v.name + " " + (v.voiceURI || "")).toLowerCase().includes(key));
+    if (hit) return hit;
+  }
+  return pool.find(v => /en[-_]us/i.test(v.lang)) || pool[0];
+}
+if (typeof speechSynthesis !== "undefined") {
+  _enVoice = pickEnglishVoice();
+  speechSynthesis.onvoiceschanged = () => { _enVoice = pickEnglishVoice(); };
+}
+
 function speak(word) {
+  if (!word) return;
+  let done = false;
+  const fallback = () => { if (done) return; done = true; speakLocal(word); };
+  // 1) 優先用線上清晰的英文發音，播不出來（沒網路／被擋）就退回裝置語音
+  try {
+    const url = "https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=" + encodeURIComponent(word);
+    const audio = new Audio(url);
+    audio.onplaying = () => { done = true; };
+    audio.onerror = fallback;
+    const p = audio.play();
+    if (p && p.catch) p.catch(fallback);
+  } catch (e) { fallback(); }
+}
+
+// 裝置內建語音（備援）
+function speakLocal(word) {
   try {
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(word);
     u.lang = "en-US";
     u.rate = 0.9;
+    if (!_enVoice) _enVoice = pickEnglishVoice();
+    if (_enVoice) u.voice = _enVoice;
     speechSynthesis.speak(u);
   } catch (e) {}
 }
