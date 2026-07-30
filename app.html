@@ -337,7 +337,7 @@
       <label>練習範圍</label>
       <div class="choices" id="sourceChoices">
         <button class="choice active" data-v="mine">📚 單字庫</button>
-        <button class="choice" data-v="dict">🎯 多益單字庫</button>
+        <button class="choice" data-v="dict">🎯 核心單字庫</button>
       </div>
     </div>
     <div class="field">
@@ -359,7 +359,7 @@
 
   <button class="progress-btn" onclick="openProgress()">📊 我的學習進度</button>
   <button class="library-btn" style="margin-top: 10px" onclick="openLibrary()">📚 單字庫</button>
-  <button class="library-btn" style="margin-top: 10px" onclick="openDictLibrary()">🎯 多益單字庫</button>
+  <button class="library-btn" style="margin-top: 10px" onclick="openDictLibrary()">🎯 核心單字庫</button>
 
   <div class="theme-picker">
     <div class="tp-label">🎨 佈景主題</div>
@@ -382,7 +382,7 @@
     <button class="back" onclick="goHome()">← 返回</button>
     <span class="progress-text" id="dictCount"></span>
   </div>
-  <h1 class="lib-title">🎯 多益單字庫</h1>
+  <h1 class="lib-title">🎯 核心單字庫</h1>
   <div id="dictList"></div>
 </div>
 
@@ -532,7 +532,7 @@ async function lookup() {
     const card = document.createElement("div");
     card.className = "s-card";
     card.innerHTML = "<div class='s-word'>" + dictHit.w + (dictHit.phon ? " <span>/" + dictHit.phon + "/</span>" : "") +
-      "<span class='badge'>" + (dictHit.enriched ? "多益核心字" : "多益核心字 · 詳細內容製作中") + "</span></div>" +
+      "<span class='badge'>" + (dictHit.enriched ? "核心單字" : "核心單字 · 詳細內容製作中") + "</span></div>" +
       "<div class='s-zh'>" + (dictHit.pos ? dictHit.pos + " " : "") + dictHit.zh + "</div>" +
       (dictHit.en ? "<div class='s-en'>" + dictHit.en + "</div>" : "") +
       (dictHit.ex ? "<div class='s-en'><em>" + dictHit.ex + "</em></div>" : "");
@@ -542,7 +542,7 @@ async function lookup() {
     btn.onclick = () => {
       const entry = Object.assign({}, dictHit, { custom: true, added: new Date().toISOString().slice(0, 10) });
       delete entry.enriched;
-      if (!dictHit.enriched) entry.usage = "📖 多益核心字：詳細用法製作中，補完後會自動更新";
+      if (!dictHit.enriched) entry.usage = "📖 核心單字：詳細用法製作中，補完後會自動更新";
       const list = loadCustom();
       list.push(entry);
       saveCustom(list);
@@ -816,7 +816,7 @@ function renderProgress() {
 
 function openDictLibrary() {
   if (typeof DICT === "undefined") {
-    document.getElementById("searchResult").innerHTML = "<div class='s-msg'>多益字典載入失敗，請重新整理頁面</div>";
+    document.getElementById("searchResult").innerHTML = "<div class='s-msg'>字典載入失敗，請重新整理頁面</div>";
     return;
   }
   navigate({ view: "dictLib" });
