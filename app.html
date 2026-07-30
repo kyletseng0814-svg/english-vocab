@@ -354,6 +354,7 @@
       </div>
     </div>
     <button class="btn primary" onclick="startQuiz()">開始練習</button>
+    <div class="s-msg hidden" id="startMsg" style="margin-top:12px"></div>
   </div>
 
   <button class="progress-btn" onclick="openProgress()">📊 我的學習進度</button>
@@ -485,6 +486,14 @@ function practicePool() {
     return DICT.filter(d => d.enriched || (/[一-鿿]/.test(d.zh) && d.zh.length <= 60 && d.zh !== "（內容整理中）"));
   }
   return allWords();
+}
+// ===== 防呆：判斷一個字有沒有足夠資料玩某個模式 =====
+function hasZh(v) { return !!v.zh && /[一-鿿]/.test(v.zh) && v.zh !== "（內容整理中）"; }
+function hasClue(v) { return hasZh(v) || !!v.en || !!v.ex; } // 有中文、英文定義或例句任一，就有提示可出題
+function wordFitsMode(v, mode) {
+  if (mode === "zh") return hasZh(v);      // 英翻中：一定要有中文當正解
+  if (mode === "fill") return hasClue(v);  // 填字：至少要有個提示才拼得出來
+  return true;                              // 拼字、發音：光靠單字就能玩
 }
 let cur = { list: [], idx: 0, wrong: [], answered: false };
 
@@ -814,8 +823,20 @@ function openDictLibrary() {
 }
 
 function startQuiz() {
-  const list = shuffle(practicePool().slice()).slice(0, opts.count);
-  if (list.length === 0) return;
+  const msg = document.getElementById("startMsg");
+  if (msg) msg.classList.add("hidden");
+  // 只留下資料足夠玩這個模式的字
+  const pool = practicePool().filter(v => wordFitsMode(v, opts.qtype));
+  if (pool.length === 0) {
+    if (msg) {
+      msg.textContent = opts.qtype === "zh"
+        ? "😅 這個範圍裡還沒有「有中文」的字，出不了英翻中。先加幾個字，或改用「拼字」「發音」。"
+        : "😅 這個範圍裡的字資料太少，先加幾個字再開始吧。";
+      msg.classList.remove("hidden");
+    }
+    return;
+  }
+  const list = shuffle(pool.slice()).slice(0, opts.count);
   cur = { list: list, idx: 0, wrong: [], answered: false };
   const s = history.state;
   if (s && (s.view === "quiz" || s.view === "result")) history.replaceState({ view: "quiz" }, "");
@@ -914,7 +935,8 @@ function renderTypeQuestion(v, mode) {
   cur.answer = answer;
   cur.answerLc = answer.toLowerCase();
   document.getElementById("qPos").textContent = v.pos || "";
-  document.getElementById("qZh").textContent = v.zh || "";
+  // 發音模式沒有例句可看，缺中文時改用英文定義當提示
+  document.getElementById("qZh").textContent = mode === "listen" ? (v.zh || v.en || "") : (v.zh || "");
 
   const input = document.getElementById("qTypeInput");
   input.value = "";
@@ -924,7 +946,7 @@ function renderTypeQuestion(v, mode) {
 
   if (mode === "fill") {
     renderSentence(v, answer, 0); // 例句挖空、不給任何字母提示
-    document.getElementById("qStatus").textContent = "看例句與中文，把單字拼出來";
+    document.getElementById("qStatus").textContent = v.ex ? "看例句與中文，把單字拼出來" : "看提示，把單字拼出來";
   } else {
     document.getElementById("qAudio").innerHTML =
       "<button class='audio-btn' onclick='speak(cur.answer)'>🔊</button>";
