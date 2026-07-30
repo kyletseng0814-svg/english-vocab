@@ -11,6 +11,45 @@
     --wrong: #c0504d; --wrong-soft: #f6e4e3;
     --gold: #d9a441; --line: #e8e8e2;
   }
+  /* ===== 佈景主題 ===== */
+  :root[data-theme="forest"] {
+    --bg: #f7f7f2; --card: #ffffff; --ink: #2d2d2d; --sub: #8a8a84;
+    --accent: #4a7c59; --accent-soft: #e6efe9; --wrong: #c0504d; --wrong-soft: #f6e4e3; --gold: #d9a441; --line: #e8e8e2;
+  }
+  :root[data-theme="ocean"] {
+    --bg: #eef4f8; --card: #ffffff; --ink: #24303a; --sub: #7a8a96;
+    --accent: #2e6f9e; --accent-soft: #dcebf5; --wrong: #c0504d; --wrong-soft: #f6e4e3; --gold: #e0a13a; --line: #dbe6ee;
+  }
+  :root[data-theme="sunset"] {
+    --bg: #fbf3ec; --card: #ffffff; --ink: #3a2c22; --sub: #9a897c;
+    --accent: #d9722f; --accent-soft: #fbe6d6; --wrong: #c0392b; --wrong-soft: #f7e0dc; --gold: #e0a13a; --line: #efe2d6;
+  }
+  :root[data-theme="berry"] {
+    --bg: #f4f0f8; --card: #ffffff; --ink: #322a3c; --sub: #8c8296;
+    --accent: #7a4fa0; --accent-soft: #ece2f5; --wrong: #c0504d; --wrong-soft: #f6e4e3; --gold: #d9a441; --line: #e5ddec;
+  }
+  :root[data-theme="sakura"] {
+    --bg: #fbf0f3; --card: #ffffff; --ink: #3a2a30; --sub: #9c8a90;
+    --accent: #c65b7c; --accent-soft: #f8e0e8; --wrong: #c0392b; --wrong-soft: #f7e0dc; --gold: #d9a441; --line: #f0e2e6;
+  }
+  :root[data-theme="night"] {
+    --bg: #16181c; --card: #22262b; --ink: #e8eaed; --sub: #9aa0a8;
+    --accent: #5aa06f; --accent-soft: #263528; --wrong: #e0736f; --wrong-soft: #3a2624; --gold: #e0b64a; --line: #30353b;
+  }
+  .theme-picker { margin-top: 24px; text-align: center; }
+  .tp-label { font-size: 14px; color: var(--sub); margin-bottom: 12px; }
+  .swatches { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+  .swatch {
+    width: 48px; height: 48px; border-radius: 50%; cursor: pointer; position: relative;
+    border: 2px solid var(--line); padding: 0; transition: transform .08s;
+  }
+  .swatch:active { transform: scale(.9); }
+  .swatch.active { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 35%, transparent); }
+  .swatch.active::after {
+    content: "✓"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 20px; font-weight: 900; text-shadow: 0 1px 3px rgba(0,0,0,.55);
+  }
+  .tp-name { margin-top: 10px; font-size: 13px; color: var(--sub); min-height: 18px; }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body {
     font-family: -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif;
@@ -35,7 +74,7 @@
     display: flex; align-items: center; justify-content: center; gap: 8px;
     width: 100%; margin-top: 10px; padding: 16px; border-radius: 14px;
     font-size: 19px; font-weight: 700; color: #fff; background: var(--accent);
-    border: none; cursor: pointer; transition: transform .08s; box-shadow: 0 3px 10px rgba(74,124,89,.25);
+    border: none; cursor: pointer; transition: transform .08s; box-shadow: 0 3px 10px color-mix(in srgb, var(--accent) 30%, transparent);
   }
   .progress-btn:active { transform: scale(.98); }
   .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
@@ -223,7 +262,7 @@
   .audio-btn {
     width: 88px; height: 88px; border-radius: 50%; border: none; cursor: pointer;
     background: var(--accent-soft); color: var(--accent); font-size: 40px; line-height: 1;
-    box-shadow: 0 4px 14px rgba(74,124,89,.18); transition: transform .08s;
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 22%, transparent); transition: transform .08s;
   }
   .audio-btn:active { transform: scale(.94); }
 
@@ -236,6 +275,10 @@
   .review-item b { font-size: 17px; }
   .review-item div { color: var(--sub); font-size: 14px; margin-top: 3px; line-height: 1.5; }
 </style>
+<script>
+  // 一開頁就套用上次選的主題，避免顏色閃一下
+  try { var _t = localStorage.getItem("zibaoTheme"); if (_t) document.documentElement.dataset.theme = _t; } catch (e) {}
+</script>
 </head>
 <body>
 
@@ -288,6 +331,12 @@
   <button class="progress-btn" onclick="openProgress()">📊 我的學習進度</button>
   <button class="library-btn" style="margin-top: 10px" onclick="openLibrary()">📚 單字庫</button>
   <button class="library-btn" style="margin-top: 10px" onclick="openDictLibrary()">🎯 多益單字庫</button>
+
+  <div class="theme-picker">
+    <div class="tp-label">🎨 佈景主題</div>
+    <div class="swatches" id="swatches"></div>
+    <div class="tp-name" id="tpName"></div>
+  </div>
 </div>
 
 <div id="library" class="hidden">
@@ -1255,7 +1304,46 @@ document.addEventListener("touchend", e => {
   }
 }, { passive: true });
 
+// ===== 佈景主題 =====
+const THEMES = [
+  { id: "forest", name: "森林綠", bg: "#f7f7f2", ac: "#4a7c59" },
+  { id: "ocean",  name: "海洋藍", bg: "#eef4f8", ac: "#2e6f9e" },
+  { id: "sunset", name: "暖陽橘", bg: "#fbf3ec", ac: "#d9722f" },
+  { id: "berry",  name: "莓果紫", bg: "#f4f0f8", ac: "#7a4fa0" },
+  { id: "sakura", name: "櫻花粉", bg: "#fbf0f3", ac: "#c65b7c" },
+  { id: "night",  name: "夜間",   bg: "#16181c", ac: "#5aa06f" },
+];
+function currentTheme() {
+  let id = "forest";
+  try { id = localStorage.getItem("zibaoTheme") || "forest"; } catch (e) {}
+  return THEMES.find(t => t.id === id) ? id : "forest";
+}
+function applyTheme(id) {
+  const t = THEMES.find(x => x.id === id) || THEMES[0];
+  document.documentElement.dataset.theme = t.id;
+  try { localStorage.setItem("zibaoTheme", t.id); } catch (e) {}
+  document.querySelectorAll("#swatches .swatch").forEach(s => s.classList.toggle("active", s.dataset.id === t.id));
+  const n = document.getElementById("tpName");
+  if (n) n.textContent = t.name;
+}
+function renderThemes() {
+  const box = document.getElementById("swatches");
+  if (!box) return;
+  box.innerHTML = "";
+  THEMES.forEach(t => {
+    const b = document.createElement("button");
+    b.className = "swatch";
+    b.dataset.id = t.id;
+    b.title = t.name;
+    b.style.background = "linear-gradient(" + t.bg + " 60%, " + t.ac + " 60%)";
+    b.onclick = () => applyTheme(t.id);
+    box.appendChild(b);
+  });
+  applyTheme(currentTheme());
+}
+
 history.replaceState({ view: "home" }, "");
+renderThemes();
 renderHome();
 </script>
 </body>
