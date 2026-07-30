@@ -1704,7 +1704,7 @@ const DICT = [
   "enriched": true
  },
  {
-  "w": "ASAP=as",
+  "w": "ASAP",
   "pos": "abbr.",
   "phon": "ˌeɪ ɛs eɪ ˈpiː",
   "zh": "儘快，越快越好（as soon as possible 的縮寫）",
@@ -9608,7 +9608,7 @@ const DICT = [
   "enriched": true
  },
  {
-  "w": "floppy(disk)",
+  "w": "floppy disk",
   "pos": "n.",
   "phon": "ˈflɑːpi dɪsk",
   "zh": "軟碟片",
@@ -24007,7 +24007,7 @@ const DICT = [
  {"w": "hairdresser", "pos": "n.", "phon": "", "zh": "美髮師", "en": "", "ex": "", "usage": "📚 高中 7000 基礎字：音標、例句、詳細用法製作中", "syn": "", "synNote": "", "added": "2026-07-29", "enriched": false},
  {"w": "hairstyle", "pos": "n.", "phon": "", "zh": "髮型", "en": "", "ex": "", "usage": "📚 高中 7000 基礎字：音標、例句、詳細用法製作中", "syn": "", "synNote": "", "added": "2026-07-29", "enriched": false},
  {"w": "half", "pos": "adj./adv./n.", "phon": "", "zh": "二分之一的", "en": "", "ex": "", "usage": "📚 高中 7000 基礎字：音標、例句、詳細用法製作中", "syn": "", "synNote": "", "added": "2026-07-29", "enriched": false},
- {"w": "halftvay", "pos": "adj./adv.", "phon": "", "zh": "位於兩地中途的", "en": "", "ex": "", "usage": "📚 高中 7000 基礎字：音標、例句、詳細用法製作中", "syn": "", "synNote": "", "added": "2026-07-29", "enriched": false},
+ {"w": "halfway", "pos": "adj./adv.", "phon": "", "zh": "位於兩地中途的", "en": "", "ex": "", "usage": "📚 高中 7000 基礎字：音標、例句、詳細用法製作中", "syn": "", "synNote": "", "added": "2026-07-29", "enriched": false},
  {"w": "hallway", "pos": "n.", "phon": "", "zh": "玄關；走廊", "en": "", "ex": "", "usage": "📚 高中 7000 基礎字：音標、例句、詳細用法製作中", "syn": "", "synNote": "", "added": "2026-07-29", "enriched": false},
  {"w": "halt", "pos": "v./n.", "phon": "", "zh": "停止；暫停", "en": "", "ex": "", "usage": "📚 高中 7000 基礎字：音標、例句、詳細用法製作中", "syn": "", "synNote": "", "added": "2026-07-29", "enriched": false},
  {"w": "ham", "pos": "n.", "phon": "", "zh": "火腿", "en": "", "ex": "", "usage": "📚 高中 7000 基礎字：音標、例句、詳細用法製作中", "syn": "", "synNote": "", "added": "2026-07-29", "enriched": false},
