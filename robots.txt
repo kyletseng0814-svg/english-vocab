@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kyletseng0814-svg.github.io/english-vocab/sitemap.xml
