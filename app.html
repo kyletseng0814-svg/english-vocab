@@ -330,7 +330,7 @@
   <div class="search-wrap">
     <div class="search-bar">
       <span class="s-icon">🔍</span>
-      <input id="searchInput" type="text" placeholder="輸入英文單字，加入單字庫" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+      <input id="searchInput" type="text" placeholder="輸入英文單字，加入我的單字庫" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
       <button class="s-btn" onclick="lookup()">查詢</button>
     </div>
     <div id="searchResult"></div>
@@ -349,7 +349,7 @@
     <div class="field">
       <label>練習範圍</label>
       <div class="choices" id="sourceChoices">
-        <button class="choice active" data-v="mine">📚 單字庫</button>
+        <button class="choice active" data-v="mine">📚 我的單字庫</button>
         <button class="choice" data-v="dict">🎯 核心單字庫</button>
       </div>
     </div>
@@ -371,7 +371,7 @@
   </div>
 
   <button class="progress-btn" onclick="openProgress()">📊 我的學習進度</button>
-  <button class="library-btn" style="margin-top: 10px" onclick="openLibrary()">📚 單字庫</button>
+  <button class="library-btn" style="margin-top: 10px" onclick="openLibrary()">📚 我的單字庫</button>
   <button class="library-btn" style="margin-top: 10px" onclick="openDictLibrary()">🎯 核心單字庫</button>
 
   <div class="theme-picker">
@@ -386,7 +386,7 @@
     <button class="back" onclick="goHome()">← 返回</button>
     <span class="progress-text" id="libCount"></span>
   </div>
-  <h1 class="lib-title">📚 單字庫</h1>
+  <h1 class="lib-title">📚 我的單字庫</h1>
   <div id="vocabList"></div>
 </div>
 
@@ -488,8 +488,8 @@
   </div>
 </div>
 
-<script src="vocab.js?v=202608041340"></script>
-<script src="dict.js?v=202608041340"></script>
+<script src="vocab.js?v=202608041349"></script>
+<script src="dict.js?v=202608041349"></script>
 <script>
 let opts = { qtype: "spell", source: "mine", count: 5, hint: 1 };
 
@@ -536,7 +536,7 @@ async function lookup() {
   const box = document.getElementById("searchResult");
   const word = input.value.trim().toLowerCase();
   if (!word || !/^[a-z][a-z' -]*$/.test(word)) { box.innerHTML = "<div class='s-msg'>請輸入英文單字</div>"; return; }
-  if (allWords().some(v => v.w.toLowerCase() === word)) { box.innerHTML = "<div class='s-msg'>「" + word + "」已經在單字庫裡了</div>"; return; }
+  if (allWords().some(v => v.w.toLowerCase() === word)) { box.innerHTML = "<div class='s-msg'>「" + word + "」已經在我的單字庫裡了</div>"; return; }
 
   // 優先查內建多益字典
   const dictHit = (typeof DICT !== "undefined") ? DICT.find(d => d.w.toLowerCase() === word) : null;
@@ -551,7 +551,7 @@ async function lookup() {
       (dictHit.ex ? "<div class='s-en'><em>" + dictHit.ex + "</em></div>" : "");
     const btn = document.createElement("button");
     btn.className = "btn primary";
-    btn.textContent = "＋ 加入單字庫";
+    btn.textContent = "＋ 加入我的單字庫";
     btn.onclick = () => {
       const entry = Object.assign({}, dictHit, { custom: true, added: new Date().toISOString().slice(0, 10) });
       delete entry.enriched;
@@ -561,7 +561,7 @@ async function lookup() {
       saveCustom(list);
       input.value = "";
       renderHome();
-      box.innerHTML = "<div class='s-msg'>✅ 已加入單字庫的 " + dictHit.w[0].toUpperCase() + " 書籤！</div>";
+      box.innerHTML = "<div class='s-msg'>✅ 已加入我的單字庫的 " + dictHit.w[0].toUpperCase() + " 書籤！</div>";
     };
     card.appendChild(btn);
     box.appendChild(card);
@@ -597,14 +597,14 @@ async function lookup() {
       (def ? "<div class='s-en'>" + def + "</div>" : "");
     const btn = document.createElement("button");
     btn.className = "btn primary";
-    btn.textContent = "＋ 加入單字庫";
+    btn.textContent = "＋ 加入我的單字庫";
     btn.onclick = () => {
       const list = loadCustom();
       list.push(entry);
       saveCustom(list);
       input.value = "";
       renderHome();
-      box.innerHTML = "<div class='s-msg'>✅ 已加入單字庫的 " + word[0].toUpperCase() + " 書籤！（標「新」的字存在這台裝置上）</div>";
+      box.innerHTML = "<div class='s-msg'>✅ 已加入我的單字庫的 " + word[0].toUpperCase() + " 書籤！（標「新」的字存在這台裝置上）</div>";
     };
     card.appendChild(btn);
     box.appendChild(card);
@@ -621,8 +621,8 @@ function renderHome() {
   const n = words.length;
   const customCount = loadCustom().length;
   document.getElementById("homeSub").textContent =
-    n === 0 ? "單字庫還是空的——用下方搜尋列加字，或問 Claude 一個英文單字！"
-            : "單字庫目前有 " + n + " 個字" + (customCount ? "（含快速新增 " + customCount + " 個）" : "") + "。選好題數和提示，開始練拼字。";
+    n === 0 ? "我的單字庫還是空的——用下方搜尋列加字，或問 Claude 一個英文單字！"
+            : "我的單字庫目前有 " + n + " 個字" + (customCount ? "（含快速新增 " + customCount + " 個）" : "") + "。選好題數和提示，開始練拼字。";
   document.getElementById("settings").classList.toggle("hidden", n === 0 && typeof DICT === "undefined");
 
   // 練習類型選項（英翻中模式不需要字母提示，順便隱藏）
