@@ -276,6 +276,11 @@
 
   /* 英翻中選擇題模式 */
   .q-sentence .hl { color: var(--accent); font-weight: 700; border-bottom: 2px solid var(--accent); padding: 0 2px; }
+  /* 英翻中：例句中文提示（點按才顯示） */
+  .q-ex-hint { text-align: center; margin: -6px 0 18px; }
+  .q-ex-hint .hint-btn { background: var(--card); border: 1.5px dashed var(--accent); color: var(--accent); border-radius: 22px; padding: 9px 18px; font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; transition: transform .09s ease; }
+  .q-ex-hint .hint-btn:active { transform: scale(.96); }
+  .q-ex-hint .hint-zh { margin-top: 10px; color: var(--sub); font-size: 15px; line-height: 1.6; animation: pop .35s ease; }
   .q-choices { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
   .zh-opt {
     background: var(--card); border: 2px solid var(--line); border-radius: 18px;
@@ -430,6 +435,9 @@
   <!-- 第一排：例句題目（單字挖空） -->
   <div class="q-sentence" id="qSentence"></div>
 
+  <!-- 英翻中模式：例句中文提示（點按才顯示） -->
+  <div class="q-ex-hint" id="qExHint"></div>
+
   <!-- 第二排：中文意思提示（英翻中模式隱藏） -->
   <div class="q-hint-pill" id="qHintPill"><span class="pos" id="qPos"></span><span id="qZh"></span></div>
 
@@ -488,8 +496,8 @@
   </div>
 </div>
 
-<script src="vocab.js?v=202608041349"></script>
-<script src="dict.js?v=202608041349"></script>
+<script src="vocab.js?v=202608041356"></script>
+<script src="dict.js?v=202608041356"></script>
 <script>
 let opts = { qtype: "spell", source: "mine", count: 5, hint: 1 };
 
@@ -905,6 +913,7 @@ function renderQuestion() {
   document.getElementById("qTypeInput").classList.toggle("hidden", !(t === "fill" || t === "listen"));
   document.getElementById("qBackspace").style.display = t === "spell" ? "" : "none";
   document.getElementById("qFeedback").innerHTML = "";
+  document.getElementById("qExHint").innerHTML = "";
   if (t === "zh") { renderZhQuestion(v); return; }
   if (t === "fill" || t === "listen") { renderTypeQuestion(v, t); return; }
 
@@ -984,14 +993,27 @@ function renderZhQuestion(v) {
   cur.pool = [];
   cur.placed = [];
 
-  // 題目：例句中把單字標色保留
+  // 題目：只顯示英文例句，中文翻譯藏進「提示」按鈕（避免直接洩答案）
   const el = document.getElementById("qSentence");
-  const sentence = v.ex || "";
-  const idx = sentence.indexOf(form);
+  const full = v.ex || "";
+  const cjk = full.search(/[一-鿿]/);          // 找第一個中文字，前面是英文、後面是翻譯
+  const enPart = cjk >= 0 ? full.slice(0, cjk).trim() : full;
+  const zhPart = cjk >= 0 ? full.slice(cjk).trim() : "";
+  const idx = enPart.indexOf(form);
   if (idx >= 0) {
-    el.innerHTML = esc(sentence.slice(0, idx)) + "<span class='hl'>" + esc(form) + "</span>" + esc(sentence.slice(idx + form.length));
+    el.innerHTML = esc(enPart.slice(0, idx)) + "<span class='hl'>" + esc(form) + "</span>" + esc(enPart.slice(idx + form.length));
   } else {
     el.innerHTML = "<span class='hl'>" + esc(v.w) + "</span>" + (v.en ? "<br><span class='q-def'>" + esc(v.en) + "</span>" : "");
+  }
+
+  // 中文提示：點按鈕才顯示例句翻譯
+  const hintBox = document.getElementById("qExHint");
+  if (zhPart) {
+    hintBox.innerHTML =
+      "<button type='button' class='hint-btn' onclick='revealExHint(this)'>💡 看例句中文提示</button>" +
+      "<div class='hint-zh hidden'>" + esc(zhPart) + "</div>";
+  } else {
+    hintBox.innerHTML = "";
   }
 
   // 三個選項：一個正解＋兩個隨機別字的中文
@@ -1010,6 +1032,13 @@ function renderZhQuestion(v) {
   document.getElementById("qFeedback").innerHTML = "";
   document.getElementById("qStatus").textContent = "選出正確的中文意思（電腦可按 1 / 2 / 3）";
   document.getElementById("qCheckBtn").textContent = "確認";
+}
+
+// 英翻中：點「提示」顯示例句中文翻譯，按鈕隨即隱藏
+function revealExHint(btn) {
+  const zh = btn.parentNode.querySelector(".hint-zh");
+  if (zh) zh.classList.remove("hidden");
+  btn.classList.add("hidden");
 }
 
 function answerZh(btn, ok, v) {
