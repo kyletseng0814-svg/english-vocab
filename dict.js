@@ -19469,7 +19469,7 @@ const DICT = [
   "en": "a device for fastening papers together with staples",
   "ex": "Can I borrow your stapler?",
   "usage": "📝 考試：多益低頻辦公用品字：stapler（訂書機）——辦公室題材\n💬 口語：常用：staple the papers（把紙訂起來）；staple（訂書針／主食／主要的）；辦公室常見物品",
-  "syn": "",
+  "syn": "fastener",
   "synNote": "stapler 是「訂書機」（把紙張釘在一起的工具）；staple 是「訂書針」（釘進去的金屬針，也指「主要的、主食」）。use a stapler 用訂書機（工具），run out of staples 訂書針用完（耗材）——stapler 是機器，staple 是針",
   "added": "2026-07-12",
   "enriched": true
@@ -21354,7 +21354,7 @@ const DICT = [
   "en": "a bill for services like water, gas, or electricity",
   "ex": "I need to pay the utility bills this week.",
   "usage": "📝 考試：多益中頻：utility bills（水電帳單）——帳單與居家開支題材\n💬 口語：租屋族日常 😄 utility bills（水電瓦斯費）；有時當居住證明（proof of address）用",
-  "syn": "",
+  "syn": "bill",
   "synNote": "utility bill 是「水電瓦斯帳單」（水、電、瓦斯等公用事業的帳單）；跟 invoice（B2B 請款單，你字典 invoice 那條）不同——utility bill 是水電公司寄給住戶的月費帳單，invoice 是企業間的請款單。日常繳的 utility bill，公司請款的 invoice",
   "added": "2026-07-12",
   "enriched": true
@@ -21653,7 +21653,7 @@ const DICT = [
   "en": "a game where two teams hit a ball over a net",
   "ex": "They play beach volleyball on weekends.",
   "usage": "📝 考試：多益低頻運動字：volleyball（排球）——運動與活動題材\n💬 口語：常用：beach volleyball（沙灘排球）；volley（截擊）＋ ball（球）",
-  "syn": "",
+  "syn": "sport",
   "synNote": "volleyball 是「排球」（隔網對打的球類運動）；跟其他球類 basketball（籃球）、baseball（棒球）、football（足球/美式足球）一樣是複合字：運動名＋ball。beach volleyball 沙灘排球，indoor volleyball 室內排球",
   "added": "2026-07-12",
   "enriched": true
