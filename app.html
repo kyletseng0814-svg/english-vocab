@@ -375,11 +375,6 @@
     <div id="searchResult"></div>
   </div>
 
-  <button class="daily-btn" onclick="startDailyQuiz()">
-    <span class="db-title">🎯 每日練習</span>
-    <span class="db-sub">10 題混合：拼字 · 填字 · 英翻中 · 發音</span>
-  </button>
-
   <div class="panel" id="settings">
     <div class="field">
       <label>練習類型</label>
@@ -413,6 +408,11 @@
     <button class="btn primary" onclick="startQuiz()">開始練習</button>
     <div class="s-msg hidden" id="startMsg" style="margin-top:12px"></div>
   </div>
+
+  <button class="daily-btn" onclick="startDailyQuiz()">
+    <span class="db-title">🎯 每日練習</span>
+    <span class="db-sub">10 題混合：拼字 · 填字 · 英翻中 · 發音</span>
+  </button>
 
   <button class="progress-btn" onclick="openProgress()">📊 我的學習進度</button>
   <button class="library-btn" style="margin-top: 10px" onclick="openLibrary()">📚 我的單字庫</button>
@@ -535,8 +535,8 @@
   </div>
 </div>
 
-<script src="vocab.js?v=202608112157"></script>
-<script src="dict.js?v=202608112157"></script>
+<script src="vocab.js?v=202608112247"></script>
+<script src="dict.js?v=202608112247"></script>
 <script>
 let opts = { qtype: "spell", source: "mine", count: 5, hint: 1 };
 
