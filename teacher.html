@@ -117,6 +117,15 @@
   .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
   .chip { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 5px 12px; font-size: 14px; font-weight: 700; }
   .chip button { border: none; background: none; color: var(--accent); cursor: pointer; font-size: 16px; line-height: 1; padding: 0; }
+  .acctbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: var(--accent-soft); border-radius: 12px; margin-bottom: 18px; font-size: 14px; }
+  .cc-link { background: none; border: none; color: var(--accent); font-weight: 700; font-size: 14px; cursor: pointer; padding: 0; }
+  .listhead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 10px; flex-wrap: wrap; }
+  .listhead h3 { font-size: 16px; font-weight: 800; }
+  .classitem { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 10px; }
+  .classitem .ci-name { font-weight: 800; font-size: 15px; }
+  .classitem .ci-meta { font-size: 12.5px; color: var(--sub); margin-top: 2px; }
+  .classitem .tbtn { padding: 8px 16px; font-size: 13px; }
+  .list-empty { color: var(--sub); font-size: 14px; padding: 16px; text-align: center; }
 </style>
 </head>
 
@@ -131,64 +140,54 @@
 
 <div class="wrap">
   <div class="tool">
-    <h2>🎯 設定班級每日練習</h2>
-    <p class="desc">建一個班級、從題庫挑單字、選題型 → 學生輸入代碼（或掃 QR）就能加入，每天練你指定的內容。</p>
+    <h2>🎯 班級每日練習</h2>
+    <p class="desc">登入後建立班級、從題庫挑字、選題型 → 學生輸入代碼（或掃 QR）就能加入，每天練你指定的內容。</p>
 
-    <div class="seg">
-      <button id="tabNew" class="on" onclick="tMode('new')">建立新班級</button>
-      <button id="tabEdit" onclick="tMode('edit')">編輯現有班級</button>
+    <div id="authBox">
+      <div class="seg">
+        <button id="tabLogin" class="on" onclick="authMode('login')">登入</button>
+        <button id="tabSignup" onclick="authMode('signup')">註冊</button>
+      </div>
+      <div class="fld"><label>Email</label><input id="auEmail" type="email" placeholder="you@example.com"></div>
+      <div class="fld"><label>密碼（至少 6 碼）</label><input id="auPass" type="password" placeholder="密碼"></div>
+      <button class="tbtn" id="auBtn" onclick="doAuth()">登入</button>
+      <div class="tmsg" id="auMsg"></div>
     </div>
 
-    <div id="paneNew">
-      <div class="fld"><label>班級名稱</label><input id="tName" placeholder="例如：六年三班"></div>
-      <div class="fld"><label>編輯密碼（至少 4 碼，之後改單字要用，請記住）</label><input id="tPin" placeholder="例如：1234"></div>
-      <button class="tbtn" onclick="tCreate()">建立班級</button>
-      <div class="tmsg" id="tNewMsg"></div>
-    </div>
+    <div id="acctBox" class="hidden">
+      <div class="acctbar"><span>👩‍🏫 <b id="acctEmail"></b></span><button class="cc-link" onclick="doLogout()">登出</button></div>
 
-    <div id="paneOpen" class="hidden">
-      <div class="fld two">
-        <div><label>班級代碼</label><input id="tOpenCode" placeholder="6 碼代碼" maxlength="6" style="text-transform:uppercase"></div>
-        <div><label>編輯密碼</label><input id="tOpenPin" placeholder="編輯密碼"></div>
+      <div id="listWrap">
+        <div class="listhead"><h3>我的班級</h3><button class="tbtn" onclick="newClass()">＋ 建立新班級</button></div>
+        <div id="classList"></div>
       </div>
-      <button class="tbtn" onclick="tOpen()">開啟編輯</button>
-      <div class="tmsg" id="tOpenMsg"></div>
-    </div>
 
-    <div id="editor" class="hidden">
-      <div class="codebox">
-        <div>
-          <div style="font-size:12px;color:var(--sub);font-weight:700;margin-bottom:2px">班級代碼</div>
-          <div class="code" id="edCode">------</div>
+      <div id="editor" class="hidden">
+        <button class="cc-link" style="margin-bottom:14px" onclick="backToList()">← 回我的班級</button>
+        <div class="codebox">
+          <div><div style="font-size:12px;color:var(--sub);font-weight:700;margin-bottom:2px">班級代碼</div><div class="code" id="edCode">------</div></div>
+          <img class="qr" id="edQr" alt="班級 QR" onerror="this.style.display='none'">
+          <div class="share">給學生：打開字寶 → 輸入代碼 <b id="edCode2"></b>，或掃 QR 直接加入。<br>連結：<span class="lnk" id="edLink"></span><div style="margin-top:8px"><button class="tbtn ghost" onclick="tCopyLink()">複製連結</button></div></div>
         </div>
-        <img class="qr" id="edQr" alt="班級 QR" onerror="this.style.display='none'">
-        <div class="share">
-          給學生：打開字寶 → 輸入代碼 <b id="edCode2"></b>，或掃 QR 直接加入。<br>
-          連結：<span class="lnk" id="edLink"></span>
-          <div style="margin-top:8px"><button class="tbtn ghost" onclick="tCopyLink()">複製連結</button></div>
+        <div class="fld"><label>班級名稱</label><input id="edName" oninput="T.name=this.value.trim()"></div>
+        <div class="fld"><label>題型（至少留 1 種）</label>
+          <div class="types" id="edTypes">
+            <button data-t="spell" onclick="tToggle(this)">✏️ 拼字</button>
+            <button data-t="fill" onclick="tToggle(this)">⌨️ 填字</button>
+            <button data-t="zh" onclick="tToggle(this)">🈶 英翻中</button>
+            <button data-t="listen" onclick="tToggle(this)">🔊 發音</button>
+          </div>
         </div>
-      </div>
-
-      <div class="fld"><label>題型（至少留 1 種）</label>
-        <div class="types" id="edTypes">
-          <button data-t="spell" onclick="tToggle(this)">✏️ 拼字</button>
-          <button data-t="fill" onclick="tToggle(this)">⌨️ 填字</button>
-          <button data-t="zh" onclick="tToggle(this)">🈶 英翻中</button>
-          <button data-t="listen" onclick="tToggle(this)">🔊 發音</button>
+        <div class="divider"></div>
+        <div class="fld">
+          <label>班級單字庫 <span id="edCount" style="color:var(--sub);font-weight:600"></span></label>
+          <input id="wq" placeholder="搜尋題庫加字，例如 apple" oninput="tSearch()" autocomplete="off">
+          <div class="wresults hidden" id="wres"></div>
+          <div class="chips" id="chips"></div>
         </div>
+        <button class="tbtn" onclick="tSave()">💾 儲存</button>
+        <div class="tmsg" id="tSaveMsg"></div>
       </div>
-
-      <div class="divider"></div>
-
-      <div class="fld">
-        <label>班級單字庫 <span id="edCount" style="color:var(--sub);font-weight:600"></span></label>
-        <input id="wq" placeholder="搜尋題庫加字，例如 apple" oninput="tSearch()" autocomplete="off">
-        <div class="wresults hidden" id="wres"></div>
-        <div class="chips" id="chips"></div>
-      </div>
-
-      <button class="tbtn" onclick="tSave()">💾 儲存到雲端</button>
-      <div class="tmsg" id="tSaveMsg"></div>
     </div>
   </div>
 
@@ -280,62 +279,104 @@
   </div>
 </div>
 
-<script src="dict.js?v=202608112350"></script>
+<script src="dict.js?v=202608121059"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SB_URL = "https://qlhrpgqcyykygzrqbwyq.supabase.co";
 const SB_KEY = "sb_publishable_P90iQrfhYflLElzN169VFA_sWmPy__F";
-async function sbRpc(fn, args) {
-  const r = await fetch(SB_URL + "/rest/v1/rpc/" + fn, {
-    method: "POST",
-    headers: { apikey: SB_KEY, Authorization: "Bearer " + SB_KEY, "Content-Type": "application/json" },
-    body: JSON.stringify(args || {})
-  });
-  const d = await r.json().catch(() => null);
-  if (!r.ok) throw new Error((d && d.message) || "連線失敗");
-  return d;
-}
+const sb = supabase.createClient(SB_URL, SB_KEY);
 function eA(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
-let T = { code: "", pin: "", name: "", words: [], types: ["spell", "fill", "zh", "listen"] };
+let T = { code: "", name: "", pin: "", words: [], types: ["spell", "fill", "zh", "listen"] };
+let AUTHMODE = "login";
 
-function tMode(m) {
-  document.getElementById("tabNew").classList.toggle("on", m === "new");
-  document.getElementById("tabEdit").classList.toggle("on", m === "edit");
-  document.getElementById("paneNew").classList.toggle("hidden", m !== "new");
-  document.getElementById("paneOpen").classList.toggle("hidden", m !== "edit");
+// ---- 登入 / 註冊 ----
+function authMode(m) {
+  AUTHMODE = m;
+  document.getElementById("tabLogin").classList.toggle("on", m === "login");
+  document.getElementById("tabSignup").classList.toggle("on", m === "signup");
+  document.getElementById("auBtn").textContent = m === "login" ? "登入" : "註冊";
+  document.getElementById("auMsg").textContent = "";
+}
+function translateAuthErr(m) {
+  m = m || "";
+  if (/Invalid login/i.test(m)) return "帳號或密碼不對";
+  if (/already registered|already been registered|User already/i.test(m)) return "這個 email 已註冊過，請直接登入";
+  if (/at least 6|Password should/i.test(m)) return "密碼至少要 6 碼";
+  if (/Email not confirmed/i.test(m)) return "此帳號尚未開通（請確認信箱驗證已關閉）";
+  return m;
+}
+async function doAuth() {
+  const email = document.getElementById("auEmail").value.trim();
+  const pass = document.getElementById("auPass").value;
+  const msg = document.getElementById("auMsg"); msg.className = "tmsg";
+  if (!email || pass.length < 6) { msg.textContent = "請填 email，密碼至少 6 碼"; msg.classList.add("err"); return; }
+  msg.textContent = AUTHMODE === "login" ? "登入中…" : "註冊中…";
+  try {
+    const { data, error } = AUTHMODE === "login"
+      ? await sb.auth.signInWithPassword({ email, password: pass })
+      : await sb.auth.signUp({ email, password: pass });
+    if (error) throw error;
+    if (AUTHMODE === "signup" && !data.session) { msg.textContent = "註冊成功，請用剛剛的帳密登入"; authMode("login"); return; }
+    // 其餘由 onAuthStateChange 處理
+  } catch (e) { msg.textContent = translateAuthErr(e.message); msg.classList.add("err"); }
+}
+async function doLogout() { await sb.auth.signOut(); }
+
+async function renderAuth() {
+  const { data: { session } } = await sb.auth.getSession();
+  const authed = !!session;
+  document.getElementById("authBox").classList.toggle("hidden", authed);
+  document.getElementById("acctBox").classList.toggle("hidden", !authed);
+  if (authed) {
+    document.getElementById("acctEmail").textContent = session.user.email;
+    backToList();
+    loadMyClasses();
+  }
+}
+sb.auth.onAuthStateChange(() => renderAuth());
+
+// ---- 我的班級 ----
+async function loadMyClasses() {
+  const wrap = document.getElementById("classList");
+  wrap.innerHTML = "<div class='list-empty'>載入中…</div>";
+  try {
+    const { data, error } = await sb.rpc("my_classes");
+    if (error) throw error;
+    if (!data || !data.length) { wrap.innerHTML = "<div class='list-empty'>還沒有班級，點右上「＋ 建立新班級」開始。</div>"; return; }
+    wrap.innerHTML = data.map(c =>
+      "<div class='classitem'><div><div class='ci-name'>" + eA(c.name || "班級") + "</div>" +
+      "<div class='ci-meta'>代碼 " + eA(c.code) + " · " + (c.words ? c.words.length : 0) + " 字</div></div>" +
+      "<button class='tbtn' data-code='" + eA(c.code) + "'>編輯</button></div>").join("");
+    wrap.querySelectorAll("button[data-code]").forEach(b => {
+      const c = data.find(x => x.code === b.dataset.code);
+      b.onclick = () => editClass(c);
+    });
+  } catch (e) { wrap.innerHTML = "<div class='list-empty'>載入失敗，請重新整理</div>"; }
+}
+function backToList() {
   document.getElementById("editor").classList.add("hidden");
+  document.getElementById("listWrap").classList.remove("hidden");
 }
-async function tCreate() {
-  const name = document.getElementById("tName").value.trim();
-  const pin = document.getElementById("tPin").value.trim();
-  const msg = document.getElementById("tNewMsg"); msg.className = "tmsg";
-  if (pin.length < 4) { msg.textContent = "編輯密碼至少要 4 碼"; msg.classList.add("err"); return; }
-  msg.textContent = "建立中…";
+async function newClass() {
   try {
-    const code = await sbRpc("create_class", { p_name: name, p_pin: pin });
-    T = { code: code, pin: pin, name: name || "我的班級", words: [], types: ["spell", "fill", "zh", "listen"] };
-    openEditor(); msg.textContent = "";
-  } catch (e) { msg.textContent = e.message; msg.classList.add("err"); }
+    const { data: code, error } = await sb.rpc("create_class", { p_name: "新班級", p_pin: null });
+    if (error) throw error;
+    T = { code: code, name: "新班級", pin: "", words: [], types: ["spell", "fill", "zh", "listen"] };
+    openEditor();
+  } catch (e) { alert("建立失敗：" + (e.message || e)); }
 }
-async function tOpen() {
-  const code = document.getElementById("tOpenCode").value.trim().toUpperCase();
-  const pin = document.getElementById("tOpenPin").value.trim();
-  const msg = document.getElementById("tOpenMsg"); msg.className = "tmsg";
-  if (code.length < 4 || pin.length < 1) { msg.textContent = "請輸入代碼與編輯密碼"; msg.classList.add("err"); return; }
-  msg.textContent = "開啟中…";
-  try {
-    const rows = await sbRpc("get_class", { p_code: code });
-    if (!rows || !rows.length) { msg.textContent = "找不到這個代碼"; msg.classList.add("err"); return; }
-    const c = rows[0];
-    T = { code: c.code, pin: pin, name: c.name || "班級", words: c.words || [],
-      types: (c.daily_types && c.daily_types.length) ? c.daily_types : ["spell", "fill", "zh", "listen"] };
-    openEditor(); msg.textContent = "";
-  } catch (e) { msg.textContent = e.message; msg.classList.add("err"); }
+function editClass(c) {
+  T = { code: c.code, name: c.name || "班級", pin: "", words: c.words || [],
+    types: (c.daily_types && c.daily_types.length) ? c.daily_types : ["spell", "fill", "zh", "listen"] };
+  openEditor();
 }
 function studentLink() { return new URL("app.html?class=" + T.code, location.href).href; }
 function openEditor() {
+  document.getElementById("listWrap").classList.add("hidden");
   document.getElementById("editor").classList.remove("hidden");
   document.getElementById("edCode").textContent = T.code;
   document.getElementById("edCode2").textContent = T.code;
+  document.getElementById("edName").value = T.name;
   const link = studentLink();
   document.getElementById("edLink").textContent = link;
   const qr = document.getElementById("edQr");
@@ -343,7 +384,6 @@ function openEditor() {
   document.querySelectorAll("#edTypes button").forEach(b => b.classList.toggle("on", T.types.includes(b.dataset.t)));
   renderChips();
   document.getElementById("tSaveMsg").textContent = "";
-  document.getElementById("editor").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 function tToggle(b) {
   const t = b.dataset.t;
@@ -374,20 +414,21 @@ function renderChips() {
     "<span class='chip'>" + eA(w) + "<button data-w=\"" + eA(w) + "\">×</button></span>").join("");
 }
 async function tSave() {
-  const msg = document.getElementById("tSaveMsg"); msg.className = "tmsg";
-  msg.textContent = "儲存中…";
+  const msg = document.getElementById("tSaveMsg"); msg.className = "tmsg"; msg.textContent = "儲存中…";
   try {
-    await sbRpc("update_class", { p_code: T.code, p_pin: T.pin, p_name: T.name, p_words: T.words, p_types: T.types });
+    const { error } = await sb.rpc("update_class", { p_code: T.code, p_pin: T.pin || null, p_name: T.name, p_words: T.words, p_types: T.types });
+    if (error) throw error;
     msg.textContent = "✅ 已儲存！學生按「更新班級」或重開就會拿到最新內容。"; msg.classList.add("ok");
-  } catch (e) { msg.textContent = "儲存失敗：" + e.message; msg.classList.add("err"); }
+  } catch (e) { msg.textContent = "儲存失敗：" + (e.message || e); msg.classList.add("err"); }
 }
 function tCopyLink() {
   navigator.clipboard.writeText(studentLink()).then(() => {
     const m = document.getElementById("tSaveMsg"); m.className = "tmsg ok"; m.textContent = "連結已複製！";
   }).catch(() => {});
 }
-// 用事件委派處理搜尋結果／單字標籤的點擊（避免單字含特殊字元時 inline onclick 出錯）
 document.getElementById("wres").addEventListener("click", e => { const b = e.target.closest("button[data-w]"); if (b) tAdd(b.dataset.w); });
 document.getElementById("chips").addEventListener("click", e => { const b = e.target.closest("button[data-w]"); if (b) tRemove(b.dataset.w); });
+renderAuth();
 </script>
 </html>
+
