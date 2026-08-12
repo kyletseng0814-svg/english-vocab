@@ -81,6 +81,42 @@
   @media (prefers-color-scheme: dark) {
     :root { --bg: #1a1c19; --card: #24271f; --ink: #ececec; --sub: #9a9a94; --line: #33362f; --accent-soft: #2a352d; --nav-bg: rgba(26,28,25,.9); }
   }
+  /* 每日練習設定工具 */
+  .hidden { display: none !important; }
+  .tool { background: var(--card); border: 1px solid var(--line); border-radius: 20px; padding: 24px; margin: 24px 0; }
+  .tool h2 { font-size: 20px; font-weight: 900; margin-bottom: 4px; }
+  .tool .desc { color: var(--sub); font-size: 14px; margin-bottom: 20px; }
+  .seg { display: inline-flex; background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 4px; margin-bottom: 20px; }
+  .seg button { border: none; background: none; padding: 7px 18px; border-radius: 999px; font-weight: 700; font-size: 14px; color: var(--sub); cursor: pointer; }
+  .seg button.on { background: var(--accent); color: #fff; }
+  .fld { margin-bottom: 14px; }
+  .fld label { display: block; font-size: 13px; font-weight: 700; color: var(--sub); margin-bottom: 6px; }
+  .fld input { width: 100%; border: 1px solid var(--line); background: var(--bg); border-radius: 12px; padding: 11px 14px; font-size: 15px; color: var(--ink); }
+  .fld input:focus { outline: none; border-color: var(--accent); }
+  .fld.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .tbtn { border: none; background: var(--accent); color: #fff; font-weight: 800; font-size: 15px; border-radius: 12px; padding: 12px 22px; cursor: pointer; }
+  .tbtn:active { transform: scale(.98); }
+  .tbtn.ghost { background: var(--accent-soft); color: var(--accent); padding: 8px 16px; font-size: 13px; }
+  .tmsg { font-size: 14px; margin-top: 12px; min-height: 20px; color: var(--sub); }
+  .tmsg.ok { color: var(--accent); font-weight: 700; }
+  .tmsg.err { color: var(--warn); font-weight: 700; }
+  .codebox { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; background: var(--accent-soft); border-radius: 16px; padding: 18px; margin-bottom: 20px; }
+  .codebox .code { font-size: 30px; font-weight: 900; letter-spacing: 4px; color: var(--accent); }
+  .codebox .qr { width: 116px; height: 116px; border-radius: 10px; background: #fff; }
+  .codebox .share { flex: 1; min-width: 220px; font-size: 13px; color: var(--sub); line-height: 1.5; }
+  .codebox .share .lnk { word-break: break-all; color: var(--ink); font-weight: 600; }
+  .divider { height: 1px; background: var(--line); margin: 20px 0; }
+  .types { display: flex; gap: 8px; flex-wrap: wrap; }
+  .types button { border: 2px solid var(--line); background: var(--bg); color: var(--sub); border-radius: 999px; padding: 7px 16px; font-weight: 700; font-size: 14px; cursor: pointer; }
+  .types button.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  .wresults { border: 1px solid var(--line); border-radius: 12px; margin-top: 6px; max-height: 220px; overflow-y: auto; }
+  .wresults button { display: block; width: 100%; text-align: left; border: none; background: none; padding: 9px 14px; font-size: 14px; cursor: pointer; border-bottom: 1px solid var(--line); color: var(--ink); }
+  .wresults button:last-child { border-bottom: none; }
+  .wresults button:hover { background: var(--accent-soft); }
+  .wresults .zh { color: var(--sub); font-size: 13px; margin-left: 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 5px 12px; font-size: 14px; font-weight: 700; }
+  .chip button { border: none; background: none; color: var(--accent); cursor: pointer; font-size: 16px; line-height: 1; padding: 0; }
 </style>
 </head>
 
@@ -94,6 +130,68 @@
 </nav>
 
 <div class="wrap">
+  <div class="tool">
+    <h2>🎯 設定班級每日練習</h2>
+    <p class="desc">建一個班級、從題庫挑單字、選題型 → 學生輸入代碼（或掃 QR）就能加入，每天練你指定的內容。</p>
+
+    <div class="seg">
+      <button id="tabNew" class="on" onclick="tMode('new')">建立新班級</button>
+      <button id="tabEdit" onclick="tMode('edit')">編輯現有班級</button>
+    </div>
+
+    <div id="paneNew">
+      <div class="fld"><label>班級名稱</label><input id="tName" placeholder="例如：六年三班"></div>
+      <div class="fld"><label>編輯密碼（至少 4 碼，之後改單字要用，請記住）</label><input id="tPin" placeholder="例如：1234"></div>
+      <button class="tbtn" onclick="tCreate()">建立班級</button>
+      <div class="tmsg" id="tNewMsg"></div>
+    </div>
+
+    <div id="paneOpen" class="hidden">
+      <div class="fld two">
+        <div><label>班級代碼</label><input id="tOpenCode" placeholder="6 碼代碼" maxlength="6" style="text-transform:uppercase"></div>
+        <div><label>編輯密碼</label><input id="tOpenPin" placeholder="編輯密碼"></div>
+      </div>
+      <button class="tbtn" onclick="tOpen()">開啟編輯</button>
+      <div class="tmsg" id="tOpenMsg"></div>
+    </div>
+
+    <div id="editor" class="hidden">
+      <div class="codebox">
+        <div>
+          <div style="font-size:12px;color:var(--sub);font-weight:700;margin-bottom:2px">班級代碼</div>
+          <div class="code" id="edCode">------</div>
+        </div>
+        <img class="qr" id="edQr" alt="班級 QR" onerror="this.style.display='none'">
+        <div class="share">
+          給學生：打開字寶 → 輸入代碼 <b id="edCode2"></b>，或掃 QR 直接加入。<br>
+          連結：<span class="lnk" id="edLink"></span>
+          <div style="margin-top:8px"><button class="tbtn ghost" onclick="tCopyLink()">複製連結</button></div>
+        </div>
+      </div>
+
+      <div class="fld"><label>題型（至少留 1 種）</label>
+        <div class="types" id="edTypes">
+          <button data-t="spell" onclick="tToggle(this)">✏️ 拼字</button>
+          <button data-t="fill" onclick="tToggle(this)">⌨️ 填字</button>
+          <button data-t="zh" onclick="tToggle(this)">🈶 英翻中</button>
+          <button data-t="listen" onclick="tToggle(this)">🔊 發音</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="fld">
+        <label>班級單字庫 <span id="edCount" style="color:var(--sub);font-weight:600"></span></label>
+        <input id="wq" placeholder="搜尋題庫加字，例如 apple" oninput="tSearch()" autocomplete="off">
+        <div class="wresults hidden" id="wres"></div>
+        <div class="chips" id="chips"></div>
+      </div>
+
+      <button class="tbtn" onclick="tSave()">💾 儲存到雲端</button>
+      <div class="tmsg" id="tSaveMsg"></div>
+    </div>
+  </div>
+
   <header class="page">
     <h1>七月多益衝刺班</h1>
     <div class="cls">班級代碼：TOEIC-0714 · 8 位學生</div>
@@ -182,4 +280,114 @@
   </div>
 </div>
 
+<script src="dict.js?v=202608112350"></script>
+<script>
+const SB_URL = "https://qlhrpgqcyykygzrqbwyq.supabase.co";
+const SB_KEY = "sb_publishable_P90iQrfhYflLElzN169VFA_sWmPy__F";
+async function sbRpc(fn, args) {
+  const r = await fetch(SB_URL + "/rest/v1/rpc/" + fn, {
+    method: "POST",
+    headers: { apikey: SB_KEY, Authorization: "Bearer " + SB_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify(args || {})
+  });
+  const d = await r.json().catch(() => null);
+  if (!r.ok) throw new Error((d && d.message) || "連線失敗");
+  return d;
+}
+function eA(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+let T = { code: "", pin: "", name: "", words: [], types: ["spell", "fill", "zh", "listen"] };
+
+function tMode(m) {
+  document.getElementById("tabNew").classList.toggle("on", m === "new");
+  document.getElementById("tabEdit").classList.toggle("on", m === "edit");
+  document.getElementById("paneNew").classList.toggle("hidden", m !== "new");
+  document.getElementById("paneOpen").classList.toggle("hidden", m !== "edit");
+  document.getElementById("editor").classList.add("hidden");
+}
+async function tCreate() {
+  const name = document.getElementById("tName").value.trim();
+  const pin = document.getElementById("tPin").value.trim();
+  const msg = document.getElementById("tNewMsg"); msg.className = "tmsg";
+  if (pin.length < 4) { msg.textContent = "編輯密碼至少要 4 碼"; msg.classList.add("err"); return; }
+  msg.textContent = "建立中…";
+  try {
+    const code = await sbRpc("create_class", { p_name: name, p_pin: pin });
+    T = { code: code, pin: pin, name: name || "我的班級", words: [], types: ["spell", "fill", "zh", "listen"] };
+    openEditor(); msg.textContent = "";
+  } catch (e) { msg.textContent = e.message; msg.classList.add("err"); }
+}
+async function tOpen() {
+  const code = document.getElementById("tOpenCode").value.trim().toUpperCase();
+  const pin = document.getElementById("tOpenPin").value.trim();
+  const msg = document.getElementById("tOpenMsg"); msg.className = "tmsg";
+  if (code.length < 4 || pin.length < 1) { msg.textContent = "請輸入代碼與編輯密碼"; msg.classList.add("err"); return; }
+  msg.textContent = "開啟中…";
+  try {
+    const rows = await sbRpc("get_class", { p_code: code });
+    if (!rows || !rows.length) { msg.textContent = "找不到這個代碼"; msg.classList.add("err"); return; }
+    const c = rows[0];
+    T = { code: c.code, pin: pin, name: c.name || "班級", words: c.words || [],
+      types: (c.daily_types && c.daily_types.length) ? c.daily_types : ["spell", "fill", "zh", "listen"] };
+    openEditor(); msg.textContent = "";
+  } catch (e) { msg.textContent = e.message; msg.classList.add("err"); }
+}
+function studentLink() { return new URL("app.html?class=" + T.code, location.href).href; }
+function openEditor() {
+  document.getElementById("editor").classList.remove("hidden");
+  document.getElementById("edCode").textContent = T.code;
+  document.getElementById("edCode2").textContent = T.code;
+  const link = studentLink();
+  document.getElementById("edLink").textContent = link;
+  const qr = document.getElementById("edQr");
+  qr.style.display = ""; qr.src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=" + encodeURIComponent(link);
+  document.querySelectorAll("#edTypes button").forEach(b => b.classList.toggle("on", T.types.includes(b.dataset.t)));
+  renderChips();
+  document.getElementById("tSaveMsg").textContent = "";
+  document.getElementById("editor").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+function tToggle(b) {
+  const t = b.dataset.t;
+  if (T.types.includes(t)) { if (T.types.length <= 1) return; T.types = T.types.filter(x => x !== t); b.classList.remove("on"); }
+  else { T.types.push(t); b.classList.add("on"); }
+}
+function tSearch() {
+  const q = document.getElementById("wq").value.trim().toLowerCase();
+  const res = document.getElementById("wres");
+  if (q.length < 2 || typeof DICT === "undefined") { res.classList.add("hidden"); res.innerHTML = ""; return; }
+  const hits = DICT.filter(d => d.enriched && d.w.toLowerCase().includes(q) && !T.words.includes(d.w))
+    .sort((a, b) => (a.w.toLowerCase().startsWith(q) ? 0 : 1) - (b.w.toLowerCase().startsWith(q) ? 0 : 1))
+    .slice(0, 12);
+  if (!hits.length) { res.classList.add("hidden"); res.innerHTML = ""; return; }
+  res.innerHTML = hits.map(d => "<button data-w=\"" + eA(d.w) + "\">" + eA(d.w) + "<span class='zh'>" + eA(d.zh || "") + "</span></button>").join("");
+  res.classList.remove("hidden");
+}
+function tAdd(w) {
+  if (!T.words.includes(w)) T.words.push(w);
+  document.getElementById("wq").value = "";
+  document.getElementById("wres").classList.add("hidden");
+  renderChips();
+}
+function tRemove(w) { T.words = T.words.filter(x => x !== w); renderChips(); }
+function renderChips() {
+  document.getElementById("edCount").textContent = "（" + T.words.length + " 字）";
+  document.getElementById("chips").innerHTML = T.words.map(w =>
+    "<span class='chip'>" + eA(w) + "<button data-w=\"" + eA(w) + "\">×</button></span>").join("");
+}
+async function tSave() {
+  const msg = document.getElementById("tSaveMsg"); msg.className = "tmsg";
+  msg.textContent = "儲存中…";
+  try {
+    await sbRpc("update_class", { p_code: T.code, p_pin: T.pin, p_name: T.name, p_words: T.words, p_types: T.types });
+    msg.textContent = "✅ 已儲存！學生按「更新班級」或重開就會拿到最新內容。"; msg.classList.add("ok");
+  } catch (e) { msg.textContent = "儲存失敗：" + e.message; msg.classList.add("err"); }
+}
+function tCopyLink() {
+  navigator.clipboard.writeText(studentLink()).then(() => {
+    const m = document.getElementById("tSaveMsg"); m.className = "tmsg ok"; m.textContent = "連結已複製！";
+  }).catch(() => {});
+}
+// 用事件委派處理搜尋結果／單字標籤的點擊（避免單字含特殊字元時 inline onclick 出錯）
+document.getElementById("wres").addEventListener("click", e => { const b = e.target.closest("button[data-w]"); if (b) tAdd(b.dataset.w); });
+document.getElementById("chips").addEventListener("click", e => { const b = e.target.closest("button[data-w]"); if (b) tRemove(b.dataset.w); });
+</script>
 </html>

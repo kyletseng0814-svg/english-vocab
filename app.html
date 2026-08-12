@@ -107,6 +107,23 @@
   .daily-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 color-mix(in srgb, var(--accent), #000 24%), 0 3px 8px color-mix(in srgb, var(--accent) 26%, transparent); }
   .daily-btn .db-title { font-size: 20px; font-weight: 900; }
   .daily-btn .db-sub { font-size: 12.5px; opacity: .92; font-weight: 600; }
+  /* 班級（輸代碼加入）*/
+  .class-card { background: var(--card); border: 2px solid var(--line); border-radius: 18px; padding: 16px; margin-bottom: 18px; }
+  .class-card.joined { border-color: var(--accent); background: var(--accent-soft); }
+  .cc-title { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
+  .cc-title b { color: var(--accent); }
+  .cc-row { display: flex; gap: 8px; }
+  .cc-input { flex: 1; min-width: 0; border: 2px solid var(--line); background: var(--bg); border-radius: 999px;
+    padding: 10px 16px; font-size: 15px; color: var(--ink); text-transform: uppercase; letter-spacing: .12em; font-weight: 700; }
+  .cc-input:focus { outline: none; border-color: var(--accent); }
+  .cc-btn { flex: 0 0 auto; border: none; background: var(--accent); color: #fff; font-weight: 800; font-size: 14px;
+    border-radius: 999px; padding: 10px 20px; cursor: pointer; transition: transform .08s; }
+  .cc-btn:active { transform: scale(.95); }
+  .cc-msg { font-size: 13px; color: var(--sub); margin-top: 8px; min-height: 18px; }
+  .cc-meta { font-size: 13px; color: var(--sub); margin-bottom: 12px; }
+  .cc-actions { display: flex; gap: 16px; }
+  .cc-link { background: none; border: none; color: var(--accent); font-weight: 700; font-size: 14px; cursor: pointer; padding: 0; }
+  .cc-link.danger { color: var(--sub); }
   .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
   .stat-card { background: var(--card); border: 2px solid var(--line); border-radius: 22px; padding: 20px 16px; text-align: center; }
   .stat-card.wide { grid-column: 1 / -1; }
@@ -411,8 +428,10 @@
 
   <button class="daily-btn" onclick="startDailyQuiz()">
     <span class="db-title">🎯 每日練習</span>
-    <span class="db-sub">10 題混合：拼字 · 填字 · 英翻中 · 發音</span>
+    <span class="db-sub" id="dailySub">10 題混合：拼字 · 填字 · 英翻中 · 發音</span>
   </button>
+
+  <div id="classBox"></div>
 
   <button class="progress-btn" onclick="openProgress()">📊 我的學習進度</button>
   <button class="library-btn" style="margin-top: 10px" onclick="openLibrary()">📚 我的單字庫</button>
@@ -535,8 +554,8 @@
   </div>
 </div>
 
-<script src="vocab.js?v=202608112247"></script>
-<script src="dict.js?v=202608112247"></script>
+<script src="vocab.js?v=202608112350"></script>
+<script src="dict.js?v=202608112350"></script>
 <script>
 let opts = { qtype: "spell", source: "mine", count: 5, hint: 1 };
 
@@ -556,6 +575,97 @@ function wordFitsMode(v, mode) {
   return true;                              // 拼字、發音：光靠單字就能玩
 }
 let cur = { list: [], idx: 0, wrong: [], answered: false };
+
+// ===== 班級（Supabase 後端）=====
+const SB_URL = "https://qlhrpgqcyykygzrqbwyq.supabase.co";
+const SB_KEY = "sb_publishable_P90iQrfhYflLElzN169VFA_sWmPy__F";
+const TYPE_NAMES = { spell: "拼字", fill: "填字", zh: "英翻中", listen: "發音" };
+async function sbRpc(fn, args) {
+  const r = await fetch(SB_URL + "/rest/v1/rpc/" + fn, {
+    method: "POST",
+    headers: { apikey: SB_KEY, Authorization: "Bearer " + SB_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify(args || {})
+  });
+  const data = await r.json().catch(() => null);
+  if (!r.ok) throw new Error((data && data.message) || "連線失敗");
+  return data;
+}
+function loadClass() { try { return JSON.parse(localStorage.getItem("zibaoClass")); } catch (e) { return null; } }
+function saveClass(c) { localStorage.setItem("zibaoClass", JSON.stringify(c)); }
+function clearClass() { localStorage.removeItem("zibaoClass"); }
+function normClass(c) { return { code: c.code, name: c.name || "班級", words: c.words || [], types: c.daily_types || [], updated_at: c.updated_at }; }
+
+async function joinClass() {
+  const input = document.getElementById("classCodeInput");
+  const msg = document.getElementById("classMsg");
+  const code = (input.value || "").trim().toUpperCase();
+  if (code.length < 4) { msg.textContent = "請輸入班級代碼"; return; }
+  msg.textContent = "查詢中…";
+  try {
+    const rows = await sbRpc("get_class", { p_code: code });
+    if (!rows || !rows.length) { msg.textContent = "😅 找不到這個代碼，請跟老師確認"; return; }
+    saveClass(normClass(rows[0]));
+    renderHome();
+  } catch (e) { msg.textContent = "連線失敗，檢查網路後再試一次"; }
+}
+async function refreshClass(silent) {
+  const c = loadClass(); if (!c) return;
+  const msg = document.getElementById("classMsg");
+  if (!silent && msg) msg.textContent = "更新中…";
+  try {
+    const rows = await sbRpc("get_class", { p_code: c.code });
+    if (rows && rows.length) saveClass(normClass(rows[0]));
+    renderHome();
+  } catch (e) { if (!silent && msg) msg.textContent = "更新失敗，稍後再試"; }
+}
+function leaveClass() {
+  if (!confirm("要離開這個班級嗎？每日練習會改回核心題庫。")) return;
+  clearClass(); renderHome();
+}
+// 掃 QR / 開連結時帶 ?class=代碼 → 自動加入
+async function autoJoinClass(code) {
+  code = (code || "").trim().toUpperCase();
+  try {
+    const rows = await sbRpc("get_class", { p_code: code });
+    if (rows && rows.length) { saveClass(normClass(rows[0])); renderHome(); }
+  } catch (e) {}
+  try { history.replaceState({ view: "home" }, "", location.pathname); } catch (e) {}
+}
+function renderClassBox() {
+  const box = document.getElementById("classBox");
+  if (!box) return;
+  const c = loadClass();
+  if (c) {
+    const ts = (c.types && c.types.length ? c.types : ["spell", "fill", "zh", "listen"]).map(t => TYPE_NAMES[t] || t).join(" · ");
+    box.innerHTML =
+      "<div class='class-card joined'>" +
+        "<div class='cc-title'>🏫 已加入班級：<b>" + esc(c.name) + "</b></div>" +
+        "<div class='cc-meta'>代碼 " + esc(c.code) + " · " + (c.words ? c.words.length : 0) + " 個單字 · 題型 " + ts + "</div>" +
+        "<div class='cc-actions'>" +
+          "<button class='cc-link' onclick='refreshClass()'>🔄 更新班級</button>" +
+          "<button class='cc-link danger' onclick='leaveClass()'>離開</button>" +
+        "</div>" +
+      "</div>";
+  } else {
+    box.innerHTML =
+      "<div class='class-card'>" +
+        "<div class='cc-title'>🏫 老師有給你班級代碼嗎？</div>" +
+        "<div class='cc-row'>" +
+          "<input id='classCodeInput' class='cc-input' placeholder='輸入 6 碼代碼' maxlength='6' autocapitalize='characters' autocomplete='off' spellcheck='false'>" +
+          "<button class='cc-btn' onclick='joinClass()'>加入</button>" +
+        "</div>" +
+        "<div class='cc-msg' id='classMsg'></div>" +
+      "</div>";
+  }
+}
+function dailySubText() {
+  const c = loadClass();
+  if (c && c.words && c.words.length) {
+    const ts = (c.types && c.types.length ? c.types : ["spell", "fill", "zh", "listen"]).map(t => TYPE_NAMES[t] || t).join(" · ");
+    return "班級「" + c.name + "」· " + ts;
+  }
+  return "10 題混合：拼字 · 填字 · 英翻中 · 發音";
+}
 
 // ===== 手動新增的單字（存在這台裝置的瀏覽器） =====
 const CUSTOM_KEY = "toeicCustomWords";
@@ -699,6 +809,11 @@ function renderHome() {
 
   // 單字庫字首資料夾（A–Z 全部建立）
   renderLetterGrid("vocabList", "mine");
+
+  // 班級狀態 + 每日練習副標
+  renderClassBox();
+  const ds = document.getElementById("dailySub");
+  if (ds) ds.textContent = dailySubText();
 }
 
 function libraryWords(source) {
@@ -956,20 +1071,31 @@ function startQuiz() {
 }
 
 // 每日練習：抽 10 個字，每題隨機一種題型（拼字／填字／英翻中／發音混合）
+// 有加入班級 → 從班級單字庫抽、題型照老師設定；否則從核心題庫、全 4 種
 function startDailyQuiz() {
   const msg = document.getElementById("startMsg");
   if (msg) msg.classList.add("hidden");
-  const src = (typeof DICT !== "undefined")
-    ? DICT.filter(d => d.enriched)
-    : allWords().filter(v => hasZh(v) && (v.en || v.ex));
-  if (src.length < 4) {
-    if (msg) { msg.textContent = "😅 單字資料還在載入，等一下再試一次。"; msg.classList.remove("hidden"); }
+  const cls = loadClass();
+  let src, base;
+  if (cls && cls.words && cls.words.length) {
+    const bag = {};
+    (typeof DICT !== "undefined" ? DICT : []).forEach(d => { bag[d.w.toLowerCase()] = d; });
+    allWords().forEach(v => { if (!bag[v.w.toLowerCase()]) bag[v.w.toLowerCase()] = v; });
+    src = cls.words.map(w => bag[String(w).toLowerCase()]).filter(Boolean);
+    base = (cls.types && cls.types.length) ? cls.types.slice() : ["spell", "fill", "zh", "listen"];
+  } else {
+    src = (typeof DICT !== "undefined")
+      ? DICT.filter(d => d.enriched)
+      : allWords().filter(v => hasZh(v) && (v.en || v.ex));
+    base = ["spell", "fill", "zh", "listen"];
+  }
+  if (!src.length) {
+    if (msg) { msg.textContent = cls ? "😅 這個班級還沒有單字，請老師先加字。" : "😅 單字資料還在載入，等一下再試一次。"; msg.classList.remove("hidden"); }
     return;
   }
   const N = Math.min(10, src.length);
   const list = shuffle(src.slice()).slice(0, N);
   // 先湊出均衡的題型組合再打亂，避免整組剛好都同一種
-  const base = ["spell", "fill", "zh", "listen"];
   const types = shuffle(list.map((_, i) => base[i % base.length]));
   // 保險：萬一某字資料不夠玩被分到的題型，改成它玩得動的
   list.forEach((v, i) => {
@@ -1561,6 +1687,10 @@ function renderThemes() {
 history.replaceState({ view: "home" }, "");
 renderThemes();
 renderHome();
+// 帶 ?class=代碼 → 自動加入；否則若已加入班級，靜默抓老師最新的單字
+const _classParam = new URLSearchParams(location.search).get("class");
+if (_classParam) autoJoinClass(_classParam);
+else if (loadClass()) refreshClass(true);
 </script>
 </body>
 </html>
