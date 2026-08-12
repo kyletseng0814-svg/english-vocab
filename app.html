@@ -554,8 +554,8 @@
   </div>
 </div>
 
-<script src="vocab.js?v=202608112350"></script>
-<script src="dict.js?v=202608112350"></script>
+<script src="vocab.js?v=202608121121"></script>
+<script src="dict.js?v=202608121121"></script>
 <script>
 let opts = { qtype: "spell", source: "mine", count: 5, hint: 1 };
 
@@ -1217,8 +1217,8 @@ function renderTypeQuestion(v, mode) {
   input.placeholder = "輸入單字後按 Enter";
 
   if (mode === "fill") {
-    renderSentence(v, answer, 0); // 例句挖空、不給任何字母提示
-    document.getElementById("qStatus").textContent = v.ex ? "看例句與中文，把單字拼出來" : "看提示，把單字拼出來";
+    renderSentence(v, answer, 1); // 例句挖空，給第一個字母當開頭提示
+    document.getElementById("qStatus").textContent = v.ex ? "看例句與中文，第一個字母幫你開頭了" : "看提示，把單字拼出來";
   } else {
     document.getElementById("qAudio").innerHTML =
       "<button class='audio-btn' onclick='speak(cur.answer)'>🔊</button>";
