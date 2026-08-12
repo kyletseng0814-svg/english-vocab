@@ -381,7 +381,6 @@
 
 <div id="home">
   <h1 class="app-title">字寶</h1>
-  <p class="sub" id="homeSub"></p>
 
   <div class="search-wrap">
     <div class="search-bar">
@@ -554,8 +553,8 @@
   </div>
 </div>
 
-<script src="vocab.js?v=202608121121"></script>
-<script src="dict.js?v=202608121121"></script>
+<script src="vocab.js?v=202608121152"></script>
+<script src="dict.js?v=202608121152"></script>
 <script>
 let opts = { qtype: "spell", source: "mine", count: 5, hint: 1 };
 
@@ -776,10 +775,6 @@ function renderHome() {
   cleanCustom();
   const words = allWords();
   const n = words.length;
-  const customCount = loadCustom().length;
-  document.getElementById("homeSub").textContent =
-    n === 0 ? "我的單字庫還是空的——用下方搜尋列加字，或問 Claude 一個英文單字！"
-            : "我的單字庫目前有 " + n + " 個字" + (customCount ? "（含快速新增 " + customCount + " 個）" : "") + "。選好題數和提示，開始練拼字。";
   document.getElementById("settings").classList.toggle("hidden", n === 0 && typeof DICT === "undefined");
 
   // 練習類型選項（英翻中模式不需要字母提示，順便隱藏）
