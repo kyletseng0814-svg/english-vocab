@@ -108,6 +108,31 @@
   .mastery-bar { height: 12px; border-radius: 6px; background: var(--line); overflow: hidden; margin-top: 12px; }
   .mastery-bar > div { height: 100%; background: var(--accent); transition: width .4s; }
   .prog-empty { text-align: center; color: var(--sub); font-size: 15px; padding: 30px 10px; line-height: 1.7; }
+  /* 每日目標 + 一週打卡 */
+  .today-card { background: var(--card); border: 2px solid var(--line); border-radius: 22px; padding: 18px 16px; margin-bottom: 16px; }
+  .today-top { display: flex; align-items: center; gap: 18px; }
+  .goal-ring { flex: 0 0 auto; width: 108px; height: 108px; border-radius: 50%;
+    background: conic-gradient(var(--accent) calc(var(--pct) * 1%), var(--line) 0); display: flex; align-items: center; justify-content: center; }
+  .goal-ring.done { background: conic-gradient(var(--gold) 100%, var(--gold) 0); }
+  .goal-inner { width: 82px; height: 82px; border-radius: 50%; background: var(--card); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .goal-inner b { font-size: 30px; font-weight: 900; color: var(--accent); line-height: 1; }
+  .goal-ring.done .goal-inner b { color: var(--gold); }
+  .goal-inner span { font-size: 12px; color: var(--sub); margin-top: 2px; }
+  .today-right { flex: 1; min-width: 0; }
+  .today-msg { font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 10px; }
+  .today-msg.hit { color: var(--gold); }
+  .week-row { display: flex; gap: 4px; }
+  .day-cell { flex: 1; text-align: center; }
+  .day-dot { width: 24px; height: 24px; border-radius: 50%; margin: 0 auto 4px; border: 2px solid var(--line); background: var(--card); box-sizing: border-box; }
+  .day-dot.on { background: var(--accent); border-color: var(--accent); }
+  .day-dot.goal { background: var(--gold); border-color: var(--gold); }
+  .day-dot.today { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 32%, transparent); }
+  .day-lbl { font-size: 11px; color: var(--sub); }
+  .goal-set { display: flex; align-items: center; gap: 8px; margin-top: 14px; }
+  .goal-set .gs-label { font-size: 12px; color: var(--sub); margin-right: 2px; }
+  .goal-set button { border: 2px solid var(--line); background: var(--bg); color: var(--sub); border-radius: 999px; padding: 4px 14px; font-size: 13px; font-weight: 700; cursor: pointer; transition: transform .08s; }
+  .goal-set button:active { transform: scale(.94); }
+  .goal-set button.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
   h2 { font-size: 16px; margin: 22px 0 10px; }
   .hidden { display: none !important; }
 
@@ -496,8 +521,8 @@
   </div>
 </div>
 
-<script src="vocab.js?v=202608080108"></script>
-<script src="dict.js?v=202608080108"></script>
+<script src="vocab.js?v=202608112138"></script>
+<script src="dict.js?v=202608112138"></script>
 <script>
 let opts = { qtype: "spell", source: "mine", count: 5, hint: 1 };
 
@@ -788,6 +813,9 @@ function loadProg() {
   try { return JSON.parse(localStorage.getItem("zibaoProgress")) || {}; } catch (e) { return {}; }
 }
 function saveProg(p) { localStorage.setItem("zibaoProgress", JSON.stringify(p)); }
+// 用台北時間（UTC+8）算「今天」，避免半夜跨日算錯
+function ymdLocal(ms) { return new Date(ms + 8 * 3600000).toISOString().slice(0, 10); }
+function todayStr() { return ymdLocal(Date.now()); }
 
 function recordSession(list, wrong) {
   if (!list || !list.length) return;
@@ -800,14 +828,19 @@ function recordSession(list, wrong) {
     const m = p.mastery[v.w] || 0;
     p.mastery[v.w] = wrongSet.has(v.w) ? Math.max(0, m - 1) : Math.min(5, m + 1);
   });
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayStr();
   if (p.lastDate !== today) {
-    const yst = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    const yst = ymdLocal(Date.now() - 86400000);
     p.streak = (p.lastDate === yst) ? (p.streak || 0) + 1 : 1;
     p.todayCount = 0;
     p.lastDate = today;
   }
   p.todayCount = (p.todayCount || 0) + list.length;
+  // 每日打卡：記下每天練了幾個字（只保留最近 90 天，避免無限長大）
+  p.days = p.days || {};
+  p.days[today] = (p.days[today] || 0) + list.length;
+  const keep = ymdLocal(Date.now() - 90 * 86400000);
+  Object.keys(p.days).forEach(d => { if (d < keep) delete p.days[d]; });
   saveProg(p);
 }
 
@@ -824,7 +857,7 @@ function renderProgress() {
   const acc = p.totalAnswered ? Math.round(p.totalCorrect / p.totalAnswered * 100) : 0;
   const masteryPct = Math.round(mastered / learned * 100);
   document.getElementById("progUpdated").textContent = "最後練習 " + (p.lastDate || "");
-  body.innerHTML =
+  body.innerHTML = todayCardHtml(p) +
     "<div class='stat-grid'>" +
       "<div class='stat-card hero'><div class='num'>" + (p.streak || 0) + " <small>天</small></div><div class='lbl'>🔥 連續學習</div></div>" +
       "<div class='stat-card'><div class='num'>" + (p.todayCount || 0) + "</div><div class='lbl'>今日已練習</div></div>" +
@@ -833,6 +866,48 @@ function renderProgress() {
       "<div class='stat-card wide'><div class='num'>" + mastered + " <small>/ " + learned + "</small></div><div class='lbl'>已精熟單字（答對 3 次以上）</div>" +
         "<div class='mastery-bar'><div style='width:" + masteryPct + "%'></div></div></div>" +
     "</div>";
+}
+
+// 今日目標圈 + 一週打卡
+function todayCardHtml(p) {
+  const goal = p.dailyGoal || 10;
+  const todayN = p.todayCount || 0;
+  const pct = Math.min(100, Math.round(todayN / goal * 100));
+  const hit = todayN >= goal;
+  const days = p.days || {};
+  const labels = ["日", "一", "二", "三", "四", "五", "六"];
+  let cells = "";
+  for (let i = 6; i >= 0; i--) {
+    const ms = Date.now() - i * 86400000;
+    const cnt = days[ymdLocal(ms)] || 0;
+    let cls = "day-dot";
+    if (cnt >= goal && cnt > 0) cls += " goal"; else if (cnt > 0) cls += " on";
+    if (i === 0) cls += " today";
+    const lbl = labels[new Date(ms + 8 * 3600000).getUTCDay()];
+    cells += "<div class='day-cell'><div class='" + cls + "'></div><div class='day-lbl'>" + lbl + "</div></div>";
+  }
+  const msg = hit ? "🎉 今天達標囉，好棒！" : ("今天再練 " + (goal - todayN) + " 個字就達標 💪");
+  const gset = [5, 10, 20].map(n =>
+    "<button class='" + (goal === n ? "active" : "") + "' onclick='setDailyGoal(" + n + ")'>" + n + "</button>").join("");
+  return "<div class='today-card'>" +
+      "<div class='today-top'>" +
+        "<div class='goal-ring" + (hit ? " done" : "") + "' style='--pct:" + pct + "'>" +
+          "<div class='goal-inner'><b>" + todayN + "</b><span>/ " + goal + " 字</span></div>" +
+        "</div>" +
+        "<div class='today-right'>" +
+          "<div class='today-msg" + (hit ? " hit" : "") + "'>" + msg + "</div>" +
+          "<div class='week-row'>" + cells + "</div>" +
+        "</div>" +
+      "</div>" +
+      "<div class='goal-set'><span class='gs-label'>每日目標</span>" + gset + "</div>" +
+    "</div>";
+}
+
+function setDailyGoal(n) {
+  const p = loadProg();
+  p.dailyGoal = n;
+  saveProg(p);
+  renderProgress();
 }
 
 function openDictLibrary() {
