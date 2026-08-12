@@ -98,6 +98,15 @@
     transition: transform .09s ease, box-shadow .09s ease;
   }
   .progress-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 color-mix(in srgb, var(--accent), #000 22%), 0 3px 8px color-mix(in srgb, var(--accent) 26%, transparent); }
+  /* 每日練習大按鈕 */
+  .daily-btn { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 3px;
+    border: none; border-radius: 20px; padding: 15px; margin: 2px 0 18px; cursor: pointer; color: #fff;
+    background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent), var(--gold) 45%));
+    box-shadow: 0 5px 0 color-mix(in srgb, var(--accent), #000 24%), 0 8px 18px color-mix(in srgb, var(--accent) 32%, transparent);
+    transition: transform .08s; }
+  .daily-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 color-mix(in srgb, var(--accent), #000 24%), 0 3px 8px color-mix(in srgb, var(--accent) 26%, transparent); }
+  .daily-btn .db-title { font-size: 20px; font-weight: 900; }
+  .daily-btn .db-sub { font-size: 12.5px; opacity: .92; font-weight: 600; }
   .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
   .stat-card { background: var(--card); border: 2px solid var(--line); border-radius: 22px; padding: 20px 16px; text-align: center; }
   .stat-card.wide { grid-column: 1 / -1; }
@@ -366,6 +375,11 @@
     <div id="searchResult"></div>
   </div>
 
+  <button class="daily-btn" onclick="startDailyQuiz()">
+    <span class="db-title">🎯 每日練習</span>
+    <span class="db-sub">10 題混合：拼字 · 填字 · 英翻中 · 發音</span>
+  </button>
+
   <div class="panel" id="settings">
     <div class="field">
       <label>練習類型</label>
@@ -516,13 +530,13 @@
     <div class="review" id="rReview"></div>
     <div class="btn-row">
       <button class="btn" onclick="goHome()">回設定</button>
-      <button class="btn primary" onclick="startQuiz()">再練一次</button>
+      <button class="btn primary" onclick="repeatQuiz()">再練一次</button>
     </div>
   </div>
 </div>
 
-<script src="vocab.js?v=202608112138"></script>
-<script src="dict.js?v=202608112138"></script>
+<script src="vocab.js?v=202608112157"></script>
+<script src="dict.js?v=202608112157"></script>
 <script>
 let opts = { qtype: "spell", source: "mine", count: 5, hint: 1 };
 
@@ -941,7 +955,42 @@ function startQuiz() {
   renderQuestion();
 }
 
+// 每日練習：抽 10 個字，每題隨機一種題型（拼字／填字／英翻中／發音混合）
+function startDailyQuiz() {
+  const msg = document.getElementById("startMsg");
+  if (msg) msg.classList.add("hidden");
+  const src = (typeof DICT !== "undefined")
+    ? DICT.filter(d => d.enriched)
+    : allWords().filter(v => hasZh(v) && (v.en || v.ex));
+  if (src.length < 4) {
+    if (msg) { msg.textContent = "😅 單字資料還在載入，等一下再試一次。"; msg.classList.remove("hidden"); }
+    return;
+  }
+  const N = Math.min(10, src.length);
+  const list = shuffle(src.slice()).slice(0, N);
+  // 先湊出均衡的題型組合再打亂，避免整組剛好都同一種
+  const base = ["spell", "fill", "zh", "listen"];
+  const types = shuffle(list.map((_, i) => base[i % base.length]));
+  // 保險：萬一某字資料不夠玩被分到的題型，改成它玩得動的
+  list.forEach((v, i) => {
+    if (!wordFitsMode(v, types[i])) {
+      const fit = base.filter(t => wordFitsMode(v, t));
+      types[i] = fit[Math.floor(Math.random() * fit.length)] || "spell";
+    }
+  });
+  cur = { list: list, types: types, idx: 0, wrong: [], answered: false, daily: true };
+  const s = history.state;
+  if (s && (s.view === "quiz" || s.view === "result")) history.replaceState({ view: "quiz" }, "");
+  else history.pushState({ view: "quiz" }, "");
+  show("quiz");
+  renderQuestion();
+}
+
 function currentWord() { return cur.list[cur.idx]; }
+// 當題題型：每日練習時每題各自帶一種；一般練習則用全域 opts.qtype
+function qType() { return (cur.types && cur.types[cur.idx]) ? cur.types[cur.idx] : opts.qtype; }
+// 「再練一次」：剛剛是每日練習就再抽一組，否則照設定重練
+function repeatQuiz() { if (cur && cur.daily) startDailyQuiz(); else startQuiz(); }
 
 function esc(s) { return (s || "").replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c])); }
 
@@ -977,8 +1026,8 @@ function renderQuestion() {
   document.getElementById("qProgress").textContent = (cur.idx + 1) + " / " + total;
   document.getElementById("qBar").style.width = (cur.idx / total * 100) + "%";
 
-  // 依練習類型切換顯示的區塊
-  const t = opts.qtype;
+  // 依練習類型切換顯示的區塊（每日練習時每題各自的類型）
+  const t = qType();
   document.getElementById("qSentence").classList.toggle("hidden", t === "listen");
   document.getElementById("qAudio").classList.toggle("hidden", t !== "listen");
   document.getElementById("qHintPill").classList.toggle("hidden", t === "zh");
@@ -1217,9 +1266,9 @@ function typeLetter(ch) {
 
 function check() {
   if (cur.answered) { next(); return; }
-  if (opts.qtype === "zh") { document.getElementById("qStatus").textContent = "先選一個答案喔"; return; }
+  if (qType() === "zh") { document.getElementById("qStatus").textContent = "先選一個答案喔"; return; }
   // 填字／發音：比對打字輸入框
-  if (opts.qtype === "fill" || opts.qtype === "listen") {
+  if (qType() === "fill" || qType() === "listen") {
     const input = document.getElementById("qTypeInput");
     const guess = input.value.trim();
     if (!guess) { document.getElementById("qStatus").textContent = "先打出你的答案喔"; input.focus(); return; }
@@ -1271,7 +1320,7 @@ function finish() {
   recordSession(cur.list, cur.wrong);
   document.getElementById("rScore").textContent = pct + "%";
   document.getElementById("rMsg").textContent =
-    pct === 100 ? "全對！拼字滿分 🎉" : "答對 " + right + " / " + total + "，錯的字再看一眼";
+    pct === 100 ? "全對！滿分 🎉" : "答對 " + right + " / " + total + "，錯的字再看一眼";
   const rv = document.getElementById("rReview");
   if (cur.wrong.length) {
     rv.classList.remove("hidden");
@@ -1380,7 +1429,7 @@ document.addEventListener("keydown", e => {
   if (document.getElementById("quiz").classList.contains("hidden")) return;
   if (e.key === "Enter") { e.preventDefault(); check(); return; }
   if (cur.answered) return;
-  if (opts.qtype === "zh") {
+  if (qType() === "zh") {
     if (/^[1-3]$/.test(e.key)) {
       const b = document.querySelectorAll("#qChoices .zh-opt")[+e.key - 1];
       if (b && !b.disabled) b.click();
@@ -1388,7 +1437,7 @@ document.addEventListener("keydown", e => {
     return;
   }
   // 填字／發音用原生輸入框，讓瀏覽器自己處理打字
-  if (opts.qtype === "fill" || opts.qtype === "listen") return;
+  if (qType() === "fill" || qType() === "listen") return;
   if (e.key === "Backspace") { e.preventDefault(); popLetter(); }
   else if (/^[a-zA-Z]$/.test(e.key)) { e.preventDefault(); typeLetter(e.key); }
 });
