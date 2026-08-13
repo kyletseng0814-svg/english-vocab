@@ -190,10 +190,11 @@
   .src-opt.active { color: var(--accent); background: var(--accent-soft); }
   .src-opt.locked { color: var(--sub); opacity: .6; }
   .src-hint { font-size: 12px; font-weight: 600; color: var(--sub); margin-left: auto; }
-  .choice.count-custom { display: inline-flex; align-items: center; gap: 2px; padding: 9px 14px; }
-  .count-custom input { width: 42px; border: none; background: transparent; font-size: 15px; font-weight: 700; color: inherit; text-align: center; outline: none; -moz-appearance: textfield; }
-  .count-custom input::-webkit-outer-spin-button, .count-custom input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-  .count-custom input::placeholder { color: var(--sub); font-weight: 600; }
+  .count-custom-row { gap: 4px; }
+  .count-custom-row input { width: 60px; border: 1px solid var(--line); background: var(--bg); border-radius: 8px; padding: 4px 8px; font-size: 15px; font-weight: 700; color: var(--ink); outline: none; -moz-appearance: textfield; }
+  .count-custom-row input:focus { border-color: var(--accent); }
+  .count-custom-row input::-webkit-outer-spin-button, .count-custom-row input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .count-custom-row input::placeholder { color: var(--sub); font-weight: 600; }
   .btn {
     width: 100%; padding: 15px; border-radius: 18px; font-size: 16px; font-weight: 700; cursor: pointer;
     border: 2px solid var(--line); background: var(--card);
@@ -437,11 +438,12 @@
   <div class="panel" id="settings">
     <div class="field">
       <label>練習類型</label>
-      <div class="choices" id="typeChoices">
-        <button class="choice active" data-v="spell">✏️ 拼字</button>
-        <button class="choice" data-v="fill">⌨️ 填字</button>
-        <button class="choice" data-v="zh">🈶 英翻中</button>
-        <button class="choice" data-v="listen">🔊 發音</button>
+      <div class="source-wrap">
+        <button class="source-field" onclick="toggleTypeMenu(event)">
+          <span id="typeLabel">✏️ 拼字</span>
+          <span class="sf-caret">▾</span>
+        </button>
+        <div class="source-menu hidden" id="typeMenu"></div>
       </div>
     </div>
     <div class="field">
@@ -456,7 +458,13 @@
     </div>
     <div class="field">
       <label>題數</label>
-      <div class="choices" id="countChoices"></div>
+      <div class="source-wrap">
+        <button class="source-field" onclick="toggleCountMenu(event)">
+          <span id="countLabel">5 題</span>
+          <span class="sf-caret">▾</span>
+        </button>
+        <div class="source-menu hidden" id="countMenu"></div>
+      </div>
     </div>
     <div class="field" id="hintField">
       <label>開頭字母提示</label>
@@ -624,8 +632,8 @@
   </div>
 </div>
 
-<script src="vocab.js?v=202608130945"></script>
-<script src="dict.js?v=202608130945"></script>
+<script src="vocab.js?v=202608131020"></script>
+<script src="dict.js?v=202608131020"></script>
 <script>
 let opts = { qtype: "spell", source: "mine", count: 5, hint: 1 };
 
@@ -672,11 +680,89 @@ function pickSource(v) {
   opts.source = v;
   document.getElementById("sourceLabel").textContent = sourceLabelOf(v);
   closeSourceMenu();
-  renderCounts();
+  refreshCount();
 }
 document.addEventListener("click", e => {
   const m = document.getElementById("sourceMenu");
   if (m && !m.classList.contains("hidden") && !e.target.closest(".source-wrap")) m.classList.add("hidden");
+});
+
+// ===== 練習類型：單一欄位 + 彈出選單 =====
+const TYPES = [
+  { v: "spell", label: "✏️ 拼字" },
+  { v: "fill", label: "⌨️ 填字" },
+  { v: "zh", label: "🈶 英翻中" },
+  { v: "listen", label: "🔊 發音" }
+];
+function typeLabelOf(v) { return (TYPES.find(t => t.v === v) || TYPES[0]).label; }
+function renderTypeMenu() {
+  const menu = document.getElementById("typeMenu");
+  menu.innerHTML = TYPES.map(t => "<button class='src-opt" + (opts.qtype === t.v ? " active" : "") + "' data-v='" + t.v + "'><span>" + t.label + "</span></button>").join("");
+  menu.querySelectorAll("button[data-v]").forEach(b => b.onclick = e => { e.stopPropagation(); pickType(b.dataset.v); });
+}
+function toggleTypeMenu(e) {
+  if (e) e.stopPropagation();
+  const m = document.getElementById("typeMenu");
+  if (m.classList.contains("hidden")) { renderTypeMenu(); m.classList.remove("hidden"); } else m.classList.add("hidden");
+}
+function pickType(v) {
+  opts.qtype = v;
+  document.getElementById("typeLabel").textContent = typeLabelOf(v);
+  document.getElementById("typeMenu").classList.add("hidden");
+  document.getElementById("hintField").classList.toggle("hidden", v !== "spell");
+}
+
+// ===== 題數：單一欄位 + 彈出選單（我的/班級單字庫只給 5/10/20，不出「全部」）=====
+function countPresets() { return (opts.source === "mine" || opts.source === "class") ? [5, 10, 20] : [5, 10, 20, 50]; }
+function allowCustomCount() { return !(opts.source === "mine" || opts.source === "class"); }
+function refreshCount() {
+  const presets = countPresets();
+  if (opts.source === "mine" || opts.source === "class") {
+    if (!presets.includes(opts.count)) opts.count = 5;
+  } else {
+    if (!opts.count || opts.count < 1) opts.count = 5;
+  }
+  const lbl = document.getElementById("countLabel");
+  if (lbl) lbl.textContent = opts.count + " 題";
+}
+function renderCountMenu() {
+  const menu = document.getElementById("countMenu");
+  const presets = countPresets();
+  let html = presets.map(c => "<button class='src-opt" + (opts.count === c ? " active" : "") + "' data-c='" + c + "'><span>" + c + " 題</span></button>").join("");
+  if (allowCustomCount()) {
+    html += "<label class='src-opt count-custom-row'><input type='number' id='countCustomInput' min='1' placeholder='自訂' inputmode='numeric'><span>題</span></label>";
+  }
+  menu.innerHTML = html;
+  menu.querySelectorAll("button[data-c]").forEach(b => b.onclick = e => { e.stopPropagation(); pickCount(+b.dataset.c); });
+  const ci = document.getElementById("countCustomInput");
+  if (ci) {
+    ci.onclick = e => e.stopPropagation();
+    ci.oninput = () => {
+      let v = parseInt(ci.value, 10);
+      const n = practicePool().length;
+      if (isNaN(v) || v < 1) return;
+      if (n > 0 && v > n) { v = n; ci.value = n; }
+      opts.count = v;
+      document.getElementById("countLabel").textContent = v + " 題";
+      menu.querySelectorAll(".src-opt").forEach(x => x.classList.remove("active"));
+    };
+  }
+}
+function toggleCountMenu(e) {
+  if (e) e.stopPropagation();
+  const m = document.getElementById("countMenu");
+  if (m.classList.contains("hidden")) { renderCountMenu(); m.classList.remove("hidden"); } else m.classList.add("hidden");
+}
+function pickCount(c) {
+  opts.count = c;
+  document.getElementById("countLabel").textContent = c + " 題";
+  document.getElementById("countMenu").classList.add("hidden");
+}
+document.addEventListener("click", e => {
+  ["typeMenu", "countMenu"].forEach(id => {
+    const m = document.getElementById(id);
+    if (m && !m.classList.contains("hidden") && !e.target.closest(".source-wrap")) m.classList.add("hidden");
+  });
 });
 
 function practicePool() {
@@ -950,21 +1036,17 @@ function renderHome() {
   const n = words.length;
   document.getElementById("settings").classList.toggle("hidden", n === 0 && typeof DICT === "undefined");
 
-  // 練習類型選項（英翻中模式不需要字母提示，順便隱藏）
-  document.querySelectorAll("#typeChoices .choice").forEach(b => {
-    b.onclick = () => {
-      pick(document.getElementById("typeChoices"), b);
-      opts.qtype = b.dataset.v;
-      // 只有「拼字」模式會用到首字母提示
-      document.getElementById("hintField").classList.toggle("hidden", opts.qtype !== "spell");
-    };
-  });
+  // 練習類型：更新欄位＋首字母提示只在拼字模式顯示
+  document.getElementById("typeLabel").textContent = typeLabelOf(opts.qtype);
+  document.getElementById("hintField").classList.toggle("hidden", opts.qtype !== "spell");
+  document.getElementById("typeMenu").classList.add("hidden");
 
   // 練習範圍：若目前選的範圍已不可用（離開班級／單字庫空了），自動退回可用的
   if (!sourceEnabled(opts.source)) opts.source = sourceEnabled("mine") ? "mine" : "dict";
   document.getElementById("sourceLabel").textContent = sourceLabelOf(opts.source);
   closeSourceMenu();
-  renderCounts();
+  document.getElementById("countMenu").classList.add("hidden");
+  refreshCount();
 
   // 提示選項
   document.querySelectorAll("#hintChoices .choice").forEach(b => {
@@ -1034,39 +1116,6 @@ function renderLetterContent(source, L) {
 }
 
 function backFromLetter() { history.back(); }
-
-function renderCounts() {
-  const n = practicePool().length;
-  const counts = [5, 10, 20, 50].filter(c => c < n);
-  if (n > 0 && n <= 50) counts.push(n);
-  const cbox = document.getElementById("countChoices");
-  cbox.innerHTML = "";
-  counts.forEach((c, i) => {
-    const b = document.createElement("button");
-    b.className = "choice" + (i === 0 ? " active" : "");
-    b.textContent = c === n ? "全部 " + n + " 題" : c + " 題";
-    b.dataset.v = c;
-    b.onclick = () => { pick(cbox, b); opts.count = c; };
-    cbox.appendChild(b);
-  });
-  // 自訂題數
-  if (n > 1) {
-    const custom = document.createElement("label");
-    custom.className = "choice count-custom";
-    custom.innerHTML = "<input type='number' min='1' max='" + n + "' placeholder='自訂' inputmode='numeric'> 題";
-    const inp = custom.querySelector("input");
-    inp.oninput = () => {
-      let v = parseInt(inp.value, 10);
-      if (isNaN(v) || v < 1) return;
-      if (v > n) { v = n; inp.value = n; }
-      opts.count = v;
-      cbox.querySelectorAll(".choice").forEach(x => x.classList.remove("active"));
-      custom.classList.add("active");
-    };
-    cbox.appendChild(custom);
-  }
-  opts.count = counts[0] || 0;
-}
 
 function pick(box, btn) {
   box.querySelectorAll(".choice").forEach(b => b.classList.remove("active"));
