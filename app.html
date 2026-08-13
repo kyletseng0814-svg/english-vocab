@@ -98,15 +98,20 @@
     transition: transform .09s ease, box-shadow .09s ease;
   }
   .progress-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 color-mix(in srgb, var(--accent), #000 22%), 0 3px 8px color-mix(in srgb, var(--accent) 26%, transparent); }
-  /* 每日練習大按鈕 */
-  .daily-btn { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 3px;
-    border: none; border-radius: 20px; padding: 15px; margin: 2px 0 18px; cursor: pointer; color: #fff;
-    background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent), var(--gold) 45%));
-    box-shadow: 0 5px 0 color-mix(in srgb, var(--accent), #000 24%), 0 8px 18px color-mix(in srgb, var(--accent) 32%, transparent);
-    transition: transform .08s; }
-  .daily-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 color-mix(in srgb, var(--accent), #000 24%), 0 3px 8px color-mix(in srgb, var(--accent) 26%, transparent); }
-  .daily-btn .db-title { font-size: 20px; font-weight: 900; }
-  .daily-btn .db-sub { font-size: 12.5px; opacity: .92; font-weight: 600; }
+  /* 每日練習 ｜ 單字庫 並排按鈕 */
+  .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 2px 0 18px; }
+  .action-btn { display: flex; flex-direction: column; align-items: center; gap: 3px;
+    border: none; border-radius: 20px; padding: 16px 10px; cursor: pointer; color: #fff; transition: transform .08s; }
+  .action-btn:active { transform: translateY(4px); }
+  .action-btn .ab-ic { font-size: 26px; line-height: 1; }
+  .action-btn .ab-title { font-size: 18px; font-weight: 900; }
+  .action-btn .ab-sub { font-size: 12px; opacity: .92; font-weight: 600; }
+  .daily-btn { background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent), var(--gold) 45%));
+    box-shadow: 0 5px 0 color-mix(in srgb, var(--accent), #000 24%), 0 8px 18px color-mix(in srgb, var(--accent) 32%, transparent); }
+  .daily-btn:active { box-shadow: 0 1px 0 color-mix(in srgb, var(--accent), #000 24%); }
+  .lib-btn { background: linear-gradient(135deg, color-mix(in srgb, var(--accent), #000 8%), color-mix(in srgb, var(--accent), #2a6fae 55%));
+    box-shadow: 0 5px 0 color-mix(in srgb, var(--accent), #000 30%), 0 8px 18px color-mix(in srgb, var(--accent) 28%, transparent); }
+  .lib-btn:active { box-shadow: 0 1px 0 color-mix(in srgb, var(--accent), #000 30%); }
   /* 班級（輸代碼加入）*/
   .class-card { background: var(--card); border: 2px solid var(--line); border-radius: 18px; padding: 16px; margin-bottom: 18px; }
   .class-card.joined { border-color: var(--accent); background: var(--accent-soft); }
@@ -435,6 +440,19 @@
     <div id="searchResult"></div>
   </div>
 
+  <div class="action-row">
+    <button class="action-btn daily-btn" onclick="startDailyQuiz()">
+      <span class="ab-ic">🎯</span>
+      <span class="ab-title">每日練習</span>
+      <span class="ab-sub" id="dailySub">10 題混合</span>
+    </button>
+    <button class="action-btn lib-btn" onclick="openMenu()">
+      <span class="ab-ic">📚</span>
+      <span class="ab-title">單字庫</span>
+      <span class="ab-sub">瀏覽單字</span>
+    </button>
+  </div>
+
   <div class="panel" id="settings">
     <div class="field">
       <label>練習類型</label>
@@ -477,11 +495,6 @@
     <button class="btn primary" onclick="startQuiz()">開始練習</button>
     <div class="s-msg hidden" id="startMsg" style="margin-top:12px"></div>
   </div>
-
-  <button class="daily-btn" onclick="startDailyQuiz()">
-    <span class="db-title">🎯 每日練習</span>
-    <span class="db-sub" id="dailySub">10 題混合：拼字 · 填字 · 英翻中 · 發音</span>
-  </button>
 
 </div>
 
@@ -632,8 +645,8 @@
   </div>
 </div>
 
-<script src="vocab.js?v=202608131050"></script>
-<script src="dict.js?v=202608131050"></script>
+<script src="vocab.js?v=202608131133"></script>
+<script src="dict.js?v=202608131133"></script>
 <script>
 let opts = { qtype: "spell", source: "mine", count: 5, hint: 1 };
 
@@ -876,11 +889,8 @@ function renderClassPage() {
 }
 function dailySubText() {
   const c = loadClass();
-  if (c && c.words && c.words.length) {
-    const ts = (c.types && c.types.length ? c.types : ["spell", "fill", "zh", "listen"]).map(t => TYPE_NAMES[t] || t).join(" · ");
-    return "班級「" + c.name + "」· " + ts;
-  }
-  return "10 題混合：拼字 · 填字 · 英翻中 · 發音";
+  if (c && c.words && c.words.length) return "班級：" + c.name;
+  return "10 題混合";
 }
 
 // ===== 目錄選單（整頁）=====
