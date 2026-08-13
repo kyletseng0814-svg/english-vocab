@@ -217,6 +217,7 @@
   .menu-ic { display: flex; flex-direction: column; gap: 3px; }
   .menu-ic span { display: block; width: 18px; height: 2px; border-radius: 2px; background: var(--ink); }
   .plus-ic { font-size: 30px; font-weight: 300; line-height: 1; color: var(--ink); margin-top: -3px; }
+  .gear-ic { font-size: 22px; line-height: 1; }
   .menu-list { display: flex; flex-direction: column; gap: 12px; }
   .menu-item { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; background: var(--card); border: 2px solid var(--line); border-radius: 18px; padding: 18px 20px; font-size: 17px; font-weight: 800; color: var(--ink); cursor: pointer; box-shadow: 0 4px 0 var(--line); transition: transform .08s; }
   .menu-item:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--line); }
@@ -411,6 +412,7 @@
       <button class="menu-btn" onclick="openMenu()" aria-label="選單">
         <span class="menu-ic"><span></span><span></span><span></span></span>
       </button>
+      <button class="menu-btn" onclick="openSettings()" aria-label="設定"><span class="gear-ic">⚙️</span></button>
     </div>
     <div id="searchResult"></div>
   </div>
@@ -454,11 +456,6 @@
     <span class="db-sub" id="dailySub">10 題混合：拼字 · 填字 · 英翻中 · 發音</span>
   </button>
 
-  <div class="theme-picker">
-    <div class="tp-label">🎨 佈景主題</div>
-    <div class="swatches" id="swatches"></div>
-    <div class="tp-name" id="tpName"></div>
-  </div>
 </div>
 
 <div id="library" class="hidden">
@@ -485,6 +482,18 @@
   </div>
   <h1 class="lib-title">🏫 班級</h1>
   <div id="classPageBody"></div>
+</div>
+
+<div id="settingsPage" class="hidden">
+  <div class="topbar">
+    <button class="back" onclick="goHome()">← 返回</button>
+  </div>
+  <h1 class="lib-title">⚙️ 設定</h1>
+  <div class="theme-picker" style="margin-top:8px">
+    <div class="tp-label">🎨 佈景主題</div>
+    <div class="swatches" id="swatches"></div>
+    <div class="tp-name" id="tpName"></div>
+  </div>
 </div>
 
 <div id="menu" class="hidden">
@@ -596,8 +605,8 @@
   </div>
 </div>
 
-<script src="vocab.js?v=202608122137"></script>
-<script src="dict.js?v=202608122137"></script>
+<script src="vocab.js?v=202608122153"></script>
+<script src="dict.js?v=202608122153"></script>
 <script>
 let opts = { qtype: "spell", source: "mine", count: 5, hint: 1 };
 
@@ -712,6 +721,7 @@ function dailySubText() {
 
 // ===== 目錄選單（整頁）=====
 function openMenu() { navigate({ view: "menu" }); }
+function openSettings() { navigate({ view: "settings" }); }
 function renderMenu() {
   const items = [
     { icon: "📚", label: "我的單字庫", go: "library" },
@@ -998,7 +1008,7 @@ function pick(box, btn) {
 }
 
 function show(id) {
-  for (const p of ["home", "quiz", "result", "menu", "classPage", "library", "dictLib", "classLib", "letterPage", "progress"]) document.getElementById(p).classList.toggle("hidden", p !== id);
+  for (const p of ["home", "quiz", "result", "menu", "settingsPage", "classPage", "library", "dictLib", "classLib", "letterPage", "progress"]) document.getElementById(p).classList.toggle("hidden", p !== id);
   window.scrollTo(0, 0);
 }
 // ===== 頁面導覽接上瀏覽器歷史紀錄：系統的「上一頁」手勢／按鍵都有效 =====
@@ -1016,6 +1026,9 @@ function applyState(s) {
   } else if (s.view === "classPage") {
     renderClassPage();
     show("classPage");
+  } else if (s.view === "settings") {
+    renderThemes();
+    show("settingsPage");
   } else if (s.view === "menu") {
     renderMenu();
     show("menu");
