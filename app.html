@@ -216,6 +216,7 @@
   .menu-btn:hover { border-color: var(--accent); }
   .menu-ic { display: flex; flex-direction: column; gap: 3px; }
   .menu-ic span { display: block; width: 18px; height: 2px; border-radius: 2px; background: var(--ink); }
+  .plus-ic { font-size: 30px; font-weight: 300; line-height: 1; color: var(--ink); margin-top: -3px; }
   .menu-list { display: flex; flex-direction: column; gap: 12px; }
   .menu-item { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left; background: var(--card); border: 2px solid var(--line); border-radius: 18px; padding: 18px 20px; font-size: 17px; font-weight: 800; color: var(--ink); cursor: pointer; box-shadow: 0 4px 0 var(--line); transition: transform .08s; }
   .menu-item:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--line); }
@@ -406,6 +407,7 @@
         <input id="searchInput" type="text" placeholder="輸入英文單字，加入我的單字庫" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
         <button class="s-btn" onclick="lookup()">查詢</button>
       </div>
+      <button class="menu-btn plus-btn" onclick="openClassPage()" aria-label="加入班級"><span class="plus-ic">＋</span></button>
       <button class="menu-btn" onclick="openMenu()" aria-label="選單">
         <span class="menu-ic"><span></span><span></span><span></span></span>
       </button>
@@ -452,8 +454,6 @@
     <span class="db-sub" id="dailySub">10 題混合：拼字 · 填字 · 英翻中 · 發音</span>
   </button>
 
-  <div id="classBox"></div>
-
   <div class="theme-picker">
     <div class="tp-label">🎨 佈景主題</div>
     <div class="swatches" id="swatches"></div>
@@ -477,6 +477,14 @@
   </div>
   <h1 class="lib-title">🎯 核心單字庫</h1>
   <div id="dictList"></div>
+</div>
+
+<div id="classPage" class="hidden">
+  <div class="topbar">
+    <button class="back" onclick="goHome()">← 返回</button>
+  </div>
+  <h1 class="lib-title">🏫 班級</h1>
+  <div id="classPageBody"></div>
 </div>
 
 <div id="menu" class="hidden">
@@ -588,8 +596,8 @@
   </div>
 </div>
 
-<script src="vocab.js?v=202608121835"></script>
-<script src="dict.js?v=202608121835"></script>
+<script src="vocab.js?v=202608122137"></script>
+<script src="dict.js?v=202608122137"></script>
 <script>
 let opts = { qtype: "spell", source: "mine", count: 5, hint: 1 };
 
@@ -639,7 +647,7 @@ async function joinClass() {
     const rows = await sbRpc("get_class", { p_code: code });
     if (!rows || !rows.length) { msg.textContent = "😅 找不到這個代碼，請跟老師確認"; return; }
     saveClass(normClass(rows[0]));
-    renderHome();
+    renderHome(); renderClassPage();
   } catch (e) { msg.textContent = "連線失敗，檢查網路後再試一次"; }
 }
 async function refreshClass(silent) {
@@ -649,12 +657,12 @@ async function refreshClass(silent) {
   try {
     const rows = await sbRpc("get_class", { p_code: c.code });
     if (rows && rows.length) saveClass(normClass(rows[0]));
-    renderHome();
+    renderHome(); renderClassPage();
   } catch (e) { if (!silent && msg) msg.textContent = "更新失敗，稍後再試"; }
 }
 function leaveClass() {
   if (!confirm("要離開這個班級嗎？每日練習會改回核心題庫。")) return;
-  clearClass(); renderHome();
+  clearClass(); renderHome(); renderClassPage();
 }
 // 掃 QR / 開連結時帶 ?class=代碼 → 自動加入
 async function autoJoinClass(code) {
@@ -665,8 +673,9 @@ async function autoJoinClass(code) {
   } catch (e) {}
   try { history.replaceState({ view: "home" }, "", location.pathname); } catch (e) {}
 }
-function renderClassBox() {
-  const box = document.getElementById("classBox");
+function openClassPage() { navigate({ view: "classPage" }); }
+function renderClassPage() {
+  const box = document.getElementById("classPageBody");
   if (!box) return;
   const c = loadClass();
   if (c) {
@@ -683,7 +692,7 @@ function renderClassBox() {
   } else {
     box.innerHTML =
       "<div class='class-card'>" +
-        "<div class='cc-title'>🏫 老師有給你班級代碼嗎？</div>" +
+        "<div class='cc-title'>老師有給你班級代碼嗎？輸入就能加入。</div>" +
         "<div class='cc-row'>" +
           "<input id='classCodeInput' class='cc-input' placeholder='輸入 6 碼代碼' maxlength='6' autocapitalize='characters' autocomplete='off' spellcheck='false'>" +
           "<button class='cc-btn' onclick='joinClass()'>加入</button>" +
@@ -889,8 +898,7 @@ function renderHome() {
   // 單字庫字首資料夾（A–Z 全部建立）
   renderLetterGrid("vocabList", "mine");
 
-  // 班級狀態 + 每日練習副標
-  renderClassBox();
+  // 每日練習副標（反映班級狀態）
   const ds = document.getElementById("dailySub");
   if (ds) ds.textContent = dailySubText();
 }
@@ -990,7 +998,7 @@ function pick(box, btn) {
 }
 
 function show(id) {
-  for (const p of ["home", "quiz", "result", "menu", "library", "dictLib", "classLib", "letterPage", "progress"]) document.getElementById(p).classList.toggle("hidden", p !== id);
+  for (const p of ["home", "quiz", "result", "menu", "classPage", "library", "dictLib", "classLib", "letterPage", "progress"]) document.getElementById(p).classList.toggle("hidden", p !== id);
   window.scrollTo(0, 0);
 }
 // ===== 頁面導覽接上瀏覽器歷史紀錄：系統的「上一頁」手勢／按鍵都有效 =====
@@ -1005,6 +1013,9 @@ function applyState(s) {
     document.getElementById("dictCount").textContent = "共 " + DICT.length + " 個字";
     renderLetterGrid("dictList", "dict");
     show("dictLib");
+  } else if (s.view === "classPage") {
+    renderClassPage();
+    show("classPage");
   } else if (s.view === "menu") {
     renderMenu();
     show("menu");
