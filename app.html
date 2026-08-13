@@ -632,8 +632,8 @@
   </div>
 </div>
 
-<script src="vocab.js?v=202608131020"></script>
-<script src="dict.js?v=202608131020"></script>
+<script src="vocab.js?v=202608131050"></script>
+<script src="dict.js?v=202608131050"></script>
 <script>
 let opts = { qtype: "spell", source: "mine", count: 5, hint: 1 };
 
@@ -664,11 +664,15 @@ function renderSourceMenu() {
   }).join("");
   menu.querySelectorAll("button[data-v]").forEach(b => b.onclick = e => { e.stopPropagation(); pickSource(b.dataset.v); });
 }
+function closeAllSettingMenus() {
+  ["sourceMenu", "typeMenu", "countMenu"].forEach(id => { const m = document.getElementById(id); if (m) m.classList.add("hidden"); });
+}
 function toggleSourceMenu(e) {
   if (e) e.stopPropagation();
   const menu = document.getElementById("sourceMenu");
-  if (menu.classList.contains("hidden")) { renderSourceMenu(); menu.classList.remove("hidden"); }
-  else menu.classList.add("hidden");
+  const wasHidden = menu.classList.contains("hidden");
+  closeAllSettingMenus();
+  if (wasHidden) { renderSourceMenu(); menu.classList.remove("hidden"); }
 }
 function closeSourceMenu() { const m = document.getElementById("sourceMenu"); if (m) m.classList.add("hidden"); }
 function pickSource(v) {
@@ -703,7 +707,9 @@ function renderTypeMenu() {
 function toggleTypeMenu(e) {
   if (e) e.stopPropagation();
   const m = document.getElementById("typeMenu");
-  if (m.classList.contains("hidden")) { renderTypeMenu(); m.classList.remove("hidden"); } else m.classList.add("hidden");
+  const wasHidden = m.classList.contains("hidden");
+  closeAllSettingMenus();
+  if (wasHidden) { renderTypeMenu(); m.classList.remove("hidden"); }
 }
 function pickType(v) {
   opts.qtype = v;
@@ -751,7 +757,9 @@ function renderCountMenu() {
 function toggleCountMenu(e) {
   if (e) e.stopPropagation();
   const m = document.getElementById("countMenu");
-  if (m.classList.contains("hidden")) { renderCountMenu(); m.classList.remove("hidden"); } else m.classList.add("hidden");
+  const wasHidden = m.classList.contains("hidden");
+  closeAllSettingMenus();
+  if (wasHidden) { renderCountMenu(); m.classList.remove("hidden"); }
 }
 function pickCount(c) {
   opts.count = c;
