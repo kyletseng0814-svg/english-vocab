@@ -173,6 +173,10 @@
   }
   .choice:active { transform: scale(.9); }
   .choice.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 800; }
+  .choice.count-custom { display: inline-flex; align-items: center; gap: 2px; padding: 9px 14px; }
+  .count-custom input { width: 42px; border: none; background: transparent; font-size: 15px; font-weight: 700; color: inherit; text-align: center; outline: none; -moz-appearance: textfield; }
+  .count-custom input::-webkit-outer-spin-button, .count-custom input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .count-custom input::placeholder { color: var(--sub); font-weight: 600; }
   .btn {
     width: 100%; padding: 15px; border-radius: 18px; font-size: 16px; font-weight: 700; cursor: pointer;
     border: 2px solid var(--line); background: var(--card);
@@ -584,8 +588,8 @@
   </div>
 </div>
 
-<script src="vocab.js?v=202608121812"></script>
-<script src="dict.js?v=202608121812"></script>
+<script src="vocab.js?v=202608121835"></script>
+<script src="dict.js?v=202608121835"></script>
 <script>
 let opts = { qtype: "spell", source: "mine", count: 5, hint: 1 };
 
@@ -961,6 +965,22 @@ function renderCounts() {
     b.onclick = () => { pick(cbox, b); opts.count = c; };
     cbox.appendChild(b);
   });
+  // 自訂題數
+  if (n > 1) {
+    const custom = document.createElement("label");
+    custom.className = "choice count-custom";
+    custom.innerHTML = "<input type='number' min='1' max='" + n + "' placeholder='自訂' inputmode='numeric'> 題";
+    const inp = custom.querySelector("input");
+    inp.oninput = () => {
+      let v = parseInt(inp.value, 10);
+      if (isNaN(v) || v < 1) return;
+      if (v > n) { v = n; inp.value = n; }
+      opts.count = v;
+      cbox.querySelectorAll(".choice").forEach(x => x.classList.remove("active"));
+      custom.classList.add("active");
+    };
+    cbox.appendChild(custom);
+  }
   opts.count = counts[0] || 0;
 }
 
