@@ -174,6 +174,22 @@
   .choice:active { transform: scale(.9); }
   .choice.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 800; }
   .choice.locked { opacity: .45; }
+  /* 練習範圍：單一欄位 + 彈出選單 */
+  .source-wrap { position: relative; }
+  .source-field { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; max-width: 300px;
+    border: 2px solid var(--line); background: var(--bg); border-radius: 14px; padding: 11px 16px; font-size: 15px; font-weight: 700; color: var(--ink); cursor: pointer; transition: transform .09s, border-color .15s; }
+  .source-field:active { transform: scale(.98); }
+  .source-field:hover { border-color: var(--accent); }
+  .sf-caret { color: var(--sub); font-size: 12px; }
+  .source-menu { position: absolute; top: calc(100% + 6px); left: 0; z-index: 30; min-width: 260px;
+    background: var(--card); border: 2px solid var(--line); border-radius: 14px; padding: 6px;
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--ink) 16%, transparent); }
+  .src-opt { display: flex; align-items: center; gap: 6px; width: 100%; text-align: left; border: none; background: none;
+    padding: 12px 14px; font-size: 15px; font-weight: 700; color: var(--ink); cursor: pointer; border-radius: 10px; }
+  .src-opt:hover { background: var(--accent-soft); }
+  .src-opt.active { color: var(--accent); background: var(--accent-soft); }
+  .src-opt.locked { color: var(--sub); opacity: .6; }
+  .src-hint { font-size: 12px; font-weight: 600; color: var(--sub); margin-left: auto; }
   .choice.count-custom { display: inline-flex; align-items: center; gap: 2px; padding: 9px 14px; }
   .count-custom input { width: 42px; border: none; background: transparent; font-size: 15px; font-weight: 700; color: inherit; text-align: center; outline: none; -moz-appearance: textfield; }
   .count-custom input::-webkit-outer-spin-button, .count-custom input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
@@ -430,10 +446,12 @@
     </div>
     <div class="field">
       <label>練習範圍</label>
-      <div class="choices" id="sourceChoices">
-        <button class="choice active" data-v="mine">📚 我的單字庫</button>
-        <button class="choice" data-v="dict">🎯 核心單字庫</button>
-        <button class="choice" data-v="class" id="srcClass">🏫 班級單字庫</button>
+      <div class="source-wrap">
+        <button class="source-field" onclick="toggleSourceMenu(event)">
+          <span id="sourceLabel">📚 我的單字庫</span>
+          <span class="sf-caret">▾</span>
+        </button>
+        <div class="source-menu hidden" id="sourceMenu"></div>
       </div>
     </div>
     <div class="field">
@@ -606,10 +624,60 @@
   </div>
 </div>
 
-<script src="vocab.js?v=202608122210"></script>
-<script src="dict.js?v=202608122210"></script>
+<script src="vocab.js?v=202608130945"></script>
+<script src="dict.js?v=202608130945"></script>
 <script>
 let opts = { qtype: "spell", source: "mine", count: 5, hint: 1 };
+
+// ===== 練習範圍：單一欄位 + 彈出選單 =====
+const SOURCES = [
+  { v: "mine", label: "📚 我的單字庫" },
+  { v: "dict", label: "🎯 核心單字庫" },
+  { v: "class", label: "🏫 班級單字庫" }
+];
+function sourceLabelOf(v) { return (SOURCES.find(s => s.v === v) || SOURCES[0]).label; }
+function sourceEnabled(v) {
+  if (v === "class") return !!loadClass();
+  if (v === "mine") return allWords().length > 0;
+  return true; // 核心題庫
+}
+function sourceHint(v) {
+  if (v === "class" && !loadClass()) return "（先加入班級）";
+  if (v === "mine" && allWords().length === 0) return "（先加字）";
+  return "";
+}
+function renderSourceMenu() {
+  const menu = document.getElementById("sourceMenu");
+  menu.innerHTML = SOURCES.map(s => {
+    const enabled = sourceEnabled(s.v), active = opts.source === s.v;
+    const hint = sourceHint(s.v);
+    return "<button class='src-opt" + (enabled ? "" : " locked") + (active ? " active" : "") + "' data-v='" + s.v + "'>" +
+      "<span>" + s.label + "</span>" + (hint ? "<span class='src-hint'>" + hint + "</span>" : "") + "</button>";
+  }).join("");
+  menu.querySelectorAll("button[data-v]").forEach(b => b.onclick = e => { e.stopPropagation(); pickSource(b.dataset.v); });
+}
+function toggleSourceMenu(e) {
+  if (e) e.stopPropagation();
+  const menu = document.getElementById("sourceMenu");
+  if (menu.classList.contains("hidden")) { renderSourceMenu(); menu.classList.remove("hidden"); }
+  else menu.classList.add("hidden");
+}
+function closeSourceMenu() { const m = document.getElementById("sourceMenu"); if (m) m.classList.add("hidden"); }
+function pickSource(v) {
+  if (!sourceEnabled(v)) {
+    if (v === "class") { if (confirm("你還沒加入班級喔，要現在加入嗎？")) { closeSourceMenu(); openClassPage(); } }
+    else if (v === "mine") { alert("你的單字庫還沒有單字，先用上方搜尋列加幾個字，再來練習吧！"); }
+    return;
+  }
+  opts.source = v;
+  document.getElementById("sourceLabel").textContent = sourceLabelOf(v);
+  closeSourceMenu();
+  renderCounts();
+}
+document.addEventListener("click", e => {
+  const m = document.getElementById("sourceMenu");
+  if (m && !m.classList.contains("hidden") && !e.target.closest(".source-wrap")) m.classList.add("hidden");
+});
 
 function practicePool() {
   if (opts.source === "class") return classLibWords();
@@ -892,26 +960,10 @@ function renderHome() {
     };
   });
 
-  // 練習範圍選項
-  document.querySelectorAll("#sourceChoices .choice").forEach(b => {
-    b.onclick = () => {
-      // 沒加入班級卻按班級單字庫 → 問要不要加入
-      if (b.dataset.v === "class" && !loadClass()) {
-        if (confirm("你還沒加入班級喔，要現在加入嗎？")) openClassPage();
-        return;
-      }
-      pick(document.getElementById("sourceChoices"), b);
-      opts.source = b.dataset.v;
-      renderCounts();
-    };
-  });
-  // 沒加入班級 → 班級單字庫顯示灰色；若原本選了班級卻已離開，退回我的單字庫
-  const srcClass = document.getElementById("srcClass");
-  if (srcClass) srcClass.classList.toggle("locked", !loadClass());
-  if (opts.source === "class" && !loadClass()) {
-    opts.source = "mine";
-    document.querySelectorAll("#sourceChoices .choice").forEach(x => x.classList.toggle("active", x.dataset.v === "mine"));
-  }
+  // 練習範圍：若目前選的範圍已不可用（離開班級／單字庫空了），自動退回可用的
+  if (!sourceEnabled(opts.source)) opts.source = sourceEnabled("mine") ? "mine" : "dict";
+  document.getElementById("sourceLabel").textContent = sourceLabelOf(opts.source);
+  closeSourceMenu();
   renderCounts();
 
   // 提示選項
