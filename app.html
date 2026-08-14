@@ -409,10 +409,17 @@
   .result .big { font-size: 52px; font-weight: 700; margin: 24px 0 4px; }
   .result .msg { color: var(--sub); margin-bottom: 24px; }
   .review { text-align: left; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 4px 16px; margin-bottom: 24px; }
-  .review-item { padding: 12px 0; border-bottom: 1px solid var(--line); }
+  .review-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--line); }
   .review-item:last-child { border-bottom: none; }
+  .ri-content { flex: 1; min-width: 0; }
   .review-item b { font-size: 17px; }
-  .review-item div { color: var(--sub); font-size: 14px; margin-top: 3px; line-height: 1.5; }
+  .ri-phon { color: var(--sub); }
+  .ri-detail { color: var(--sub); font-size: 14px; margin-top: 3px; line-height: 1.5; }
+  .ri-add { flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--accent);
+    background: var(--accent-soft); color: var(--accent); font-size: 22px; font-weight: 300; line-height: 1; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: transform .08s; }
+  .ri-add:active { transform: scale(.9); }
+  .ri-add.added { border-color: var(--line); background: var(--line); color: var(--sub); cursor: default; }
 </style>
 <script>
   // 一開頁就套用上次選的主題，避免顏色閃一下
@@ -642,8 +649,8 @@
   </div>
 </div>
 
-<script src="vocab.js?v=202608131448"></script>
-<script src="dict.js?v=202608131448"></script>
+<script src="vocab.js?v=202608131813"></script>
+<script src="dict.js?v=202608131813"></script>
 <script>
 let opts = { qtype: "spell", source: "mine", count: 5, hint: 1 };
 
@@ -1705,15 +1712,35 @@ function finish() {
   const rv = document.getElementById("rReview");
   if (cur.wrong.length) {
     rv.classList.remove("hidden");
-    rv.innerHTML = cur.wrong.map(v =>
-      '<div class="review-item"><b>' + v.w + "</b> <span style='color:var(--sub)'>/" + v.phon + "/</span><div>" +
-      v.pos + " " + v.zh + "<br>" + v.ex + "</div></div>"
+    rv.innerHTML = cur.wrong.map((v, i) =>
+      '<div class="review-item"><div class="ri-content"><b>' + v.w + "</b> <span class='ri-phon'>/" + v.phon + "/</span>" +
+      "<div class='ri-detail'>" + v.pos + " " + v.zh + "<br>" + v.ex + "</div></div>" +
+      "<button class='ri-add' onclick='addWrongToMine(" + i + ", this)' aria-label='加入我的單字庫'>＋</button></div>"
     ).join("");
   } else {
     rv.classList.add("hidden");
   }
   history.replaceState({ view: "result" }, "");
   show("result");
+}
+
+// 結果頁：把錯的字加入我的單字庫
+function addWrongToMine(i, btn) {
+  const v = cur.wrong[i];
+  if (!v) return;
+  const wl = v.w.toLowerCase();
+  if (allWords().some(x => x.w.toLowerCase() === wl)) {
+    if (btn) { btn.textContent = "✓"; btn.classList.add("added"); btn.onclick = null; }
+    alert("「" + v.w + "」已經在我的單字庫裡了");
+    return;
+  }
+  if (!confirm("要把「" + v.w + "」加入我的單字庫嗎？")) return;
+  const list = loadCustom();
+  const entry = Object.assign({}, v, { custom: true, added: todayStr() });
+  delete entry.enriched;
+  list.push(entry);
+  saveCustom(list);
+  if (btn) { btn.textContent = "✓"; btn.classList.add("added"); btn.onclick = null; }
 }
 
 let detailWord = null;
