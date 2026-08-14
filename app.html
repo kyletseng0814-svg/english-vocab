@@ -649,8 +649,8 @@
   </div>
 </div>
 
-<script src="vocab.js?v=202608131813"></script>
-<script src="dict.js?v=202608131813"></script>
+<script src="vocab.js?v=202608131820"></script>
+<script src="dict.js?v=202608131820"></script>
 <script>
 let opts = { qtype: "spell", source: "mine", count: 5, hint: 1 };
 
@@ -1712,11 +1712,15 @@ function finish() {
   const rv = document.getElementById("rReview");
   if (cur.wrong.length) {
     rv.classList.remove("hidden");
-    rv.innerHTML = cur.wrong.map((v, i) =>
-      '<div class="review-item"><div class="ri-content"><b>' + v.w + "</b> <span class='ri-phon'>/" + v.phon + "/</span>" +
-      "<div class='ri-detail'>" + v.pos + " " + v.zh + "<br>" + v.ex + "</div></div>" +
-      "<button class='ri-add' onclick='addWrongToMine(" + i + ", this)' aria-label='加入我的單字庫'>＋</button></div>"
-    ).join("");
+    const mine = new Set(allWords().map(x => x.w.toLowerCase()));
+    rv.innerHTML = cur.wrong.map((v, i) => {
+      const already = mine.has(v.w.toLowerCase());
+      const btn = already
+        ? "<button class='ri-add added' disabled aria-label='已在我的單字庫'>✓</button>"
+        : "<button class='ri-add' onclick='addWrongToMine(" + i + ", this)' aria-label='加入我的單字庫'>＋</button>";
+      return '<div class="review-item"><div class="ri-content"><b>' + v.w + "</b> <span class='ri-phon'>/" + v.phon + "/</span>" +
+        "<div class='ri-detail'>" + v.pos + " " + v.zh + "<br>" + v.ex + "</div></div>" + btn + "</div>";
+    }).join("");
   } else {
     rv.classList.add("hidden");
   }
